@@ -1,0 +1,17 @@
+# Tests: a fresh in-memory H2 per Spring context, no Kafka, no BART key, no scheduled polls.
+spring:
+  datasource:
+    url: jdbc:h2:mem:test-${random.uuid};MODE=PostgreSQL;DATABASE_TO_LOWER=TRUE;DEFAULT_NULL_ORDERING=HIGH;DB_CLOSE_DELAY=-1
+    username: sa
+    password:
+  autoconfigure:
+    exclude:
+      - org.springframework.boot.autoconfigure.kafka.KafkaAutoConfiguration
+
+app:
+  events:
+    transport: inprocess
+
+bart:
+  api-key: ""
+  initial-delay: PT1H

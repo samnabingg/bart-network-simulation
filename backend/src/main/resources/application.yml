@@ -1,0 +1,107 @@
+# Default profile: PostgreSQL + Kafka (see docker-compose.yml at the repo root).
+# For a run without Docker, use the "local" profile (H2 + in-process events).
+
+server:
+  port: ${PORT:8080}
+  shutdown: graceful
+
+spring:
+  application:
+    name: transit-twin
+  threads:
+    virtual:
+      enabled: true   # Java 21 virtual threads for request handling and @Scheduled jobs
+  mvc:
+    problemdetails:
+      enabled: true
+  datasource:
+    url: ${DB_URL:jdbc:postgresql://localhost:5432/transit}
+    username: ${DB_USER:transit}
+    password: ${DB_PASSWORD:transit}
+  jpa:
+    open-in-view: false
+    hibernate:
+      ddl-auto: validate   # Flyway owns the schema
+  flyway:
+    locations: classpath:db/migration
+  kafka:
+    bootstrap-servers: ${KAFKA_BOOTSTRAP_SERVERS:localhost:9092}
+    producer:
+      acks: all
+      key-serializer: org.apache.kafka.common.serialization.StringSerializer
+      value-serializer: org.springframework.kafka.support.serializer.JsonSerializer
+      properties:
+        enable.idempotence: true
+        spring.json.add.type.headers: false
+    consumer:
+      # Every instance keeps its own copy of the live board, so it needs every partition:
+      # one consumer group per instance, starting from the newest messages.
+      group-id: transit-live-${random.uuid}
+      auto-offset-reset: latest
+      key-deserializer: org.apache.kafka.common.serialization.StringDeserializer
+      value-deserializer: org.springframework.kafka.support.serializer.ErrorHandlingDeserializer
+      properties:
+        spring.deserializer.value.delegate.class: org.springframework.kafka.support.serializer.JsonDeserializer
+        spring.json.value.default.type: com.transittwin.live.DepartureSnapshotEvent
+        spring.json.use.type.headers: false
+        spring.json.trusted.packages: com.transittwin.*
+
+app:
+  events:
+    transport: kafka          # kafka | inprocess
+    departures-topic: bart.departures
+  geo:
+    # Optional: path to BART's "Stations, tracks and entrances" doc.kml. When set, track lines
+    # and entrances are re-imported from it on startup (replaces build-geo.mjs).
+    kml-file: ${GEO_KML_FILE:}
+
+bart:
+  api-key: ${BART_API_KEY:}
+  base-url: ${BART_API_BASE:https://api.bart.gov/api}
+  poll-interval: 30s
+  station-sync-interval: 1h
+  connect-timeout: 5s
+  read-timeout: 10s
+
+resilience4j:
+  retry:
+    instances:
+      bart:
+        max-attempts: 3
+        wait-duration: 500ms
+        enable-exponential-backoff: true
+        exponential-backoff-multiplier: 2
+        ignore-exceptions:
+          - com.transittwin.bart.BartClientErrorException   # a bad key won't fix itself on retry
+          - io.github.resilience4j.circuitbreaker.CallNotPermittedException   # circuit open: wait, don't retry
+  circuitbreaker:
+    instances:
+      bart:
+        sliding-window-type: COUNT_BASED
+        sliding-window-size: 10
+        minimum-number-of-calls: 5
+        failure-rate-threshold: 50
+        wait-duration-in-open-state: 60s
+        permitted-number-of-calls-in-half-open-state: 2
+        automatic-transition-from-open-to-half-open-enabled: true
+
+management:
+  endpoints:
+    web:
+      exposure:
+        include: health,info,circuitbreakers
+  endpoint:
+    health:
+      probes:
+        enabled: true
+  health:
+    circuitbreakers:
+      enabled: true
+
+springdoc:
+  swagger-ui:
+    path: /swagger-ui.html
+
+logging:
+  pattern:
+    level: "%5p [%X{correlationId:-}]"
