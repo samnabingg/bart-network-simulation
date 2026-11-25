@@ -1,0 +1,57 @@
+<header>
+  <div class="brand">
+    <div class="logo" aria-hidden="true">B</div>
+    <div>
+      <h1>BART network simulation</h1>
+      <p class="sub">Unofficial prototype. Not affiliated with or endorsed by BART.</p>
+    </div>
+  </div>
+  <div class="header-train" aria-hidden="true"></div>
+</header>
+
+<main>
+  <section class="panel" aria-labelledby="mapHeading">
+    <h2 id="mapHeading">Stations</h2>
+    <app-station-search [stations]="stations()" [selectedName]="selectedStation()?.name ?? null" (pick)="select($event)" />
+    <app-mode-bar />
+    <app-network-map
+      [network]="sim.network()"
+      [geo]="sim.geo()"
+      [stations]="stations()"
+      [selected]="selected()"
+      [trains]="sim.trains()"
+      [pickedTrain]="pickedTrain()"
+      (stationSelect)="select($event)"
+      (trainPick)="pickedTrain.set($event)"
+    />
+    <p class="train-info" aria-live="polite">{{ trainInfo() }}</p>
+    <p class="status" [class.error]="mapStatus().error" aria-live="polite">{{ mapStatus().text }}</p>
+  </section>
+
+  <section class="panel" aria-labelledby="stationName">
+    <app-station-panel
+      [station]="selectedStation()"
+      [lines]="sim.lines()"
+      [board]="board()"
+      [entrances]="entrances()"
+      [sourceNote]="sim.sourceNote()"
+      [problem]="sim.liveProblem()"
+      [inScene]="sceneAbbr() === selected()"
+      [tick]="sim.slowFrame()"
+      (walk)="walk($event)"
+    />
+  </section>
+
+  <section class="panel wide">
+    <app-station-scene
+      [station]="sceneStation()"
+      [lines]="sim.lines()"
+      [feed]="sceneFeed()"
+      [balance]="sceneBalance()"
+      [spawn]="sceneSpawn()"
+      [debug]="debug"
+      (exit)="exitTrain($event)"
+      (ready)="sceneReady($event)"
+    />
+  </section>
+</main>
