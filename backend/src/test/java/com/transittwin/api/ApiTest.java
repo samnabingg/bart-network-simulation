@@ -39,6 +39,18 @@ class ApiTest {
     }
 
     @Test
+    void importedLayoutsAreServedWithTheirOsmCredit() throws Exception {
+        mvc.perform(get("/api/stations/mcar/layout"))
+            .andExpect(status().isOk())
+            .andExpect(jsonPath("$.abbr").value("MCAR"))
+            .andExpect(jsonPath("$.layout").value("island"))
+            .andExpect(jsonPath("$.platforms", hasSize(2)))
+            .andExpect(jsonPath("$.source.attribution").value("© OpenStreetMap contributors"));
+        mvc.perform(get("/api/stations/ZZZ/layout"))
+            .andExpect(status().isNotFound());
+    }
+
+    @Test
     void geoHasTrackAndEntrancesInTheOldGeoJsonShape() throws Exception {
         mvc.perform(get("/api/geo"))
             .andExpect(status().isOk())

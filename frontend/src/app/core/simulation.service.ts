@@ -37,8 +37,11 @@ export class SimulationService {
   readonly geo = signal<GeoDocument | null>(null);
   readonly loadError = signal<string | null>(null);
 
-  /** What the user picked. Live is only *used* when live data is actually available. */
-  readonly mode = signal<DataMode>('demo');
+  /**
+   * What the user picked. Starts on Live: if the server turns out to have no API key it drops to
+   * Demo. While Live is picked nothing simulated is shown, only real data or an honest "no data".
+   */
+  readonly mode = signal<DataMode>('live');
   readonly speed = signal(1);
 
   /** Ticks about 10 times a second: drives train positions. */
@@ -48,6 +51,7 @@ export class SimulationService {
 
   private demoClock = { base: Date.now() / 1000, perf: performance.now() };
   private userPickedMode = false;
+  private modeDecided = false;
 
   readonly liveStatus: Signal<LiveStatus | null> = toSignal(
     timer(0, STATUS_POLL_MS).pipe(switchMap(() => this.api.liveStatus().pipe(catchError(() => of(null))))),
@@ -61,6 +65,10 @@ export class SimulationService {
   readonly usingLive = computed(
     () => this.mode() === 'live' && !!this.liveStatus()?.available && !!this.liveTrainsState(),
   );
+  /** Live picked, still waiting for the first data, and nothing has gone wrong yet. */
+  readonly liveLoading = computed(
+    () => this.mode() === 'live' && !this.usingLive() && !this.liveError() && !this.liveStatus()?.error && !this.loadError(),
+  );
 
   readonly lines = computed<LineDef[]>(() => this.network()?.lines ?? []);
 
@@ -69,8 +77,9 @@ export class SimulationService {
     const net = this.network();
     if (!net) return [];
     const live = this.liveTrainsState();
-    if (this.usingLive() && live) {
-      return advanceLiveTrains(live.data.trains, (performance.now() - live.receivedPerf) / 1000);
+    if (this.mode() === 'live') {
+      // Live picked: real trains or none at all, never the demo timetable.
+      return this.usingLive() && live ? advanceLiveTrains(live.data.trains, (performance.now() - live.receivedPerf) / 1000) : [];
     }
     return demoTrains(net, this.simNow());
   });
@@ -81,15 +90,16 @@ export class SimulationService {
       const at = status?.fetchedAt ? new Date(status.fetchedAt) : null;
       return `Live BART estimates${at ? `, updated ${at.toLocaleTimeString([], { hour: 'numeric', minute: '2-digit' })}` : ''}`;
     }
+    if (this.liveLoading()) return 'Loading live BART data…';
     if (this.mode() === 'live') {
-      const why = this.liveError() || status?.error || 'no live data yet';
-      return `Live data unavailable (${why}). Showing the demo timetable.`;
+      const why = this.liveError() || status?.error || 'no response from the server';
+      return `Live data unavailable (${why}). No trains shown; switch to Demo for the simulated timetable.`;
     }
     if (!this.hasKey()) return 'Demo timetable (no API key on the server, so no live data)';
     return 'Demo timetable (simulated, not real times)';
   });
 
-  readonly liveProblem = computed(() => this.mode() === 'live' && !this.usingLive());
+  readonly liveProblem = computed(() => this.mode() === 'live' && !this.usingLive() && !this.liveLoading());
 
   constructor() {
     const destroyRef = inject(DestroyRef);
@@ -119,11 +129,14 @@ export class SimulationService {
         this.liveError.set(error);
       });
 
-    // Default to live when the server has a key, unless the user already chose.
+    // Start on Live; the first answer from the server decides, unless the user already chose:
+    // no API key means there is no live data, so drop to the demo timetable.
     const statusSub = toObservable(this.liveStatus).subscribe((s) => {
-      if (s?.configured && !this.userPickedMode) {
-        this.userPickedMode = true;
-        this.mode.set('live');
+      if (!s || this.modeDecided || this.userPickedMode) return;
+      this.modeDecided = true;
+      if (!s.configured) {
+        this.demoClock = { base: Date.now() / 1000, perf: performance.now() };
+        this.mode.set('demo');
       }
     });
 
@@ -154,7 +167,7 @@ export class SimulationService {
 
   /** Simulated time in epoch seconds: real time in live mode, the speed-adjustable demo clock otherwise. */
   simNow(): number {
-    if (this.usingLive()) return Date.now() / 1000;
+    if (this.mode() === 'live') return Date.now() / 1000;
     return this.demoClock.base + ((performance.now() - this.demoClock.perf) / 1000) * this.speed();
   }
 
@@ -172,14 +185,15 @@ export class SimulationService {
 
   /**
    * A station's departure board that follows the selected station, the data source and the demo
-   * speed. Must be called in an injection context (a component field initializer).
+   * speed. Must be called in an injection context (a component field initializer). With Live
+   * picked it always asks for live departures: an outage shows as an error, not as demo rows.
    * A new station or source cancels the request in flight, so a stale board never wins.
    */
   board(abbr: Signal<string | null>): Signal<BoardState> {
     const empty: BoardState = { data: null, error: null, receivedAt: 0 };
     const source$ = combineLatest([
       toObservable(abbr),
-      toObservable(this.usingLive),
+      toObservable(computed(() => this.mode() === 'live')),
       toObservable(this.speed),
     ]).pipe(distinctUntilChanged((a, b) => a[0] === b[0] && a[1] === b[1] && a[2] === b[2]));
 

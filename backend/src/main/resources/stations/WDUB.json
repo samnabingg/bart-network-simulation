@@ -1,0 +1,65 @@
+{
+  "abbr" : "WDUB",
+  "name" : "West Dublin/Pleasanton",
+  "source" : {
+    "name" : "OpenStreetMap",
+    "license" : "ODbL 1.0 (https://opendatacommons.org/licenses/odbl/)",
+    "attribution" : "© OpenStreetMap contributors",
+    "importedAt" : "2026-11-26T02:00:32.950989800Z"
+  },
+  "origin" : {
+    "lat" : 37.699725,
+    "lon" : -121.928292
+  },
+  "bearingDeg" : 74.4,
+  "layout" : "island",
+  "platformLevel" : null,
+  "levels" : [ ],
+  "platforms" : [ {
+    "osmId" : "way/154676685",
+    "ref" : "1;2",
+    "level" : null,
+    "shape" : "area",
+    "lengthM" : 212.8,
+    "widthM" : 7.8,
+    "centerX" : 0.0,
+    "zMin" : -106.4,
+    "zMax" : 106.4,
+    "tracksAlongside" : "none",
+    "outline" : [ [ -3.9, 106.4 ], [ -3.9, -106.4 ], [ 3.9, -106.4 ], [ 3.9, 106.4 ], [ -3.9, 106.4 ] ]
+  } ],
+  "tracks" : [ ],
+  "features" : [ {
+    "kind" : "entrance",
+    "osmId" : "node/5306478430",
+    "level" : null,
+    "name" : null,
+    "points" : [ [ 58.5, 16.5 ] ]
+  }, {
+    "kind" : "entrance",
+    "osmId" : "node/5306478432",
+    "level" : null,
+    "name" : null,
+    "points" : [ [ -74.5, 62.5 ] ]
+  }, {
+    "kind" : "stairs",
+    "osmId" : "way/119891741",
+    "level" : null,
+    "name" : null,
+    "points" : [ [ 59.4, 17.0 ], [ 61.6, 36.2 ] ]
+  } ],
+  "areas" : [ ],
+  "building" : [ [ -8.6, -37.5 ], [ -5.6, -37.5 ], [ 5.4, -37.5 ], [ 8.7, -37.5 ], [ 8.7, 61.7 ], [ 5.5, 61.7 ], [ -5.5, 61.7 ], [ -8.6, 61.7 ], [ -8.6, -37.5 ] ],
+  "coverage" : {
+    "platforms" : 1,
+    "tracks" : 0,
+    "entrance" : 2,
+    "elevator" : 0,
+    "escalator" : 0,
+    "stairs" : 1,
+    "fare_gate" : 0,
+    "ticket_machine" : 0,
+    "indoor_areas" : 0
+  },
+  "warnings" : [ "Platform level isn't tagged.", "No escalators mapped in OSM: fill in by hand.", "No elevators mapped in OSM: fill in by hand.", "No fare gates mapped in OSM: fill in by hand." ]
+}

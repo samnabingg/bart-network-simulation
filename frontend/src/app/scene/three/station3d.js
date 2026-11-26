@@ -18,13 +18,14 @@
 import * as THREE from 'three';
 import { RoomEnvironment } from 'three/addons/environments/RoomEnvironment.js';
 import { mergeGeometries } from 'three/addons/utils/BufferGeometryUtils.js';
-import { createTrainRide } from './train-ride.js';
+import { atLeftDoor, createTrainRide } from './train-ride.js';
+import { createFareGates } from './fare-gates.js';
 import { buildFleetTrain } from './fleet.js';
 
 export const SDIM = {
   eye: 1.6, radius: 0.3, walk: 2.6, run: 4.2, escalatorSpeed: 0.9,
   platformZ0: -17, platformZ1: -90, rampZ0: -3, gateZ: -1, trainStopZ: -54,
-  fare: 4.0, topUp: 20, // demo amounts, not real fares
+  topUp: 20, // what the ticket machine adds to your card; fares come from BART when you tap out
 };
 const HEIGHT = { elevated: 7, surface: 4.5, underground: -6 };
 
@@ -1194,6 +1195,8 @@ export function createStationScene(host, opts = {}) {
     balance: Number(opts.balance) || 0, gatesOpen: false, openUntil: 0, flash: 0,
     steps: { funds: false, tapped: false, platform: false, boarded: false },
     onBoard: false, sitting: null, arrived: false,
+    // where the trip on the card started (carried over when you arrive by train)
+    tripFrom: (opts.trip && opts.trip.from) || null,
   };
   const hud = document.createElement('div');
   hud.className = 'bf-hud';
@@ -1235,17 +1238,20 @@ export function createStationScene(host, opts = {}) {
       if (game.steps[k]) li.className = 'done';
       return li;
     }));
-    walletEl.textContent = `Card balance (demo): $${game.balance.toFixed(2)}`;
+    walletEl.textContent = `Clipper card balance: $${game.balance.toFixed(2)}`;
     liveEl.textContent = live.note;
     stepsEl.hidden = game.onBoard;
     rideEl.hidden = !game.onBoard;
     const r = game.onBoard && ride.state;
     if (r) {
-      const status = { boarding: 'Doors open', closing: 'Doors closing', moving: `Next stop: ${r.next}`, arriving: `Now arriving: ${r.next}`, arrived: `Arrived at ${r.next}` }[r.phase];
+      const eta = r.eta == null ? '' : ` in ${Math.floor(r.eta / 60)}:${String(Math.floor(r.eta % 60)).padStart(2, '0')}`;
+      const status = { boarding: 'Doors open', closing: 'Doors closing', moving: `Next stop: ${r.next}${eta}`, arriving: `Now arriving: ${r.next}`, arrived: `Arrived at ${r.next}` }[r.phase];
       rideEl.replaceChildren();
       const a = document.createElement('strong'); a.textContent = `Train to ${r.dest}`;
-      const b = document.createElement('span'); b.textContent = `${status} · ${Math.round(r.speed * 3.6)} km/h`;
-      const c = document.createElement('span'); c.className = 'bf-ride-tip'; c.textContent = game.sitting ? 'Sitting. Press E or walk to stand up.' : 'Walk around the car. Press E near a seat to sit.';
+      const b = document.createElement('span'); b.textContent = `${status} · ${Math.round(r.speed * 3.6)} km/h${r.remaining > 0 ? ` · ${r.remaining} more stop${r.remaining === 1 ? '' : 's'}` : ''}`;
+      const c = document.createElement('span'); c.className = 'bf-ride-tip';
+      c.textContent = r.here ? `Doors open at ${r.here.name}. Walk to a door on the left and press E to get off.`
+        : game.sitting ? 'Sitting. Press E or walk to stand up.' : 'Walk around the car. Press E near a seat to sit.';
       rideEl.append(a, b, c);
     }
   };
@@ -1268,6 +1274,7 @@ export function createStationScene(host, opts = {}) {
     } catch { /* audio is optional */ }
   };
   const chime = (notes) => notes.forEach(([f, d], i) => setTimeout(() => beep(f, d), i * 260));
+  const gates = createFareGates({ opts, game, here: { abbr: st.abbr, name: st.name }, toast, beep, onChange: () => renderHud() });
 
   const P = { x: 0, z: 12, y: 0, yaw: 0, pitch: -0.05 };
   const plat0 = LAY.platforms[0];
@@ -1298,27 +1305,18 @@ export function createStationScene(host, opts = {}) {
   const interactables = [
     {
       test: () => P.y > -1 && P.y < 1 && Math.hypot(P.x - 6.5, P.z - 0.6) < 2.6 && P.z > 0.4,
-      label: () => `Press E: add $${D.topUp} to your card (demo)`,
+      label: () => `Press E: add $${D.topUp} to your Clipper card`,
       run() { game.balance += D.topUp; game.steps.funds = true; beep(660); toast(`Added $${D.topUp}. Balance is $${game.balance.toFixed(2)}. Now walk to the fare gates.`); },
     },
     {
       test: () => nearGates() && !paidSide(),
-      label: () => (game.gatesOpen ? 'Gates are open, walk through' : `Press E: tap your card at the gate (demo fare $${D.fare.toFixed(2)})`),
-      run() {
-        if (game.gatesOpen) return;
-        if (game.balance < D.fare) { game.flash = 1.2; beep(220, 0.3); toast('The gate shows a red X: not enough value. Add money at a ticket machine first.'); return; }
-        game.balance -= D.fare;
-        game.steps.tapped = true;
-        game.gatesOpen = true;
-        game.openUntil = performance.now() + 10_000;
-        beep(990);
-        toast(`Tap accepted, $${D.fare.toFixed(2)} charged. Walk through the green arrows.`);
-      },
+      label: () => gates.inLabel(),
+      run() { gates.tapIn(); },
     },
     {
       test: () => nearGates() && paidSide(),
-      label: () => (game.gatesOpen ? 'Gates are open, walk through' : 'Press E: tap out to leave the station'),
-      run() { if (game.gatesOpen) return; game.gatesOpen = true; game.openUntil = performance.now() + 10_000; beep(990); toast(`Tapped out at ${st.name}. Thanks for riding (demo).`); },
+      label: () => gates.outLabel(),
+      run() { gates.tapOut(); },
     },
     {
       test: () => P.y > -1 && P.y < 1 && Math.hypot(P.x + 7, P.z - 3.4) < 2.6,
@@ -1337,6 +1335,12 @@ export function createStationScene(host, opts = {}) {
     return best;
   };
   const rideActs = [
+    {
+      // Doors open at a station and you're standing in a doorway: step off here.
+      test: () => !game.sitting && !!(ride.state && ride.state.here) && atLeftDoor(P.x, P.z),
+      label: () => `Press E: get off at ${ride.state.here.name}`,
+      run() { getOff(ride.state.here.index); },
+    },
     { test: () => !!game.sitting, label: () => 'Press E: stand up', run() { standUp(); } },
     {
       test: () => !game.sitting && !!nearestSeat(),
@@ -1348,36 +1352,54 @@ export function createStationScene(host, opts = {}) {
 
   let rideInfo = null;
   const startRide = (train) => {
-    const nx = (opts.nextStop && train.destAbbr && opts.nextStop({ from: st.abbr, destAbbr: train.destAbbr, hex: train.hex, direction: train.direction })) || null;
-    rideInfo = { train, next: nx };
+    // The network knows every stop this train makes; fall back to just the next stop.
+    const req = { from: st.abbr, destAbbr: train.destAbbr, hex: train.hex, direction: train.direction };
+    const route = (opts.route && train.destAbbr && opts.route(req)) || [];
+    const nx = route[0] || (opts.nextStop && train.destAbbr && opts.nextStop(req)) || null;
+    const stops = route.length ? route : nx ? [nx] : [];
+    rideInfo = { train, next: nx, stops };
     game.onBoard = true;
     game.arrived = false;
     game.sitting = null;
     boardEl.hidden = true;
     const nextName = nx ? nx.name : 'the next station';
-    ride.start({ dest: train.dest, color: train.hex, next: nextName, from: st.name });
+    ride.start({ dest: train.dest, color: train.hex, next: nextName, stops: stops.map((x) => x.name), legs: stops.map((x) => x.meters), from: st.name });
     P.x = -0.95; P.z = 0; P.y = 0; P.yaw = -Math.PI / 2; P.pitch = -0.05;
     beep(520, 0.2);
     toast(`Welcome aboard the train to ${train.dest}. Next stop: ${nextName}.`, 4500);
     renderHud();
   };
   const stopRide = () => { ride.stop(); game.onBoard = false; game.sitting = null; game.arrived = false; };
+  // Step off at stop `index` of the route: load that station with you on its platform.
+  const getOff = (index) => {
+    const stop = rideInfo && rideInfo.stops[index];
+    if (stop && stop.abbr && opts.onExit) { opts.onExit(stop.abbr, { balance: game.balance, tripFrom: game.tripFrom }); return; }
+    // Not a station we can load (no network data): end the demo ride with the menu.
+    boardEl.querySelector('strong').textContent = `You got off at ${ride.state ? ride.state.here?.name || ride.state.next : 'the station'}.`;
+    boardEl.querySelector('span').textContent = `That's the end of the demo ride. You can ride again or go back to ${st.name}.`;
+    $('[data-act="get-off"]').hidden = true;
+    boardEl.hidden = false;
+  };
   const onRideEvent = (e, r) => {
     if (e === 'closing') { chime([[784, 0.18], [659, 0.18], [523, 0.32]]); toast('Doors closing. Please stand clear.'); }
-    if (e === 'departed') toast(`Next stop: ${r.next}.`);
-    if (e === 'arriving') { chime([[523, 0.2], [659, 0.3]]); toast(`Now arriving at ${r.next}. Doors will open on the left.`, 5000); }
+    if (e === 'departed') toast(`Next stop: ${r.next}${r.last ? ', the last stop' : ''}.`);
+    if (e === 'arriving') { chime([[523, 0.2], [659, 0.3]]); toast(`Now arriving at ${r.next}${r.last ? ', the last stop on this train' : ''}. Doors will open on the left.`, 5000); }
     if (e === 'opened') {
       game.arrived = true;
       chime([[523, 0.18], [659, 0.18], [784, 0.3]]);
+      if (!r.last) { toast(`This is ${r.next}. To get off, walk to a door on the left and press E.`, 6000); return; }
+      toast(`This is ${r.next}, the last stop. Everyone please leave the train: walk to a door and press E.`, 7000);
+      // End of the line: if you stay on, offer the menu after a while.
       setTimeout(() => {
-        if (!game.onBoard || !game.arrived) return;
-        const canExit = !!(rideInfo && rideInfo.next && opts.onExit);
-        boardEl.querySelector('strong').textContent = `You've arrived at ${r.next}.`;
-        boardEl.querySelector('span').textContent = canExit ? `Get off to walk around ${r.next}, ride again, or go back to ${st.name}.` : `You can ride again or go back to ${st.name}.`;
+        const now = ride.state;
+        if (!game.onBoard || !now || !now.last || now.phase !== 'arrived') return;
+        const canExit = !!(rideInfo && rideInfo.stops.length && opts.onExit);
+        boardEl.querySelector('strong').textContent = `End of the line: ${r.next}.`;
+        boardEl.querySelector('span').textContent = canExit ? `This train doesn't go any further. Get off to walk around ${r.next}, ride again, or go back to ${st.name}.` : `You can ride again or go back to ${st.name}.`;
         $('[data-act="get-off"]').hidden = !canExit;
         $('[data-act="get-off"]').textContent = `Get off at ${r.next}`;
         boardEl.hidden = false;
-      }, 2500);
+      }, 10_000);
     }
   };
   const boardable = () => tracks.find((t) => {
@@ -1397,7 +1419,7 @@ export function createStationScene(host, opts = {}) {
   };
   const reset = (spot = 'entrance') => {
     stopRide();
-    Object.assign(game, { gatesOpen: false, openUntil: 0, flash: 0, onBoard: false, steps: { funds: game.balance >= D.fare, tapped: false, platform: false, boarded: false } });
+    Object.assign(game, { gatesOpen: false, openUntil: 0, flash: 0, onBoard: false, steps: { funds: game.balance > 0, tapped: false, platform: false, boarded: false }, tripFrom: null });
     boardEl.hidden = true;
     teleport(spot);
     renderHud();
@@ -1440,7 +1462,7 @@ export function createStationScene(host, opts = {}) {
     if (act.dataset.act === 'interact') interact();
     if (act.dataset.act === 'reset') reset('entrance');
     if (act.dataset.act === 'ride-again' && rideInfo) startRide(rideInfo.train);
-    if (act.dataset.act === 'get-off' && rideInfo && rideInfo.next && opts.onExit) opts.onExit(rideInfo.next.abbr, { balance: game.balance });
+    if (act.dataset.act === 'get-off' && rideInfo && rideInfo.stops.length) getOff(rideInfo.stops.length - 1);
   });
 
   /* ----- Movement and collisions ----- */

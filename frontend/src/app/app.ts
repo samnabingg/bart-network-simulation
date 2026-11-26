@@ -29,6 +29,7 @@ export class App {
   protected readonly sceneAbbr = signal<string | null>(null);
   protected readonly sceneBalance = signal<number | undefined>(undefined);
   protected readonly sceneSpawn = signal<'platform' | undefined>(undefined);
+  protected readonly sceneTrip = signal<string | null>(null);
   protected readonly pickedTrain = signal<string | null>(null);
 
   private readonly sceneView = viewChild(StationSceneComponent);
@@ -46,7 +47,7 @@ export class App {
 
   /** Re-feed the 3D station every 15 s (every 3 s when the demo runs fast), or when its board changes. */
   private readonly feedTick = computed(() => {
-    const fast = !this.sim.usingLive() && this.sim.speed() > 1;
+    const fast = this.sim.mode() === 'demo' && this.sim.speed() > 1;
     return Math.floor(this.sim.slowFrame() / (fast ? 6 : 30));
   });
 
@@ -115,6 +116,7 @@ export class App {
   protected exitTrain(e: SceneExit): void {
     this.sceneSpawn.set('platform');
     this.sceneBalance.set(e.balance);
+    this.sceneTrip.set(e.tripFrom);
     this.sceneAbbr.set(e.next);
     this.selected.set(e.next);
   }
@@ -135,6 +137,7 @@ export class App {
   private openScene(abbr: string): void {
     this.sceneSpawn.set(undefined);
     this.sceneBalance.set(undefined);
+    this.sceneTrip.set(null);
     this.sceneAbbr.set(abbr);
   }
 }

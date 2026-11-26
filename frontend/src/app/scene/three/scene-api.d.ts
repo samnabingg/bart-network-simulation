@@ -21,6 +21,8 @@ export interface NextStopRequest {
 export interface SceneNextStop {
   abbr: string;
   name: string;
+  /** meters of track from the previous stop (for ride timing) */
+  meters?: number;
 }
 
 export interface SceneOptions {
@@ -28,7 +30,14 @@ export interface SceneOptions {
   spawn?: 'platform';
   balance?: number;
   nextStop?: (req: NextStopRequest) => SceneNextStop | null;
-  onExit?: (nextAbbr: string, carry: { balance: number }) => void;
+  /** Every stop after the boarding station, in order, to the train's destination. */
+  route?: (req: NextStopRequest) => SceneNextStop[];
+  onExit?: (nextAbbr: string, carry: { balance: number; tripFrom: string | null }) => void;
+  /** The trip on the card when you arrive by train: where you tapped in. */
+  trip?: { from: string } | null;
+  /** BART's Clipper fare in dollars; rejects with a readable Error. */
+  fare?: (orig: string, dest: string) => Promise<number>;
+  stationName?: (abbr: string) => string;
 }
 
 export interface StationSceneOptions extends SceneOptions {

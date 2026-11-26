@@ -154,3 +154,12 @@ export interface MapTrain {
 }
 
 export type DataMode = 'live' | 'demo';
+
+/** BART's fare for one trip (GET /api/fares). */
+export interface Fare {
+  orig: string;
+  dest: string;
+  /** adult Clipper fare in dollars, charged when you tap out */
+  clipper: number;
+  date: string;
+}

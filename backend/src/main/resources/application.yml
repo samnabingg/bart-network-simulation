@@ -54,6 +54,15 @@ app:
     # Optional: path to BART's "Stations, tracks and entrances" doc.kml. When set, track lines
     # and entrances are re-imported from it on startup (replaces build-geo.mjs).
     kml-file: ${GEO_KML_FILE:}
+  osm:
+    # One-off station layout import from OpenStreetMap: run with the osm-import profile (see
+    # OsmLayoutImporter). Normal startup only reads the files it wrote.
+    overpass-url: ${OVERPASS_URL:https://overpass-api.de/api/interpreter}
+    stations: ALL
+    output-dir: src/main/resources/stations
+    raw-dir:
+    pause: 3s
+    rebuild: false   # true: rebuild the layouts from the answers saved in raw-dir, without asking Overpass
 
 bart:
   api-key: ${BART_API_KEY:}

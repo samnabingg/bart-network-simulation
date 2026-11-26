@@ -1,0 +1,111 @@
+{
+  "abbr" : "ASHB",
+  "name" : "Ashby",
+  "source" : {
+    "name" : "OpenStreetMap",
+    "license" : "ODbL 1.0 (https://opendatacommons.org/licenses/odbl/)",
+    "attribution" : "© OpenStreetMap contributors",
+    "importedAt" : "2026-11-26T02:00:32.795048800Z"
+  },
+  "origin" : {
+    "lat" : 37.85298,
+    "lon" : -122.26971
+  },
+  "bearingDeg" : 16.7,
+  "layout" : "island",
+  "platformLevel" : null,
+  "levels" : [ ],
+  "platforms" : [ {
+    "osmId" : "way/654069769",
+    "ref" : null,
+    "level" : null,
+    "shape" : "line",
+    "lengthM" : 228.6,
+    "widthM" : null,
+    "centerX" : -0.7,
+    "zMin" : -114.3,
+    "zMax" : 114.3,
+    "tracksAlongside" : "left",
+    "outline" : [ [ -0.7, -114.3 ], [ -0.7, 114.3 ] ]
+  }, {
+    "osmId" : "way/654069770",
+    "ref" : null,
+    "level" : null,
+    "shape" : "line",
+    "lengthM" : 228.6,
+    "widthM" : null,
+    "centerX" : 0.7,
+    "zMin" : -114.3,
+    "zMax" : 114.3,
+    "tracksAlongside" : "right",
+    "outline" : [ [ 0.7, -114.3 ], [ 0.7, 114.3 ] ]
+  } ],
+  "tracks" : [ {
+    "osmId" : "way/654069775",
+    "x" : -2.2,
+    "zMin" : -114.3,
+    "zMax" : 114.3
+  }, {
+    "osmId" : "way/654069778",
+    "x" : 2.4,
+    "zMin" : -114.3,
+    "zMax" : 114.3
+  } ],
+  "features" : [ {
+    "kind" : "entrance",
+    "osmId" : "node/2086712236",
+    "level" : null,
+    "name" : null,
+    "points" : [ [ 20.0, -20.5 ] ]
+  }, {
+    "kind" : "entrance",
+    "osmId" : "node/3200794175",
+    "level" : null,
+    "name" : null,
+    "points" : [ [ 20.6, -71.4 ] ]
+  }, {
+    "kind" : "entrance",
+    "osmId" : "node/4262478062",
+    "level" : null,
+    "name" : null,
+    "points" : [ [ -26.2, -26.1 ] ]
+  }, {
+    "kind" : "stairs",
+    "osmId" : "way/69963288",
+    "level" : null,
+    "name" : null,
+    "points" : [ [ -27.7, -37.1 ], [ -27.9, -45.7 ], [ -24.4, -45.7 ], [ -24.4, -37.5 ] ]
+  }, {
+    "kind" : "stairs",
+    "osmId" : "way/69963289",
+    "level" : null,
+    "name" : null,
+    "points" : [ [ -27.5, 43.4 ], [ -27.5, 50.2 ], [ -24.7, 50.2 ], [ -24.7, 43.6 ] ]
+  }, {
+    "kind" : "stairs",
+    "osmId" : "way/198549487",
+    "level" : null,
+    "name" : null,
+    "points" : [ [ -23.0, 146.1 ], [ -26.3, 140.1 ] ]
+  }, {
+    "kind" : "stairs",
+    "osmId" : "way/1114811052",
+    "level" : null,
+    "name" : null,
+    "points" : [ [ 20.6, -71.4 ], [ 19.2, -71.3 ], [ 19.2, -65.4 ] ]
+  } ],
+  "areas" : [ ],
+  "building" : null,
+  "coverage" : {
+    "platforms" : 2,
+    "tracks" : 2,
+    "entrance" : 3,
+    "elevator" : 0,
+    "escalator" : 0,
+    "stairs" : 4,
+    "fare_gate" : 0,
+    "ticket_machine" : 0,
+    "indoor_areas" : 0
+  },
+  "warnings" : [ "Platform level isn't tagged.", "No escalators mapped in OSM: fill in by hand.", "No elevators mapped in OSM: fill in by hand.", "No fare gates mapped in OSM: fill in by hand.", "No station building outline in OSM." ]
+}

@@ -1,0 +1,147 @@
+{
+  "abbr" : "CAST",
+  "name" : "Castro Valley",
+  "source" : {
+    "name" : "OpenStreetMap",
+    "license" : "ODbL 1.0 (https://opendatacommons.org/licenses/odbl/)",
+    "attribution" : "© OpenStreetMap contributors",
+    "importedAt" : "2026-11-26T02:00:32.812555900Z"
+  },
+  "origin" : {
+    "lat" : 37.690732,
+    "lon" : -122.075629
+  },
+  "bearingDeg" : 89.6,
+  "layout" : "unknown",
+  "platformLevel" : null,
+  "levels" : [ ],
+  "platforms" : [ {
+    "osmId" : "way/51050919",
+    "ref" : null,
+    "level" : null,
+    "shape" : "line",
+    "lengthM" : 211.7,
+    "widthM" : null,
+    "centerX" : 0.0,
+    "zMin" : -102.4,
+    "zMax" : 109.3,
+    "tracksAlongside" : "none",
+    "outline" : [ [ 0.0, -102.4 ], [ 0.0, -6.9 ], [ 0.0, 109.3 ] ]
+  } ],
+  "tracks" : [ {
+    "osmId" : "way/246146238",
+    "x" : -6.5,
+    "zMin" : -102.4,
+    "zMax" : 109.3
+  }, {
+    "osmId" : "way/60673447",
+    "x" : 4.5,
+    "zMin" : -102.4,
+    "zMax" : 109.3
+  } ],
+  "features" : [ {
+    "kind" : "fare_gate",
+    "osmId" : "node/12339849146",
+    "level" : null,
+    "name" : null,
+    "points" : [ [ -13.6, -11.5 ] ]
+  }, {
+    "kind" : "entrance",
+    "osmId" : "node/12339849154",
+    "level" : null,
+    "name" : null,
+    "points" : [ [ -49.3, -19.5 ] ]
+  }, {
+    "kind" : "entrance",
+    "osmId" : "node/12829819984",
+    "level" : null,
+    "name" : null,
+    "points" : [ [ -48.2, -32.7 ] ]
+  }, {
+    "kind" : "stairs",
+    "osmId" : "way/902494822",
+    "level" : null,
+    "name" : null,
+    "points" : [ [ -60.2, -25.3 ], [ -63.9, -25.2 ] ]
+  }, {
+    "kind" : "stairs",
+    "osmId" : "way/1333783954",
+    "level" : null,
+    "name" : null,
+    "points" : [ [ -60.5, -12.0 ], [ -62.0, -9.9 ] ]
+  }, {
+    "kind" : "stairs",
+    "osmId" : "way/1385725606",
+    "level" : null,
+    "name" : null,
+    "points" : [ [ -54.6, -36.0 ], [ -56.1, -37.7 ] ]
+  }, {
+    "kind" : "stairs",
+    "osmId" : "way/1385725608",
+    "level" : null,
+    "name" : null,
+    "points" : [ [ -57.0, -34.0 ], [ -58.9, -35.5 ] ]
+  }, {
+    "kind" : "stairs",
+    "osmId" : "way/1385725609",
+    "level" : null,
+    "name" : null,
+    "points" : [ [ -59.6, -30.0 ], [ -63.0, -31.3 ] ]
+  }, {
+    "kind" : "stairs",
+    "osmId" : "way/1385725610",
+    "level" : null,
+    "name" : null,
+    "points" : [ [ -56.3, -17.7 ], [ -58.5, -14.8 ] ]
+  }, {
+    "kind" : "stairs",
+    "osmId" : "way/1385725611",
+    "level" : null,
+    "name" : null,
+    "points" : [ [ -59.1, -21.3 ], [ -62.3, -19.7 ] ]
+  }, {
+    "kind" : "stairs",
+    "osmId" : "way/1385725629",
+    "level" : null,
+    "name" : null,
+    "points" : [ [ -55.3, -9.5 ], [ -55.9, -6.7 ] ]
+  }, {
+    "kind" : "stairs",
+    "osmId" : "way/1385725631",
+    "level" : null,
+    "name" : null,
+    "points" : [ [ -62.3, -38.7 ], [ -64.6, -40.4 ] ]
+  }, {
+    "kind" : "stairs",
+    "osmId" : "way/1385725632",
+    "level" : null,
+    "name" : null,
+    "points" : [ [ -66.1, -32.4 ], [ -68.9, -33.3 ] ]
+  }, {
+    "kind" : "stairs",
+    "osmId" : "way/1385725633",
+    "level" : null,
+    "name" : null,
+    "points" : [ [ -66.9, -25.0 ], [ -70.1, -24.9 ] ]
+  }, {
+    "kind" : "stairs",
+    "osmId" : "way/1385725634",
+    "level" : null,
+    "name" : null,
+    "points" : [ [ -65.1, -18.0 ], [ -67.8, -16.7 ] ]
+  } ],
+  "areas" : [ ],
+  "building" : [ [ -0.6, 56.3 ], [ -4.7, 52.2 ], [ -4.7, 6.5 ], [ -4.6, -20.5 ], [ -4.6, -50.2 ], [ -0.4, -53.8 ], [ 3.4, -50.2 ], [ 3.4, 52.2 ], [ -0.6, 56.3 ] ],
+  "coverage" : {
+    "platforms" : 1,
+    "tracks" : 2,
+    "entrance" : 2,
+    "elevator" : 0,
+    "escalator" : 0,
+    "stairs" : 12,
+    "fare_gate" : 1,
+    "ticket_machine" : 0,
+    "indoor_areas" : 0
+  },
+  "warnings" : [ "Couldn't tell island from side platforms.", "Platform level isn't tagged.", "No escalators mapped in OSM: fill in by hand.", "No elevators mapped in OSM: fill in by hand." ]
+}

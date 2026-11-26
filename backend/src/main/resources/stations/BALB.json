@@ -1,0 +1,159 @@
+{
+  "abbr" : "BALB",
+  "name" : "Balboa Park",
+  "source" : {
+    "name" : "OpenStreetMap",
+    "license" : "ODbL 1.0 (https://opendatacommons.org/licenses/odbl/)",
+    "attribution" : "© OpenStreetMap contributors",
+    "importedAt" : "2026-11-26T02:00:32.800207300Z"
+  },
+  "origin" : {
+    "lat" : 37.721559,
+    "lon" : -122.447512
+  },
+  "bearingDeg" : 10.2,
+  "layout" : "island",
+  "platformLevel" : null,
+  "levels" : [ ],
+  "platforms" : [ {
+    "osmId" : "way/370530880",
+    "ref" : "2",
+    "level" : null,
+    "shape" : "line",
+    "lengthM" : 13.2,
+    "widthM" : null,
+    "centerX" : 2.6,
+    "zMin" : -86.6,
+    "zMax" : -73.4,
+    "tracksAlongside" : "right",
+    "outline" : [ [ 2.5, -86.6 ], [ 2.6, -73.4 ] ]
+  }, {
+    "osmId" : "way/370530881",
+    "ref" : "1",
+    "level" : null,
+    "shape" : "line",
+    "lengthM" : 73.8,
+    "widthM" : null,
+    "centerX" : -2.7,
+    "zMin" : 53.1,
+    "zMax" : 127.0,
+    "tracksAlongside" : "left",
+    "outline" : [ [ -2.8, 127.0 ], [ -2.6, 53.1 ] ]
+  }, {
+    "osmId" : "way/654563343",
+    "ref" : "2",
+    "level" : null,
+    "shape" : "line",
+    "lengthM" : 73.8,
+    "widthM" : null,
+    "centerX" : 2.4,
+    "zMin" : 53.2,
+    "zMax" : 127.0,
+    "tracksAlongside" : "right",
+    "outline" : [ [ 2.6, 53.2 ], [ 2.2, 127.0 ] ]
+  }, {
+    "osmId" : "way/654563344",
+    "ref" : "1",
+    "level" : null,
+    "shape" : "line",
+    "lengthM" : 126.6,
+    "widthM" : null,
+    "centerX" : -2.5,
+    "zMin" : -73.4,
+    "zMax" : 53.1,
+    "tracksAlongside" : "left",
+    "outline" : [ [ -2.6, 53.1 ], [ -2.4, -73.4 ] ]
+  }, {
+    "osmId" : "way/769483925",
+    "ref" : "2",
+    "level" : null,
+    "shape" : "line",
+    "lengthM" : 126.6,
+    "widthM" : null,
+    "centerX" : 2.6,
+    "zMin" : -73.4,
+    "zMax" : 53.2,
+    "tracksAlongside" : "right",
+    "outline" : [ [ 2.6, -73.4 ], [ 2.6, 53.2 ] ]
+  }, {
+    "osmId" : "way/769483926",
+    "ref" : "1",
+    "level" : null,
+    "shape" : "line",
+    "lengthM" : 13.1,
+    "widthM" : null,
+    "centerX" : -2.4,
+    "zMin" : -86.5,
+    "zMax" : -73.4,
+    "tracksAlongside" : "left",
+    "outline" : [ [ -2.4, -73.4 ], [ -2.3, -86.5 ] ]
+  } ],
+  "tracks" : [ {
+    "osmId" : "way/769483927",
+    "x" : -4.4,
+    "zMin" : -66.2,
+    "zMax" : 45.6
+  }, {
+    "osmId" : "way/1335811912",
+    "x" : 4.8,
+    "zMin" : -86.6,
+    "zMax" : 45.6
+  } ],
+  "features" : [ {
+    "kind" : "entrance",
+    "osmId" : "node/1718852442",
+    "level" : null,
+    "name" : null,
+    "points" : [ [ 16.1, -25.6 ] ]
+  }, {
+    "kind" : "entrance",
+    "osmId" : "node/1735975703",
+    "level" : null,
+    "name" : null,
+    "points" : [ [ 5.8, -83.2 ] ]
+  }, {
+    "kind" : "entrance",
+    "osmId" : "node/2542333096",
+    "level" : null,
+    "name" : null,
+    "points" : [ [ -0.2, -34.2 ] ]
+  }, {
+    "kind" : "entrance",
+    "osmId" : "node/2678311839",
+    "level" : null,
+    "name" : null,
+    "points" : [ [ 23.0, -38.6 ] ]
+  }, {
+    "kind" : "entrance",
+    "osmId" : "node/4583437173",
+    "level" : null,
+    "name" : null,
+    "points" : [ [ -7.4, 46.6 ] ]
+  }, {
+    "kind" : "entrance",
+    "osmId" : "node/5338635540",
+    "level" : null,
+    "name" : null,
+    "points" : [ [ 28.6, -25.2 ] ]
+  }, {
+    "kind" : "stairs",
+    "osmId" : "way/550418612",
+    "level" : null,
+    "name" : null,
+    "points" : [ [ -10.0, -20.3 ], [ -10.0, -22.7 ] ]
+  } ],
+  "areas" : [ ],
+  "building" : [ [ -9.6, 43.5 ], [ -8.2, -22.8 ], [ 4.4, -23.0 ], [ 4.4, -26.6 ], [ 7.2, -26.7 ], [ 18.6, -29.8 ], [ 16.1, -25.6 ], [ 14.5, -20.8 ], [ 13.3, -15.9 ], [ 12.7, -10.7 ], [ 9.5, -10.9 ], [ 9.2, 6.8 ], [ 8.6, 43.4 ], [ 6.1, 43.5 ], [ 6.0, 53.2 ], [ -5.9, 53.1 ], [ -7.4, 53.1 ], [ -7.4, 46.6 ], [ -7.3, 43.5 ], [ -9.6, 43.5 ] ],
+  "coverage" : {
+    "platforms" : 6,
+    "tracks" : 2,
+    "entrance" : 6,
+    "elevator" : 0,
+    "escalator" : 0,
+    "stairs" : 1,
+    "fare_gate" : 0,
+    "ticket_machine" : 0,
+    "indoor_areas" : 0
+  },
+  "warnings" : [ "Platform way/370530880 is 13.2 m long; BART platforms are about 213 m.", "Platform way/370530881 is 73.8 m long; BART platforms are about 213 m.", "Platform way/654563343 is 73.8 m long; BART platforms are about 213 m.", "Platform way/654563344 is 126.6 m long; BART platforms are about 213 m.", "Platform way/769483925 is 126.6 m long; BART platforms are about 213 m.", "Platform way/769483926 is 13.1 m long; BART platforms are about 213 m.", "Platform level isn't tagged.", "No escalators mapped in OSM: fill in by hand.", "No elevators mapped in OSM: fill in by hand.", "No fare gates mapped in OSM: fill in by hand." ]
+}

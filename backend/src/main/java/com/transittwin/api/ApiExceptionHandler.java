@@ -2,6 +2,8 @@ package com.transittwin.api;
 
 import com.transittwin.departures.LiveDataUnavailableException;
 import com.transittwin.departures.StationNotFoundException;
+import com.transittwin.fares.ExcursionTripException;
+import com.transittwin.fares.FareUnavailableException;
 import jakarta.validation.ConstraintViolationException;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ProblemDetail;
@@ -24,6 +26,16 @@ public class ApiExceptionHandler extends ResponseEntityExceptionHandler {
     @ExceptionHandler(LiveDataUnavailableException.class)
     ProblemDetail liveUnavailable(LiveDataUnavailableException e) {
         return problem(HttpStatus.SERVICE_UNAVAILABLE, "Live data unavailable", e.getMessage());
+    }
+
+    @ExceptionHandler(FareUnavailableException.class)
+    ProblemDetail fareUnavailable(FareUnavailableException e) {
+        return problem(HttpStatus.SERVICE_UNAVAILABLE, "Fare unavailable", e.getMessage());
+    }
+
+    @ExceptionHandler(ExcursionTripException.class)
+    ProblemDetail excursion(ExcursionTripException e) {
+        return problem(HttpStatus.UNPROCESSABLE_ENTITY, "No fare for an excursion trip", e.getMessage());
     }
 
     @ExceptionHandler(ConstraintViolationException.class)

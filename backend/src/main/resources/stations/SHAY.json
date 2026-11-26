@@ -1,0 +1,111 @@
+{
+  "abbr" : "SHAY",
+  "name" : "South Hayward",
+  "source" : {
+    "name" : "OpenStreetMap",
+    "license" : "ODbL 1.0 (https://opendatacommons.org/licenses/odbl/)",
+    "attribution" : "© OpenStreetMap contributors",
+    "importedAt" : "2026-11-26T02:00:32.940470500Z"
+  },
+  "origin" : {
+    "lat" : 37.634239,
+    "lon" : -122.057116
+  },
+  "bearingDeg" : 148.1,
+  "layout" : "side",
+  "platformLevel" : null,
+  "levels" : [ "-1", "0", "1", "2" ],
+  "platforms" : [ {
+    "osmId" : "way/50988936",
+    "ref" : null,
+    "level" : null,
+    "shape" : "line",
+    "lengthM" : 213.2,
+    "widthM" : null,
+    "centerX" : -4.2,
+    "zMin" : -120.3,
+    "zMax" : 93.0,
+    "tracksAlongside" : "right",
+    "outline" : [ [ -4.2, 93.0 ], [ -4.2, 36.2 ], [ -4.1, -120.3 ] ]
+  }, {
+    "osmId" : "way/50988938",
+    "ref" : null,
+    "level" : null,
+    "shape" : "line",
+    "lengthM" : 213.3,
+    "widthM" : null,
+    "centerX" : 4.2,
+    "zMin" : -120.2,
+    "zMax" : 93.1,
+    "tracksAlongside" : "left",
+    "outline" : [ [ 4.2, -120.2 ], [ 4.2, -24.5 ], [ 4.2, -1.5 ], [ 4.2, 38.3 ], [ 4.2, 93.1 ] ]
+  } ],
+  "tracks" : [ {
+    "osmId" : "way/50988877",
+    "x" : -2.3,
+    "zMin" : -120.3,
+    "zMax" : 93.1
+  }, {
+    "osmId" : "way/50988912",
+    "x" : 2.1,
+    "zMin" : -120.3,
+    "zMax" : 93.1
+  } ],
+  "features" : [ {
+    "kind" : "entrance",
+    "osmId" : "node/2388771570",
+    "level" : "0",
+    "name" : null,
+    "points" : [ [ -34.9, -11.9 ] ]
+  }, {
+    "kind" : "elevator",
+    "osmId" : "node/12413798406",
+    "level" : "0;1;2",
+    "name" : null,
+    "points" : [ [ -8.8, 38.2 ] ]
+  }, {
+    "kind" : "elevator",
+    "osmId" : "node/12413798411",
+    "level" : "1;2",
+    "name" : null,
+    "points" : [ [ 8.5, 38.3 ] ]
+  }, {
+    "kind" : "fare_gate",
+    "osmId" : "node/12413798420",
+    "level" : "0",
+    "name" : null,
+    "points" : [ [ -29.6, -12.7 ] ]
+  }, {
+    "kind" : "stairs",
+    "osmId" : "way/1341937403",
+    "level" : "-1;0",
+    "name" : null,
+    "points" : [ [ -25.3, -12.7 ], [ -29.6, -12.7 ] ]
+  }, {
+    "kind" : "escalator",
+    "osmId" : "way/1341937404",
+    "level" : "1;-1",
+    "name" : null,
+    "points" : [ [ 8.5, -24.4 ], [ 8.6, -12.8 ] ]
+  }, {
+    "kind" : "stairs",
+    "osmId" : "way/1341937405",
+    "level" : "1;-1",
+    "name" : null,
+    "points" : [ [ 8.6, -12.8 ], [ 8.7, -1.4 ] ]
+  } ],
+  "areas" : [ ],
+  "building" : [ [ 9.9, -56.6 ], [ 9.8, 29.2 ], [ -9.9, 29.2 ], [ -9.8, 2.0 ], [ -12.6, 2.0 ], [ -19.0, 5.9 ], [ -25.7, 1.9 ], [ -25.7, -3.0 ], [ -26.8, -3.6 ], [ -28.0, -4.3 ], [ -34.8, -8.5 ], [ -34.9, -11.9 ], [ -34.9, -19.0 ], [ -25.8, -24.4 ], [ -25.9, -29.2 ], [ -18.9, -33.2 ], [ -12.1, -29.2 ], [ -9.8, -29.2 ], [ -9.8, -56.6 ], [ 9.9, -56.6 ] ],
+  "coverage" : {
+    "platforms" : 2,
+    "tracks" : 2,
+    "entrance" : 1,
+    "elevator" : 2,
+    "escalator" : 1,
+    "stairs" : 2,
+    "fare_gate" : 1,
+    "ticket_machine" : 0,
+    "indoor_areas" : 0
+  },
+  "warnings" : [ "OSM looks like side platforms; the reference data says island.", "Platform level isn't tagged." ]
+}

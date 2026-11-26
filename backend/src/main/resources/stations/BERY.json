@@ -1,0 +1,57 @@
+{
+  "abbr" : "BERY",
+  "name" : "Berryessa/North San José",
+  "source" : {
+    "name" : "OpenStreetMap",
+    "license" : "ODbL 1.0 (https://opendatacommons.org/licenses/odbl/)",
+    "attribution" : "© OpenStreetMap contributors",
+    "importedAt" : "2026-11-26T02:00:32.809538600Z"
+  },
+  "origin" : {
+    "lat" : 37.368482,
+    "lon" : -121.874716
+  },
+  "bearingDeg" : 165.2,
+  "layout" : "island",
+  "platformLevel" : "1",
+  "levels" : [ "1" ],
+  "platforms" : [ {
+    "osmId" : "way/682397822",
+    "ref" : null,
+    "level" : "1",
+    "shape" : "area",
+    "lengthM" : 213.0,
+    "widthM" : 9.1,
+    "centerX" : 0.0,
+    "zMin" : -106.5,
+    "zMax" : 106.5,
+    "tracksAlongside" : "both",
+    "outline" : [ [ -4.6, 106.5 ], [ -4.6, -106.5 ], [ 4.6, -106.5 ], [ 4.6, 106.5 ], [ -4.6, 106.5 ] ]
+  } ],
+  "tracks" : [ {
+    "osmId" : "way/504023586",
+    "x" : -6.0,
+    "zMin" : -106.5,
+    "zMax" : 106.5
+  }, {
+    "osmId" : "way/504023585",
+    "x" : 6.2,
+    "zMin" : -106.5,
+    "zMax" : 96.3
+  } ],
+  "features" : [ ],
+  "areas" : [ ],
+  "building" : [ [ -15.6, -21.7 ], [ -10.1, -21.8 ], [ -4.8, -21.8 ], [ -0.9, -21.8 ], [ 5.5, -21.8 ], [ 9.9, -21.9 ], [ 10.3, 32.8 ], [ 5.0, 32.8 ], [ -0.9, 32.9 ], [ -5.2, 32.9 ], [ -9.9, 32.9 ], [ -15.2, 32.9 ], [ -15.4, 5.6 ], [ -15.6, -21.7 ] ],
+  "coverage" : {
+    "platforms" : 1,
+    "tracks" : 2,
+    "entrance" : 0,
+    "elevator" : 0,
+    "escalator" : 0,
+    "stairs" : 0,
+    "fare_gate" : 0,
+    "ticket_machine" : 0,
+    "indoor_areas" : 0
+  },
+  "warnings" : [ "No entrances mapped in OSM: fill in by hand.", "No escalators mapped in OSM: fill in by hand.", "No elevators mapped in OSM: fill in by hand.", "No fare gates mapped in OSM: fill in by hand." ]
+}

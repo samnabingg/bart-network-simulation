@@ -1,0 +1,81 @@
+{
+  "abbr" : "FTVL",
+  "name" : "Fruitvale",
+  "source" : {
+    "name" : "OpenStreetMap",
+    "license" : "ODbL 1.0 (https://opendatacommons.org/licenses/odbl/)",
+    "attribution" : "© OpenStreetMap contributors",
+    "importedAt" : "2026-11-26T02:00:32.859132900Z"
+  },
+  "origin" : {
+    "lat" : 37.774843,
+    "lon" : -122.224093
+  },
+  "bearingDeg" : 126.2,
+  "layout" : "side",
+  "platformLevel" : null,
+  "levels" : [ ],
+  "platforms" : [ {
+    "osmId" : "way/116567915",
+    "ref" : null,
+    "level" : null,
+    "shape" : "line",
+    "lengthM" : 213.5,
+    "widthM" : null,
+    "centerX" : 4.6,
+    "zMin" : -106.7,
+    "zMax" : 106.8,
+    "tracksAlongside" : "left",
+    "outline" : [ [ 4.6, 106.8 ], [ 4.6, -106.7 ] ]
+  }, {
+    "osmId" : "way/116567916",
+    "ref" : null,
+    "level" : null,
+    "shape" : "line",
+    "lengthM" : 213.5,
+    "widthM" : null,
+    "centerX" : -4.6,
+    "zMin" : -106.8,
+    "zMax" : 106.7,
+    "tracksAlongside" : "right",
+    "outline" : [ [ -4.7, 106.7 ], [ -4.6, -106.8 ] ]
+  } ],
+  "tracks" : [ {
+    "osmId" : "way/23751586",
+    "x" : -2.2,
+    "zMin" : -106.8,
+    "zMax" : 106.8
+  }, {
+    "osmId" : "way/50970306",
+    "x" : 2.2,
+    "zMin" : -106.8,
+    "zMax" : 106.8
+  } ],
+  "features" : [ {
+    "kind" : "entrance",
+    "osmId" : "node/13174869635",
+    "level" : null,
+    "name" : null,
+    "points" : [ [ 0.1, -38.3 ] ]
+  }, {
+    "kind" : "ticket_machine",
+    "osmId" : "node/13626552958",
+    "level" : null,
+    "name" : null,
+    "points" : [ [ 0.7, -53.2 ] ]
+  } ],
+  "areas" : [ ],
+  "building" : [ [ 10.3, -51.8 ], [ -9.8, -51.8 ], [ -9.8, -21.6 ], [ -13.7, -21.6 ], [ -13.7, -18.7 ], [ -9.8, -18.7 ], [ -9.8, 51.4 ], [ 10.3, 51.4 ], [ 10.3, -18.7 ], [ 14.3, -18.7 ], [ 14.3, -21.6 ], [ 10.3, -21.6 ], [ 10.3, -51.8 ] ],
+  "coverage" : {
+    "platforms" : 2,
+    "tracks" : 2,
+    "entrance" : 1,
+    "elevator" : 0,
+    "escalator" : 0,
+    "stairs" : 0,
+    "fare_gate" : 0,
+    "ticket_machine" : 1,
+    "indoor_areas" : 0
+  },
+  "warnings" : [ "OSM looks like side platforms; the reference data says island.", "Platform level isn't tagged.", "No escalators mapped in OSM: fill in by hand.", "No elevators mapped in OSM: fill in by hand.", "No fare gates mapped in OSM: fill in by hand." ]
+}

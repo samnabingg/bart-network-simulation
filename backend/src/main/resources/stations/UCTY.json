@@ -1,0 +1,141 @@
+{
+  "abbr" : "UCTY",
+  "name" : "Union City",
+  "source" : {
+    "name" : "OpenStreetMap",
+    "license" : "ODbL 1.0 (https://opendatacommons.org/licenses/odbl/)",
+    "attribution" : "© OpenStreetMap contributors",
+    "importedAt" : "2026-11-26T02:00:32.945463300Z"
+  },
+  "origin" : {
+    "lat" : 37.590735,
+    "lon" : -122.017261
+  },
+  "bearingDeg" : 133.1,
+  "layout" : "side",
+  "platformLevel" : "1",
+  "levels" : [ "0", "1" ],
+  "platforms" : [ {
+    "osmId" : "way/50958983",
+    "ref" : null,
+    "level" : "1",
+    "shape" : "line",
+    "lengthM" : 211.1,
+    "widthM" : null,
+    "centerX" : -5.7,
+    "zMin" : -105.2,
+    "zMax" : 105.9,
+    "tracksAlongside" : "right",
+    "outline" : [ [ -5.7, 105.9 ], [ -5.7, 33.9 ], [ -5.7, -33.2 ], [ -5.7, -105.2 ] ]
+  }, {
+    "osmId" : "way/50958984",
+    "ref" : null,
+    "level" : "1",
+    "shape" : "line",
+    "lengthM" : 211.0,
+    "widthM" : null,
+    "centerX" : 5.7,
+    "zMin" : -105.9,
+    "zMax" : 105.1,
+    "tracksAlongside" : "left",
+    "outline" : [ [ 5.7, 105.1 ], [ 5.7, 34.2 ], [ 5.7, -34.8 ], [ 5.6, -105.9 ] ]
+  } ],
+  "tracks" : [ {
+    "osmId" : "way/1049371124",
+    "x" : -2.2,
+    "zMin" : -105.9,
+    "zMax" : 105.9
+  }, {
+    "osmId" : "way/1049371125",
+    "x" : 2.1,
+    "zMin" : -105.9,
+    "zMax" : 105.9
+  } ],
+  "features" : [ {
+    "kind" : "entrance",
+    "osmId" : "node/2388768690",
+    "level" : null,
+    "name" : null,
+    "points" : [ [ 26.9, -2.0 ] ]
+  }, {
+    "kind" : "entrance",
+    "osmId" : "node/5306478414",
+    "level" : "0",
+    "name" : null,
+    "points" : [ [ -17.5, -0.2 ] ]
+  }, {
+    "kind" : "stairs",
+    "osmId" : "way/1049371126",
+    "level" : "0;1",
+    "name" : null,
+    "points" : [ [ -9.0, 11.0 ], [ -9.2, 32.0 ] ]
+  }, {
+    "kind" : "escalator",
+    "osmId" : "way/1049371128",
+    "level" : "0;1",
+    "name" : null,
+    "points" : [ [ -10.6, 11.0 ], [ -10.8, 31.9 ] ]
+  }, {
+    "kind" : "stairs",
+    "osmId" : "way/1049371131",
+    "level" : "0;1",
+    "name" : null,
+    "points" : [ [ -8.2, -10.7 ], [ -7.9, -31.1 ] ]
+  }, {
+    "kind" : "escalator",
+    "osmId" : "way/1049371135",
+    "level" : "0;1",
+    "name" : null,
+    "points" : [ [ -10.3, -10.7 ], [ -9.8, -31.1 ] ]
+  }, {
+    "kind" : "escalator",
+    "osmId" : "way/1049371146",
+    "level" : "0;1",
+    "name" : null,
+    "points" : [ [ 8.9, 11.0 ], [ 9.0, 32.2 ] ]
+  }, {
+    "kind" : "stairs",
+    "osmId" : "way/1049371147",
+    "level" : "0;1",
+    "name" : null,
+    "points" : [ [ 11.0, 11.0 ], [ 11.0, 32.3 ] ]
+  }, {
+    "kind" : "stairs",
+    "osmId" : "way/1049371148",
+    "level" : "0;1",
+    "name" : null,
+    "points" : [ [ 13.0, 11.0 ], [ 13.0, 32.3 ] ]
+  }, {
+    "kind" : "escalator",
+    "osmId" : "way/1049371152",
+    "level" : "0;1",
+    "name" : null,
+    "points" : [ [ 9.1, -11.6 ], [ 9.0, -32.9 ] ]
+  }, {
+    "kind" : "stairs",
+    "osmId" : "way/1049371153",
+    "level" : "0;1",
+    "name" : null,
+    "points" : [ [ 11.1, -11.6 ], [ 11.0, -32.9 ] ]
+  }, {
+    "kind" : "stairs",
+    "osmId" : "way/1049371154",
+    "level" : "0;1",
+    "name" : null,
+    "points" : [ [ 13.1, -11.7 ], [ 13.0, -33.0 ] ]
+  } ],
+  "areas" : [ ],
+  "building" : [ [ 15.4, 53.9 ], [ -13.2, 53.8 ], [ -13.1, 14.1 ], [ -16.1, 14.0 ], [ -16.1, 11.8 ], [ -17.6, 11.7 ], [ -17.6, 4.8 ], [ -17.5, -0.2 ], [ -17.5, -5.6 ], [ -17.5, -12.6 ], [ -13.1, -12.6 ], [ -12.9, -53.9 ], [ 15.1, -53.8 ], [ 15.1, -38.2 ], [ 18.1, -38.3 ], [ 16.4, -11.1 ], [ 17.5, -11.1 ], [ 24.4, -11.1 ], [ 26.9, -11.1 ], [ 26.9, -2.0 ], [ 26.8, 11.1 ], [ 24.4, 11.1 ], [ 17.6, 11.1 ], [ 16.6, 11.1 ], [ 18.2, 38.1 ], [ 15.5, 38.1 ], [ 15.4, 53.9 ] ],
+  "coverage" : {
+    "platforms" : 2,
+    "tracks" : 2,
+    "entrance" : 2,
+    "elevator" : 0,
+    "escalator" : 4,
+    "stairs" : 6,
+    "fare_gate" : 0,
+    "ticket_machine" : 0,
+    "indoor_areas" : 0
+  },
+  "warnings" : [ "OSM looks like side platforms; the reference data says island.", "No elevators mapped in OSM: fill in by hand.", "No fare gates mapped in OSM: fill in by hand." ]
+}

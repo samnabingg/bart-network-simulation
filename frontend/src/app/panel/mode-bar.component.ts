@@ -12,8 +12,8 @@ import { DataMode } from '../core/models';
           [title]="sim.hasKey() ? 'BART real-time estimates' : 'Needs a BART API key on the server'">Live</button>
         <button type="button" [attr.aria-pressed]="sim.mode() === 'demo'" (click)="set('demo')">Demo</button>
       </div>
-      <label [class.dim]="sim.usingLive()">Demo speed
-        <select [value]="sim.speed()" [disabled]="sim.usingLive()" (change)="speed($event)">
+      <label [class.dim]="sim.mode() === 'live'">Demo speed
+        <select [value]="sim.speed()" [disabled]="sim.mode() === 'live'" (change)="speed($event)">
           <option value="1">1×</option>
           <option value="10">10×</option>
           <option value="60">60×</option>
@@ -34,7 +34,7 @@ export class ModeBarComponent {
 
   protected readonly clock = computed(() => {
     this.sim.slowFrame();
-    const showSeconds = this.sim.usingLive() || this.sim.speed() === 1;
+    const showSeconds = this.sim.mode() === 'live' || this.sim.speed() === 1;
     return new Date(this.sim.simNow() * 1000).toLocaleTimeString([], {
       hour: 'numeric', minute: '2-digit', second: showSeconds ? '2-digit' : undefined,
     });

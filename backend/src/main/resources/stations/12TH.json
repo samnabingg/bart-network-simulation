@@ -1,0 +1,302 @@
+{
+  "abbr" : "12TH",
+  "name" : "12th St. Oakland City Center",
+  "source" : {
+    "name" : "OpenStreetMap",
+    "license" : "ODbL 1.0 (https://opendatacommons.org/licenses/odbl/)",
+    "attribution" : "© OpenStreetMap contributors",
+    "importedAt" : "2026-11-26T02:00:32.734617800Z"
+  },
+  "origin" : {
+    "lat" : 37.803228,
+    "lon" : -122.271874
+  },
+  "bearingDeg" : 26.4,
+  "layout" : "island",
+  "platformLevel" : "-2;-3",
+  "levels" : [ "-3", "-2", "-1", "0" ],
+  "platforms" : [ {
+    "osmId" : "way/654376776",
+    "ref" : "3",
+    "level" : "-2",
+    "shape" : "line",
+    "lengthM" : 237.1,
+    "widthM" : null,
+    "centerX" : -6.0,
+    "zMin" : -85.1,
+    "zMax" : 152.0,
+    "tracksAlongside" : "left",
+    "outline" : [ [ -6.0, -85.1 ], [ -6.0, -67.8 ], [ -6.0, 152.0 ] ]
+  }, {
+    "osmId" : "way/654376777",
+    "ref" : "1",
+    "level" : "-2",
+    "shape" : "line",
+    "lengthM" : 237.1,
+    "widthM" : null,
+    "centerX" : 2.2,
+    "zMin" : -85.1,
+    "zMax" : 152.0,
+    "tracksAlongside" : "right",
+    "outline" : [ [ 2.2, -85.1 ], [ 2.2, -67.8 ], [ 2.2, 152.0 ] ]
+  }, {
+    "osmId" : "way/654376778",
+    "ref" : "2",
+    "level" : "-3",
+    "shape" : "line",
+    "lengthM" : 237.1,
+    "widthM" : null,
+    "centerX" : 3.8,
+    "zMin" : -85.1,
+    "zMax" : 152.0,
+    "tracksAlongside" : "right",
+    "outline" : [ [ 3.8, 152.0 ], [ 3.8, -65.3 ], [ 3.8, -85.1 ] ]
+  } ],
+  "tracks" : [ {
+    "osmId" : "way/654376792",
+    "x" : -7.1,
+    "zMin" : -85.1,
+    "zMax" : 152.0
+  }, {
+    "osmId" : "way/51894712",
+    "x" : 5.1,
+    "zMin" : -85.1,
+    "zMax" : 152.0
+  } ],
+  "features" : [ {
+    "kind" : "entrance",
+    "osmId" : "node/1378045533",
+    "level" : null,
+    "name" : null,
+    "points" : [ [ 9.2, -99.9 ] ]
+  }, {
+    "kind" : "entrance",
+    "osmId" : "node/1378045536",
+    "level" : null,
+    "name" : null,
+    "points" : [ [ -32.4, 173.9 ] ]
+  }, {
+    "kind" : "entrance",
+    "osmId" : "node/1378045538",
+    "level" : null,
+    "name" : null,
+    "points" : [ [ -13.7, 14.1 ] ]
+  }, {
+    "kind" : "entrance",
+    "osmId" : "node/1378045539",
+    "level" : null,
+    "name" : null,
+    "points" : [ [ 8.8, 13.7 ] ]
+  }, {
+    "kind" : "entrance",
+    "osmId" : "node/1378045541",
+    "level" : null,
+    "name" : null,
+    "points" : [ [ 33.1, 143.7 ] ]
+  }, {
+    "kind" : "entrance",
+    "osmId" : "node/1378045542",
+    "level" : null,
+    "name" : null,
+    "points" : [ [ 8.8, 85.5 ] ]
+  }, {
+    "kind" : "entrance",
+    "osmId" : "node/1378045543",
+    "level" : null,
+    "name" : null,
+    "points" : [ [ -13.5, -100.3 ] ]
+  }, {
+    "kind" : "entrance",
+    "osmId" : "node/1378045545",
+    "level" : null,
+    "name" : null,
+    "points" : [ [ -19.9, 49.4 ] ]
+  }, {
+    "kind" : "entrance",
+    "osmId" : "node/2585950305",
+    "level" : "-1;0",
+    "name" : null,
+    "points" : [ [ -19.7, -68.5 ] ]
+  }, {
+    "kind" : "entrance",
+    "osmId" : "node/5308494184",
+    "level" : null,
+    "name" : null,
+    "points" : [ [ -20.5, 153.4 ] ]
+  }, {
+    "kind" : "fare_gate",
+    "osmId" : "node/14229892694",
+    "level" : "-1",
+    "name" : null,
+    "points" : [ [ -6.7, -77.3 ] ]
+  }, {
+    "kind" : "fare_gate",
+    "osmId" : "node/14229892695",
+    "level" : "-1",
+    "name" : null,
+    "points" : [ [ 3.2, -77.3 ] ]
+  }, {
+    "kind" : "stairs",
+    "osmId" : "way/128414123",
+    "level" : null,
+    "name" : null,
+    "points" : [ [ -39.8, 42.7 ], [ -27.0, 42.6 ] ]
+  }, {
+    "kind" : "stairs",
+    "osmId" : "way/128414126",
+    "level" : null,
+    "name" : null,
+    "points" : [ [ -30.1, 58.9 ], [ -29.6, 70.2 ] ]
+  }, {
+    "kind" : "stairs",
+    "osmId" : "way/129477787",
+    "level" : null,
+    "name" : null,
+    "points" : [ [ -69.6, 55.6 ], [ -74.5, 55.7 ] ]
+  }, {
+    "kind" : "stairs",
+    "osmId" : "way/129477789",
+    "level" : null,
+    "name" : null,
+    "points" : [ [ -33.9, 53.8 ], [ -38.0, 53.7 ] ]
+  }, {
+    "kind" : "stairs",
+    "osmId" : "way/1158241012",
+    "level" : null,
+    "name" : null,
+    "points" : [ [ -20.9, 70.2 ], [ -19.8, 70.2 ] ]
+  }, {
+    "kind" : "stairs",
+    "osmId" : "way/1292160110",
+    "level" : null,
+    "name" : null,
+    "points" : [ [ -57.2, 184.3 ], [ -54.2, 184.2 ] ]
+  }, {
+    "kind" : "stairs",
+    "osmId" : "way/1292160112",
+    "level" : null,
+    "name" : null,
+    "points" : [ [ -64.5, 192.8 ], [ -62.2, 192.7 ] ]
+  }, {
+    "kind" : "stairs",
+    "osmId" : "way/1292160134",
+    "level" : null,
+    "name" : null,
+    "points" : [ [ -72.3, 201.4 ], [ -70.0, 201.4 ] ]
+  }, {
+    "kind" : "stairs",
+    "osmId" : "way/1292160136",
+    "level" : null,
+    "name" : null,
+    "points" : [ [ -49.7, 166.0 ], [ -47.5, 166.2 ] ]
+  }, {
+    "kind" : "stairs",
+    "osmId" : "way/1292160138",
+    "level" : null,
+    "name" : null,
+    "points" : [ [ -55.7, 154.7 ], [ -55.7, 153.2 ] ]
+  }, {
+    "kind" : "stairs",
+    "osmId" : "way/1292160141",
+    "level" : null,
+    "name" : null,
+    "points" : [ [ -70.2, 154.5 ], [ -70.2, 152.9 ] ]
+  }, {
+    "kind" : "stairs",
+    "osmId" : "way/1563388708",
+    "level" : "-1;0",
+    "name" : null,
+    "points" : [ [ -12.9, -98.8 ], [ -12.8, -85.7 ] ]
+  }, {
+    "kind" : "escalator",
+    "osmId" : "way/1563388709",
+    "level" : "-1;0",
+    "name" : null,
+    "points" : [ [ -14.5, -85.7 ], [ -14.6, -98.9 ] ]
+  }, {
+    "kind" : "escalator",
+    "osmId" : "way/1563388715",
+    "level" : "-1;0",
+    "name" : null,
+    "points" : [ [ 8.2, -85.2 ], [ 8.1, -98.5 ] ]
+  }, {
+    "kind" : "stairs",
+    "osmId" : "way/1563388716",
+    "level" : "-1;0",
+    "name" : null,
+    "points" : [ [ 9.8, -98.4 ], [ 9.9, -85.2 ] ]
+  }, {
+    "kind" : "escalator",
+    "osmId" : "way/1563388721",
+    "level" : "-1;0",
+    "name" : null,
+    "points" : [ [ -14.9, 29.8 ], [ -14.7, 15.5 ] ]
+  }, {
+    "kind" : "stairs",
+    "osmId" : "way/1563388722",
+    "level" : "-1;0",
+    "name" : null,
+    "points" : [ [ -13.1, 15.6 ], [ -13.2, 29.8 ] ]
+  }, {
+    "kind" : "escalator",
+    "osmId" : "way/1563388724",
+    "level" : "-1;0",
+    "name" : null,
+    "points" : [ [ 9.7, 29.3 ], [ 9.6, 15.1 ] ]
+  }, {
+    "kind" : "stairs",
+    "osmId" : "way/1563388725",
+    "level" : "-1;0",
+    "name" : null,
+    "points" : [ [ 7.9, 15.2 ], [ 8.0, 29.3 ] ]
+  }, {
+    "kind" : "stairs",
+    "osmId" : "way/1563388737",
+    "level" : "-2;-1",
+    "name" : null,
+    "points" : [ [ -0.5, -68.9 ], [ -0.5, -72.6 ], [ -2.7, -72.6 ], [ -2.7, -68.6 ] ]
+  }, {
+    "kind" : "stairs",
+    "osmId" : "way/1563388741",
+    "level" : "-3;-2",
+    "name" : null,
+    "points" : [ [ -0.8, -69.0 ], [ -0.8, -72.7 ], [ -3.1, -72.7 ], [ -3.1, -68.7 ] ]
+  }, {
+    "kind" : "stairs",
+    "osmId" : "way/1563388745",
+    "level" : "-1;0",
+    "name" : null,
+    "points" : [ [ -31.9, 172.4 ], [ -21.0, 159.7 ] ]
+  }, {
+    "kind" : "escalator",
+    "osmId" : "way/1563388746",
+    "level" : "-1;0",
+    "name" : null,
+    "points" : [ [ -19.5, 161.0 ], [ -30.6, 173.6 ] ]
+  }, {
+    "kind" : "stairs",
+    "osmId" : "way/1563388750",
+    "level" : "-1;0",
+    "name" : null,
+    "points" : [ [ 31.2, 143.7 ], [ 17.9, 143.7 ] ]
+  } ],
+  "areas" : [ {
+    "kind" : "room",
+    "osmId" : "way/1563388733",
+    "level" : "-1",
+    "outline" : [ [ -3.5, -78.2 ], [ -3.5, -77.3 ], [ -3.5, -76.5 ], [ -2.3, -75.5 ], [ -1.0, -75.4 ], [ 0.2, -76.5 ], [ 0.2, -77.2 ], [ 0.3, -78.1 ], [ -0.7, -79.4 ], [ -2.4, -79.4 ], [ -3.5, -78.2 ] ]
+  } ],
+  "building" : null,
+  "coverage" : {
+    "platforms" : 3,
+    "tracks" : 2,
+    "entrance" : 10,
+    "elevator" : 0,
+    "escalator" : 5,
+    "stairs" : 19,
+    "fare_gate" : 2,
+    "ticket_machine" : 0,
+    "indoor_areas" : 1
+  },
+  "warnings" : [ "No elevators mapped in OSM: fill in by hand.", "No station building outline in OSM." ]
+}

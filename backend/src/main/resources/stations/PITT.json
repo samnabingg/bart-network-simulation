@@ -1,0 +1,63 @@
+{
+  "abbr" : "PITT",
+  "name" : "Pittsburg/Bay Point",
+  "source" : {
+    "name" : "OpenStreetMap",
+    "license" : "ODbL 1.0 (https://opendatacommons.org/licenses/odbl/)",
+    "attribution" : "© OpenStreetMap contributors",
+    "importedAt" : "2026-11-26T02:00:32.896807900Z"
+  },
+  "origin" : {
+    "lat" : 38.018912,
+    "lon" : -121.944027
+  },
+  "bearingDeg" : 89.9,
+  "layout" : "island",
+  "platformLevel" : null,
+  "levels" : [ ],
+  "platforms" : [ {
+    "osmId" : "way/154669717",
+    "ref" : null,
+    "level" : null,
+    "shape" : "area",
+    "lengthM" : 213.5,
+    "widthM" : 7.3,
+    "centerX" : -0.2,
+    "zMin" : -125.4,
+    "zMax" : 88.1,
+    "tracksAlongside" : "both",
+    "outline" : [ [ -3.9, 88.1 ], [ -3.9, -125.4 ], [ 3.4, -125.4 ], [ 3.4, -98.9 ], [ 3.5, 88.1 ], [ 0.9, 86.8 ], [ -3.5, 86.7 ], [ -3.9, 88.1 ] ]
+  } ],
+  "tracks" : [ {
+    "osmId" : "way/154825781",
+    "x" : -5.6,
+    "zMin" : -125.4,
+    "zMax" : 88.1
+  }, {
+    "osmId" : "way/154669963",
+    "x" : 5.2,
+    "zMin" : -125.4,
+    "zMax" : 88.1
+  } ],
+  "features" : [ {
+    "kind" : "entrance",
+    "osmId" : "node/5313514244",
+    "level" : null,
+    "name" : null,
+    "points" : [ [ 68.8, -114.1 ] ]
+  } ],
+  "areas" : [ ],
+  "building" : null,
+  "coverage" : {
+    "platforms" : 1,
+    "tracks" : 2,
+    "entrance" : 1,
+    "elevator" : 0,
+    "escalator" : 0,
+    "stairs" : 0,
+    "fare_gate" : 0,
+    "ticket_machine" : 0,
+    "indoor_areas" : 0
+  },
+  "warnings" : [ "Platform level isn't tagged.", "No escalators mapped in OSM: fill in by hand.", "No elevators mapped in OSM: fill in by hand.", "No fare gates mapped in OSM: fill in by hand.", "No station building outline in OSM." ]
+}

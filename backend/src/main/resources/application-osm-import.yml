@@ -1,0 +1,4 @@
+spring:
+  main:
+    # the import is a batch job: no web server, so it can run next to the normal backend on 8080
+    web-application-type: none
