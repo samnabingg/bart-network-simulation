@@ -1,8 +1,9 @@
 import { Component, ElementRef, OnDestroy, effect, inject, input, output, signal, untracked, viewChild } from '@angular/core';
 import { firstValueFrom } from 'rxjs';
-import { NetworkApi } from '../core/network-api.service';
+import { NetworkApi, RideProfile } from '../core/network-api.service';
 import { DepartureRow, LineDef, StationInfo, TrackPath } from '../core/models';
 import type { SceneNextStop, SceneRow, StationScene } from './three/scene-api';
+import { OsmLayout, SceneLayout, layoutFromOsm } from './three/osm-layout.js';
 
 export interface SceneExit {
   next: string;
@@ -52,9 +53,18 @@ export class StationSceneComponent implements OnDestroy {
   readonly caption = signal(SCENE_HINT);
 
   private readonly api = inject(NetworkApi);
+  /** The controls hint, plus the OpenStreetMap credit when the station is built from OSM data. */
+  private hint = SCENE_HINT;
+
+  /** The station's OSM layout, or null when there is none (the scene then uses the generic model). */
+  private fetchLayout(abbr: string): Promise<OsmLayout | null> {
+    return firstValueFrom(this.api.stationLayout(abbr)).catch(() => null);
+  }
   private readonly host = viewChild.required<ElementRef<HTMLDivElement>>('host');
   private scene: StationScene | null = null;
   private loadToken = 0;
+  /** Tunnels, viaducts and door sides for the ride (null until loaded or when the server has none). */
+  private profile: RideProfile | null = null;
 
   constructor() {
     effect(() => {
@@ -86,10 +96,15 @@ export class StationSceneComponent implements OnDestroy {
     hostEl.replaceChildren();
     if (!st) return;
 
-    const [{ createStationScene, stationFamily }, { createBayFairScene }] = await Promise.all([
+    // Bay Fair has its own model from photos; every other station is built from its OSM layout.
+    const [{ createStationScene, stationFamily }, { createBayFairScene }, layout, profile] = await Promise.all([
       import('./three/station3d.js'),
       import('./three/bayfair.js'),
+      st.abbr === 'BAYF' ? Promise.resolve(null) : this.fetchLayout(st.abbr),
+      // tunnels and viaducts along the ride; without it the ride still runs, on ground-level track
+      firstValueFrom(this.api.rideProfile()).catch(() => null),
     ]);
+    this.profile = profile;
     if (token !== this.loadToken) return; // another station was picked while loading
 
     const common = {
@@ -105,9 +120,10 @@ export class StationSceneComponent implements OnDestroy {
       trip: this.tripFrom() ? { from: this.tripFrom()! } : null,
       fare: async (orig: string, dest: string) => (await firstValueFrom(this.api.fare(orig, dest))).clipper,
       stationName: (abbr: string) => this.stations().find((s) => s.abbr === abbr)?.name ?? abbr,
+      stationView: (abbr: string) => this.profile?.stations[abbr] ?? null,
     };
     const kind = KIND_LABEL[st.kind] ?? st.kind;
-    const platforms = `${st.platform} platform${st.platform === 'side' ? 's' : ''}`;
+    this.hint = SCENE_HINT;
     if (st.abbr === 'BAYF') {
       this.scene = createBayFairScene(hostEl, common);
       this.heading.set('Bay Fair walkthrough (detailed model from photos)');
@@ -116,8 +132,12 @@ export class StationSceneComponent implements OnDestroy {
         ...common,
         station: { abbr: st.abbr, name: st.name, kind: st.kind, platform: st.platform },
         lines: this.lines().filter((l) => l.stops.includes(st.abbr)).map((l) => l.hex),
+        layout,
       });
-      this.heading.set(`${st.name} walkthrough (${stationFamily(st.abbr, st.kind).label}; ${kind}, ${platforms})`);
+      const shape = layoutFromOsm(layout, st.platform);
+      this.heading.set(`${st.name} walkthrough (${stationFamily(st.abbr, st.kind).label}; ${kind}, ${describeLayout(shape)})`);
+      // OpenStreetMap's license (ODbL) asks for credit wherever its data is shown
+      if (shape.source === 'osm') this.hint = `${SCENE_HINT} ${OSM_CREDIT}`;
     }
     this.push(this.feed());
     this.ready.emit(this.scene);
@@ -133,13 +153,13 @@ export class StationSceneComponent implements OnDestroy {
       // An empty list, not null: null makes the scene run its own made-up train.
       const why = feed.rows === null ? feed.note || 'Waiting for departures' : `No departures listed for ${st.name} right now`;
       scene.setLive([], why);
-      this.caption.set(SCENE_HINT);
+      this.caption.set(this.hint);
       return;
     }
     scene.setLive(rows.map(toSceneRow), feed.note);
     const next = rows[0];
     const when = next.minutes === 0 ? 'leaving' : `in ${next.minutes} min`;
-    this.caption.set(`Next train at ${st.name}: ${next.destination}${next.platform ? `, platform ${next.platform}` : ''}, ${when}. ${SCENE_HINT}`);
+    this.caption.set(`Next train at ${st.name}: ${next.destination}${next.platform ? `, platform ${next.platform}` : ''}, ${when}. ${this.hint}`);
   }
 
   /** The backend matched every row to its line and next stop; find the row for this train. */
@@ -174,15 +194,30 @@ export class StationSceneComponent implements OnDestroy {
     const names = new Map(this.stations().map((s) => [s.abbr, s.name]));
     const paths = this.paths();
     const upto = end > i ? end + 1 : stops.length;
-    return stops.slice(i + 1, upto).map((abbr, k) => ({
-      abbr,
-      name: names.get(abbr) ?? abbr,
-      meters: paths[`${stops[i + k]}>${abbr}`]?.len,
-    }));
+    const profile = this.profile;
+    return stops.slice(i + 1, upto).map((abbr, k) => {
+      const leg = `${stops[i + k]}>${abbr}`;
+      const view = profile?.stations[abbr];
+      return {
+        abbr,
+        name: names.get(abbr) ?? abbr,
+        meters: paths[leg]?.len,
+        ...(view ? { doors: view.doors, layout: view.layout, level: view.level } : {}),
+        segments: profile?.legs[leg],
+      };
+    });
   }
 }
 
 const SCENE_HINT = 'Drag to look around, WASD to walk, E to use things.';
+const OSM_CREDIT = 'Station layout © OpenStreetMap contributors (ODbL).';
+
+/** "island platform, 213 m" / "2 island platforms, 213 m" / "side platforms" */
+export function describeLayout(l: SceneLayout): string {
+  const n = l.platforms.length;
+  const what = l.kind === 'side' ? 'side platforms' : l.kind === 'island' ? (n === 1 ? 'island platform' : `${n} island platforms`) : `${n} platforms`;
+  return l.source === 'osm' ? `${what}, ${Math.round(l.length)} m (OpenStreetMap)` : `${what} (approximate)`;
+}
 
 function toSceneRow(r: DepartureRow): SceneRow {
   return {

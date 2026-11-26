@@ -1,6 +1,8 @@
 import { HttpClient, HttpErrorResponse, HttpParams } from '@angular/common/http';
 import { Injectable, inject } from '@angular/core';
-import { Observable, catchError, throwError } from 'rxjs';
+import { Observable, catchError, shareReplay, throwError } from 'rxjs';
+import type { OsmLayout } from '../scene/three/osm-layout.js';
+import type { RideSegment, StationView } from '../scene/three/scene-api';
 import { DataMode, Departures, Fare, GeoDocument, LiveStatus, LiveTrainsResponse, NetworkResponse } from './models';
 
 /** Typed access to the Spring Boot API. Errors come back as Error with the server's problem detail. */
@@ -30,6 +32,26 @@ export class NetworkApi {
     return this.http.get<Fare>('/api/fares', { params }).pipe(catchError(toError));
   }
 
+  /** A station's layout imported from OpenStreetMap; errors (404 when not imported) as for every call. */
+  stationLayout(abbr: string): Observable<OsmLayout> {
+    return this.http.get<OsmLayout>(`/api/stations/${encodeURIComponent(abbr)}/layout`).pipe(catchError(toError));
+  }
+
+  /**
+   * For the train ride: tunnels, viaducts and ground-level track between neighbouring stations
+   * (from OpenStreetMap), and how each station looks from the train. Fetched once.
+   */
+  rideProfile(): Observable<RideProfile> {
+    return (this.rideProfile$ ??= this.http.get<RideProfile>('/api/stations/ride-profile').pipe(
+      catchError((err: HttpErrorResponse) => {
+        this.rideProfile$ = undefined; // ask again next time
+        return toError(err);
+      }),
+      shareReplay(1),
+    ));
+  }
+  private rideProfile$?: Observable<RideProfile>;
+
   /** @param simTime demo only: the simulated time (epoch seconds) the board is for */
   departures(abbr: string, source: DataMode, simTime?: number): Observable<Departures> {
     let params = new HttpParams().set('source', source);
@@ -38,6 +60,13 @@ export class NetworkApi {
       .get<Departures>(`/api/stations/${encodeURIComponent(abbr)}/departures`, { params })
       .pipe(catchError(toError));
   }
+}
+
+export interface RideProfile {
+  source: { attribution: string } | null;
+  /** keyed "ABBR>ABBR" like the network's track paths */
+  legs: Record<string, RideSegment[]>;
+  stations: Record<string, StationView>;
 }
 
 /** ProblemDetail's "detail", or a readable fallback. */

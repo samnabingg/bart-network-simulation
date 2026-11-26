@@ -88,6 +88,7 @@ Poll interval, timeouts, retry and circuit breaker settings are in `backend/src/
 | `GET /api/live/trains` | Estimated position of every live train. |
 | `GET /api/fares?orig=&dest=` | Today's Clipper fare between two stations, from BART. 422 for the same station (excursion fare), 503 when BART can't be asked. |
 | `GET /api/stations/{abbr}/layout` | The station's layout imported from OpenStreetMap (see below). 404 if it hasn't been imported. |
+| `GET /api/stations/ride-profile` | For the train ride: tunnel, viaduct and ground-level stretches between neighbouring stations (from OpenStreetMap), and for each station its level, platform layout and the side the doors open on. |
 
 Errors are RFC 9457 problem details. Every response carries `X-Correlation-Id` (sent by the frontend or generated), which is also in every log line.
 
@@ -141,6 +142,16 @@ All 50 stations are imported (Nov 25, 2026). Every station has its platforms; OS
 - Platforms split into pieces in OSM: ANTC, BALB, COLM, CONC, DALY, MLPT, OAKL, PCTR, SBRN. eBART (ANTC, PCTR) and the Oakland Airport connector (OAKL) really have shorter platforms.
 - OSM disagrees with the reference data's island/side guess at 13 stations: 16TH and 24TH (OSM: island), and DELN, FTVL, HAYW, MLPT, PHIL, PLZA, SANL, SHAY, UCTY, WCRK, WOAK (OSM: side). The reference values are marked approximate; check on site or against BART's station overview maps before changing them.
 
+### Tunnels and viaducts along the line
+
+A second import reads where the track runs in a tunnel, on a viaduct or on the ground between every pair of neighbouring stations. One Overpass request fetches every BART track way in OSM with its `tunnel`, `bridge` and `layer` tags. The importer walks each track path from BART's KML in 20 m steps, matches the nearest OSM track within 35 m, and folds stretches shorter than 90 m (a road over the line) into their neighbours:
+
+```powershell
+.\mvnw.cmd spring-boot:run "-Dspring-boot.run.profiles=local,osm-import" "-Dspring-boot.run.arguments=--app.osm.target=line"
+```
+
+It writes `src/main/resources/line/profile.json` (100 legs, 66 with a tunnel; the Transbay Tube is named). Fruitvale to Lake Merritt, for example, runs on a viaduct for 47% of the way, on the ground to 81%, then in the tunnel under downtown Oakland. Right at the stations OSM's tags are misleading (a road bridge or station roof over the platform reads as a tunnel at Union City), so a station's own level comes from the reference data; its platform layout comes from its OSM layout file. BART runs on the right, so the doors open on the left at an island platform and on the right at side platforms.
+
 Map data © OpenStreetMap contributors, available under the [Open Database License](https://opendatacommons.org/licenses/odbl/). The credit is also in every layout file and must stay wherever the data is shown.
 
 Map notes: zoomed out, entrance dots are pushed up to 25 times farther from the station so they stay visible; from zoom 15 they sit on their true spots. Station names appear from zoom 12.
@@ -149,11 +160,17 @@ Map notes: zoomed out, entrance dots are pushed up to 25 times farther from the 
 
 The Three.js scenes are the prototype's modules, unchanged, with TypeScript declarations (`*.d.ts`) at the boundary. Angular loads them on demand when the page needs them.
 
-Every station except Bay Fair is built from its `kind` and `platform` (the layout) and its architecture family (the look):
+Every station except Bay Fair is built from its OpenStreetMap layout (the shape), its `kind` (the height) and its architecture family (the look).
+
+The shape comes from `GET /api/stations/{abbr}/layout` through `osm-layout.js`: how many tracks and platforms there are and where (one island, side platforms, MacArthur's two islands and four tracks), the platform length (about 213 m at most stations, 128 m at Antioch, 44 m at the Oakland Airport connector), and how wide the station box, roof and tunnel must be. Trains are as long as the platform holds, up to 10 cars. `osm-layout.js` also copes with how differently OSM maps platforms: outlines, two touching halves of one island, edge lines, centre lines, and pieces split along the track. Where OSM's tracks contradict its platforms (two tracks mapped too close together for the island tagged between them), the platform wins. All 50 imported layouts give a consistent cross-section: no track through a platform, every platform beside a track. Without a layout, a station gets the generic cross-section from its reference `platform` value, as before. Escalators, elevators and entrances from OSM are not placed yet; every station still has the same concourse and ramps at the end of the platform. The scene credits OpenStreetMap under the view whenever its data is used.
+
+On the train ride (`train-ride.js`) the view out of the windows follows `GET /api/stations/ride-profile`. The track climbs onto viaducts with piers below, runs at ground level, and goes through tunnel portals into a lit tunnel. Each stop is built as it really is: an island platform on the left, or side platforms on the right with the other track and its platform across on the left. Underground stations get tiled walls and a ceiling, the others canopies. The doors open on the platform side, and you get off through a door on that side.
+
+The height comes from `kind`:
 - Elevated: street-level concourse, platform 7 m up on a viaduct.
 - Ground level: concourse in an underpass, platform 4.5 m up on an embankment.
 - Underground: mezzanine with stairs to the street, platform 6 m below in a tunnel box.
-- Island platform: one platform between the tracks. Side platforms: escalator to the southbound side, stairs to the northbound side.
+- Each platform gets an escalator and stairs down to (or up from) the hall, or one of them on a narrow platform.
 
 BART was built in waves, and stations from one wave share a style, so each station gets the family that matches its era (`FAMILIES` and `FAMILY_OF` at the top of `station3d.js`):
 
@@ -173,7 +190,7 @@ BART was built in waves, and stations from one wave share a style, so each stati
 
 `STATION_TWEAKS` gives single stations their own colors, stations in or beside a freeway (`FREEWAY`) get raised lanes with moving traffic, and the rest get a park-and-ride lot. All of this is approximate, from general knowledge and photos, not surveyed.
 
-Every station has ticket machines, an agent booth, 8 tall glass fare gates, escalator and stairs, departure boards, yellow truncated-dome edge strips, the third rail, posters, signs with the station name and colored dots for the lines that stop there, and 3-car trains. The boards and trains follow the same departures as the side panel. Board a train, ride to the real next stop on that line (the backend matches every departure to its next stop), then "Get off at …" to walk around that station. Your demo card balance carries over.
+Every station has ticket machines, an agent booth, 8 tall glass fare gates, escalator and stairs, departure boards, yellow truncated-dome edge strips, the third rail, posters, signs with the station name and colored dots for the lines that stop there, and trains as long as the platform. The boards and trains follow the same departures as the side panel. Board a train, ride to the real next stop on that line (the backend matches every departure to its next stop), then "Get off at …" to walk around that station. Your demo card balance carries over.
 
 **Bay Fair** (`bayfair.js`) is a detailed model built from 10 photos: brick concourse with lime columns, ticket machines, agent booth, 8 fare gates, escalator and stairs, the elevated island platform, red departure boards. Its sizes are estimates in the `DIM` block at the top of the file; the fare is a placeholder, not a real BART fare. Platform 1 is the east track and platform 2 the west track (an estimate: edit `SIDE` after checking on site).
 

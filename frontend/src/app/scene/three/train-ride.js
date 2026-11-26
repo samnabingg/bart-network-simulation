@@ -10,7 +10,8 @@
 // Sizes are estimates (car about 21 m long, 3.2 m wide). Not affiliated with BART, no logos.
 //
 // Car-local coordinates: x across the car (left wall at -1.45, right at +1.45), z along it,
-// the train moves toward -z. The platform is on the left at both stations.
+// the train moves toward -z. The doors open on the platform's side: the left at an island platform,
+// the right at side platforms (BART runs on the right).
 
 import * as THREE from 'three';
 
@@ -38,9 +39,21 @@ export const RIDE = {
   dwell: 20,       // s the doors stay open at each stop; with opening and closing about the backend's 25 s
 };
 
-// Is a rider at (x, z) standing at one of the left-side doors (the platform side)?
-export function atLeftDoor(x, z) {
-  return x < -(CAR.wall - 0.75) && CAR.doorZ.some((d) => Math.abs(z - d) < CAR.doorHalf + 0.35);
+// Is a rider at (x, z) standing at one of the doors on that side ('left' or 'right')?
+export function atDoor(x, z, side = 'left') {
+  const s = side === 'right' ? 1 : -1;
+  return s * x > CAR.wall - 0.75 && CAR.doorZ.some((d) => Math.abs(z - d) < CAR.doorHalf + 0.35);
+}
+export const atLeftDoor = (x, z) => atDoor(x, z, 'left');
+
+// One station as the ride needs it; anything missing falls back to an elevated island platform.
+export function stationLook(v) {
+  return {
+    doors: v && v.doors === 'right' ? 'right' : 'left',
+    layout: (v && v.layout) || 'island',
+    level: v && ['tunnel', 'elevated', 'grade'].includes(v.level) ? v.level : 'elevated',
+    segments: (v && v.segments) || null,
+  };
 }
 
 const TAU = Math.PI * 2;
@@ -428,24 +441,34 @@ export function createTrainRide(scene, { floorY, x: originX = 400 }) {
     }
   }
 
-  /* ---------- Scenery outside: viaduct, ground, road, trees, buildings, stations ---------- */
+  /* ---------- Scenery outside: land, viaduct, tunnels, stations ---------- */
+  // The car floor stays at FY. The land moves up and down instead: on a viaduct it is far below,
+  // on ground-level track just under the rails, and in a tunnel it is hidden behind the tunnel walls.
+  // Which of the three applies where comes from OpenStreetMap's tags along the real track (see the
+  // backend's LineProfileBuilder); without that data the whole leg uses the stations' own levels.
+  const LIFT = { elevated: 8.5, grade: 1.3, tunnel: 1.3 }; // track above the land around it (m)
+  const RAMP = 260;        // m to climb from the ground onto a viaduct (about a 3% grade)
+  const STATION_HALF = 106; // half a 10-car platform
   const WRAP = 440;
+
+  const scenery = new THREE.Group(); // land, road, trees, buildings: y follows the lift
+  world.add(scenery);
   const groundMat = texMat(T.grass, 35, 35, { roughness: 1 });
-  const ground = planeAt(world, 700, 700, groundMat, 0, 0.02, 0, 0, -Math.PI / 2);
+  planeAt(scenery, 700, 700, groundMat, 0, 0, 0, 0, -Math.PI / 2);
   const roadMat = texMat(T.road, 1, 35);
-  planeAt(world, 10, 700, roadMat, 21, 0.04, 0, 0, -Math.PI / 2);
+  planeAt(scenery, 10, 700, roadMat, 21, 0.02, 0, 0, -Math.PI / 2);
   const ballastMat = texMat(T.ballast, 1, 520 / 2.4);
-  box(world, -2.3, 2.3, FY - 1.45, FY - 1.0, -260, 260, mat(0x7a7a7d)); // viaduct deck
+  const concrete = mat(0x8c8b87);
+  box(world, -2.3, 2.3, FY - 1.45, FY - 1.0, -260, 260, mat(0x7a7a7d)); // track bed
   planeAt(world, 2.8, 520, ballastMat, 0, FY - 0.995, 0, 0, -Math.PI / 2);
   for (const rx of [-0.72, 0.72]) box(world, rx - 0.04, rx + 0.04, FY - 1.0, FY - 0.86, -260, 260, mat(0x9a9ca2, { metalness: 0.6 }));
-  for (const sx of [-1, 1]) box(world, sx * 2.3 - 0.08, sx * 2.3 + 0.08, FY - 1.45, FY - 0.55, -260, 260, mat(0x8c8b87)); // parapets
 
-  const movers = []; // items that loop past the windows
-  const addMover = (obj, u) => { world.add(obj); movers.push({ obj, u }); };
+  const movers = []; // items that loop past the windows: { obj, u, kind }
+  const addMover = (obj, u, kind = 'land', parent = scenery) => { parent.add(obj); movers.push({ obj, u, kind }); return obj; };
   const trunkGeo = new THREE.CylinderGeometry(0.25, 0.3, 3, 8), crownGeo = new THREE.SphereGeometry(2.6, 10, 8);
   const trunkMat = mat(0x5a4636), crownMats = [mat(0x4b6b32), mat(0x58763a), mat(0x3f5e2c)];
   for (let i = 0; i < 90; i++) {
-    let x = (rand() < 0.5 ? -1 : 1) * (9 + rand() * 80);
+    let x = (rand() < 0.5 ? -1 : 1) * (14 + rand() * 76);
     if (x > 14 && x < 29) x += 16;
     const sc = 0.8 + rand() * 0.6;
     const g = new THREE.Group();
@@ -458,7 +481,7 @@ export function createTrainRide(scene, { floorY, x: originX = 400 }) {
   const roofMat = mat(0x5b5550);
   for (let i = 0; i < 42; i++) {
     const right = rand() < 0.5;
-    const x = right ? 34 + rand() * 50 : -(14 + rand() * 70);
+    const x = right ? 34 + rand() * 50 : -(18 + rand() * 66);
     const w = 8 + rand() * 14, d = 8 + rand() * 16, h = 4 + rand() * (rand() < 0.2 ? 14 : 6);
     const g = new THREE.Group();
     box(g, -w / 2, w / 2, 0, h, -d / 2, d / 2, bColors[i % bColors.length]);
@@ -475,18 +498,63 @@ export function createTrainRide(scene, { floorY, x: originX = 400 }) {
     g.position.x = 15;
     addMover(g, u);
   }
+  // viaduct piers: hang down from the track bed to the land, as tall as the lift
+  const pierGeo = new THREE.BoxGeometry(2.2, 1, 1.2).translate(0, -0.5, 0);
   for (let u = 0; u < WRAP; u += 24) {
-    const g = new THREE.Group();
-    box(g, -1.1, 1.1, 0, FY - 1.45, -0.6, 0.6, mat(0x8c8b87)); // viaduct pier
-    addMover(g, u);
+    const m = new THREE.Mesh(pierGeo, concrete);
+    m.position.y = FY - 1.45;
+    addMover(m, u, 'pier', world);
   }
-  for (let u = 0; u < WRAP; u += 4) {
+  // parapets on both sides of the viaduct, and a fence on the right one, in 20 m pieces so they
+  // can be left out at stations and on ground-level track
+  for (let u = 0; u < WRAP; u += 20) {
     const g = new THREE.Group();
-    box(g, -0.04, 0.04, FY - 0.55, FY + 0.35, -0.04, 0.04, mat(0x6b6f74)); // fence post on the right parapet
-    g.position.x = 2.3;
-    addMover(g, u);
+    for (const sx of [-1, 1]) box(g, sx * 2.3 - 0.08, sx * 2.3 + 0.08, FY - 1.45, FY - 0.55, -10, 10, concrete);
+    for (let k = -8; k <= 8; k += 4) box(g, 2.26, 2.34, FY - 0.55, FY + 0.35, k - 0.04, k + 0.04, mat(0x6b6f74));
+    addMover(g, u, 'parapet', world);
   }
 
+  /* Tunnels: concrete walls close to the car with a lamp every 12 m, a portal where the track goes
+     in, and earth over the top so the tunnel isn't a box floating over the fields. */
+  const tunnelTex = canvasTex(256, 128, (g, w, h) => {
+    g.fillStyle = '#2c2e31'; g.fillRect(0, 0, w, h);
+    for (let i = 0; i < 300; i++) { g.fillStyle = `rgba(${rand() > 0.5 ? '255,255,255' : '0,0,0'},${rand() * 0.08})`; g.fillRect(rand() * w, rand() * h, 6, 3); }
+    // the wall runs from the track bed (bottom) to the roof (top); the car windows look at the
+    // middle third, so the lamps and cables sit there and stream past
+    g.fillStyle = '#1d1f22'; g.fillRect(0, 70, w, 6); g.fillRect(0, 80, w, 4); // cables
+    g.fillStyle = 'rgba(255,240,200,.14)'; g.fillRect(0, 36, 50, 26);
+    g.fillStyle = '#fff3d6'; g.fillRect(10, 45, 28, 7); // lamp
+  });
+  const tunnelPieces = []; // { g, a, b } in meters along the current leg
+  const clearTunnels = () => { for (const t of tunnelPieces) world.remove(t.g); tunnelPieces.length = 0; };
+  const addTunnel = (a, b, portalA, portalB) => {
+    const len = b - a;
+    if (len < 5) return;
+    const g = new THREE.Group();
+    const t = tunnelTex.clone(); t.needsUpdate = true; t.repeat.set(len / 12, 1);
+    const wallMat = new THREE.MeshBasicMaterial({ map: t, side: THREE.DoubleSide });
+    const H0 = FY - 1.45, H1 = FY + 3.3;
+    for (const sx of [-1, 1]) planeAt(g, len, H1 - H0, wallMat, sx * 2.75, (H0 + H1) / 2, 0, Math.PI / 2);
+    const ceil = tunnelTex.clone(); ceil.needsUpdate = true; ceil.repeat.set(len / 12, 0.4);
+    planeAt(g, len, 5.5, new THREE.MeshBasicMaterial({ color: 0x8a8c90, map: ceil, side: THREE.DoubleSide }), 0, H1, 0, Math.PI / 2, Math.PI / 2);
+    // earth over the tunnel, seen only from outside near the portals
+    box(g, -30, 30, H1 + 0.05, H1 + 4, -len / 2, len / 2, mat(0x6d7f52, { roughness: 1 }));
+    const portal = (z) => {
+      const m = mat(0x9b9890);
+      box(g, -16, -2.75, FY - 1.45, H1 + 4.2, z - 0.6, z + 0.6, m);
+      box(g, 2.75, 16, FY - 1.45, H1 + 4.2, z - 0.6, z + 0.6, m);
+      box(g, -2.75, 2.75, H1, H1 + 4.2, z - 0.6, z + 0.6, m);
+    };
+    if (portalA) portal(len / 2);   // smaller u is larger z (the train moves toward -z)
+    if (portalB) portal(-len / 2);
+    world.add(g);
+    tunnelPieces.push({ g, a, b });
+  };
+
+  /* Stations seen from the train. BART runs on the right, so an island platform (between the two
+     tracks) is on the train's left and side platforms are on its right, with the other track and
+     its platform across on the left. Underground stations get walls and a ceiling, the others a
+     canopy. */
   const makeSign = (name) => canvasTex(512, 128, (g, w, h) => {
     g.fillStyle = '#141d26'; g.fillRect(0, 0, w, h);
     g.fillStyle = '#0099d8'; g.fillRect(0, h - 10, w, 10);
@@ -495,29 +563,162 @@ export function createTrainRide(scene, { floorY, x: originX = 400 }) {
     do { g.font = `600 ${px}px "Helvetica Neue", Arial, sans-serif`; px -= 2; } while (px > 20 && g.measureText(name).width > w - 30);
     g.fillText(name, w / 2, h / 2 + 3);
   }, false);
-  const makePlatform = (lime) => {
+  const tileTex = canvasTex(128, 128, (g, w, h) => {
+    g.fillStyle = '#d8d2c2'; g.fillRect(0, 0, w, h);
+    g.strokeStyle = 'rgba(0,0,0,.12)'; g.lineWidth = 2;
+    for (let i = 0; i <= w; i += 16) { g.beginPath(); g.moveTo(i, 0); g.lineTo(i, h); g.stroke(); g.beginPath(); g.moveTo(0, i); g.lineTo(w, i); g.stroke(); }
+  });
+  const platformMat = mat(0x9c9a94), stripMat = M.yellow, canopyMat = mat(0xcfd2d4), columnMat = mat(0x8a8f95), benchMat = mat(0x6d6f73);
+  const makeStation = ({ name, doors = 'left', layout = 'island', level = 'elevated' }) => {
     const g = new THREE.Group();
-    const PL = 50;
-    box(g, -9.5, -1.72, FY - 1.2, FY - 0.03, -PL, PL, mat(0x8c8b87));
-    box(g, -2.5, -1.72, FY - 0.03, FY - 0.025, -PL, PL, M.yellow);
-    box(g, -10, -1.4, FY + 4.4, FY + 4.7, -PL, PL, mat(0xd2c7ab));
-    box(g, -1.5, -1.4, FY + 3.5, FY + 4.7, -PL, PL, lime ? mat(0xa6c93a) : mat(0x9aa0a6));
-    for (let z = -PL + 6; z < PL; z += 12) box(g, -6.1, -5.6, FY, FY + 4.4, z - 0.25, z + 0.25, mat(0x8a8068));
-    for (let z = -PL + 12; z < PL; z += 18) box(g, -4.6, -4.0, FY, FY + 0.45, z - 1, z + 1, mat(0x6d6f73)); // benches
-    const signs = [];
-    for (let z = -PL + 10; z < PL; z += 20) {
-      box(g, -3.05, -2.95, FY, FY + 2.0, z - 0.05, z + 0.05, mat(0x777777));
+    const PL = STATION_HALF;
+    const sx = doors === 'right' ? 1 : -1; // the side our platform is on
+    const island = layout !== 'side';
+    const X = (a) => sx * a;               // a measured from our track toward our platform
+    const span = (a, b) => [Math.min(X(a), X(b)), Math.max(X(a), X(b))];
+    const signMats = [];
+    const sign = (x, face, z) => {
+      box(g, x - 0.05, x + 0.05, FY, FY + 2.0, z - 0.05, z + 0.05, mat(0x777777));
       const m = new THREE.MeshBasicMaterial();
-      planeAt(g, 1.6, 0.4, m, -2.94, FY + 2.15, z, Math.PI / 2);
-      signs.push(m);
+      planeAt(g, 1.6, 0.4, m, x + face * 0.06, FY + 2.15, z, face > 0 ? Math.PI / 2 : -Math.PI / 2);
+      signMats.push(m);
+    };
+    // a platform from a to b, with a yellow safety strip along each edge that faces a track
+    const platform = (a, b, ...trackEdges) => {
+      const [x0, x1] = span(a, b);
+      box(g, x0, x1, FY - 1.2, FY - 0.03, -PL, PL, platformMat);
+      for (const e of trackEdges) {
+        const inward = e === a ? Math.sign(b - a) : Math.sign(a - b);
+        const [e0, e1] = span(e, e + inward * 0.6);
+        box(g, e0, e1, FY - 0.03, FY - 0.02, -PL, PL, stripMat);
+      }
+    };
+    const otherTrack = (c) => {
+      const x = X(c);
+      box(g, x - 2.3, x + 2.3, FY - 1.45, FY - 1.0, -PL, PL, mat(0x7a7a7d));
+      for (const rx of [-0.72, 0.72]) box(g, x + rx - 0.04, x + rx + 0.04, FY - 1.0, FY - 0.86, -PL, PL, mat(0x9a9ca2, { metalness: 0.6 }));
+    };
+    let lo, hi; // the station's width, across our track and everything beside it
+    if (island) {
+      platform(1.72, 9.5, 1.72, 9.5);
+      otherTrack(11.22);
+      for (let z = -PL + 10; z < PL; z += 20) sign(X(2.95), -sx, z);
+      for (let z = -PL + 12; z < PL; z += 18) { const [b0, b1] = span(4.4, 5.0); box(g, b0, b1, FY, FY + 0.45, z - 1, z + 1, benchMat); }
+      [lo, hi] = span(-2.6, 13.6);
+    } else {
+      platform(1.72, 6.6, 1.72);
+      otherTrack(-4.4);
+      platform(-6.12, -11.0, -6.12); // the far side platform, across both tracks
+      for (let z = -PL + 10; z < PL; z += 20) { sign(X(2.95), -sx, z); sign(X(-7.3), sx, z); }
+      for (let z = -PL + 12; z < PL; z += 18) { const [b0, b1] = span(5.2, 5.8); box(g, b0, b1, FY, FY + 0.45, z - 1, z + 1, benchMat); }
+      [lo, hi] = span(-11.6, 7.2);
+    }
+    if (level === 'tunnel') {
+      // a box under the street: tiled walls, a ceiling with long light strips, and end walls with
+      // an opening for our tunnel
+      const wall = new THREE.MeshStandardMaterial({ map: tileTex, roughness: 0.6, emissive: 0xd8d2c2, emissiveIntensity: 0.35 });
+      wall.map = tileTex.clone(); wall.map.needsUpdate = true; wall.map.repeat.set(2 * PL / 2, 3);
+      for (const x of [lo, hi]) planeAt(g, 2 * PL, 6, wall, x, FY + 1.5, 0, Math.PI / 2);
+      box(g, lo, hi, FY + 4.5, FY + 4.7, -PL, PL, mat(0x5e6166, { emissive: 0x2a2c30, emissiveIntensity: 0.6 }));
+      const strip = new THREE.MeshBasicMaterial({ color: 0xfff8e8 });
+      for (const x of island ? [X(5.6)] : [X(4.2), X(-8.5)]) planeAt(g, 0.5, 2 * PL - 8, strip, x, FY + 4.48, 0, 0, Math.PI / 2);
+      for (const z of [-PL, PL]) {
+        box(g, lo, -2.75, FY - 1.45, FY + 4.6, z - 0.3, z + 0.3, mat(0x55585c));
+        box(g, 2.75, hi, FY - 1.45, FY + 4.6, z - 0.3, z + 0.3, mat(0x55585c));
+        box(g, -2.75, 2.75, FY + 3.3, FY + 4.6, z - 0.3, z + 0.3, mat(0x55585c));
+      }
+      // big station names on the wall across from the doors, as in BART's subway stations
+      const far = sx < 0 ? hi : lo;
+      for (let z = -PL + 25; z < PL; z += 50) {
+        const m = new THREE.MeshBasicMaterial();
+        planeAt(g, 4.8, 1.2, m, far - sx * 0.02, FY + 2.4, z, sx < 0 ? -Math.PI / 2 : Math.PI / 2);
+        signMats.push(m);
+      }
+    } else {
+      // canopies over the platforms on posts
+      const roof = (a, b) => {
+        const [x0, x1] = span(a, b);
+        box(g, x0 - 0.3, x1 + 0.3, FY + 4.4, FY + 4.65, -PL * 0.8, PL * 0.8, canopyMat);
+        const mid = (x0 + x1) / 2;
+        for (let z = -PL * 0.8 + 6; z < PL * 0.8; z += 12) box(g, mid - 0.2, mid + 0.2, FY, FY + 4.4, z - 0.2, z + 0.2, columnMat);
+      };
+      if (island) roof(1.72, 9.5);
+      else { roof(1.72, 6.6); roof(-6.12, -11.0); }
     }
     g.visible = false;
     world.add(g);
-    return { g, setName(name) { const t = makeSign(name); for (const m of signs) { m.map = t; m.needsUpdate = true; } } };
+    const t = makeSign(name);
+    for (const m of signMats) { m.map = t; m.needsUpdate = true; }
+    return { g, doors, level, dispose: () => world.remove(g) };
   };
-  const origin = makePlatform(true);
-  origin.setName('Bay Fair');
-  const destPlat = makePlatform(false);
+
+  // How the land lies under the track at u meters into the current leg (0 = the station you left).
+  let legPlan = { segs: [{ a: 0, b: RIDE.distance, kind: 'elevated' }], dist: RIDE.distance };
+  const planLeg = (segments, dist, fromLevel, toLevel) => {
+    let segs = (segments && segments.length ? segments : [{ from: 0, to: 1, kind: fromLevel === toLevel ? fromLevel : 'grade' }])
+      .map((s) => ({ a: s.from * dist, b: s.to * dist, kind: LIFT[s.kind] !== undefined ? s.kind : 'grade', name: s.name || null }));
+    // at the platforms the station's own level wins (OSM's tags are least reliable right at a station)
+    const ends = [[0, STATION_HALF + 20, fromLevel], [dist - STATION_HALF - 20, dist, toLevel]];
+    for (const [a, b, kind] of ends) {
+      if (!kind) continue;
+      const out = [];
+      for (const s of segs) {
+        if (s.b <= a || s.a >= b) { out.push(s); continue; }
+        if (s.a < a) out.push({ ...s, b: a });
+        if (s.b > b) out.push({ ...s, a: b });
+      }
+      out.push({ a: Math.max(0, a), b: Math.min(dist, b), kind, name: null });
+      segs = out.sort((p, q) => p.a - q.a);
+    }
+    // merge neighbours of the same kind
+    const merged = [];
+    for (const s of segs) {
+      const last = merged[merged.length - 1];
+      if (last && last.kind === s.kind) last.b = s.b; else if (s.b - s.a > 0.5) merged.push({ ...s });
+    }
+    legPlan = { segs: merged, dist };
+    clearTunnels();
+    merged.forEach((s, i) => {
+      if (s.kind !== 'tunnel') return;
+      // underground stations have their own box; the tunnel tube runs between them
+      const a = i === 0 && fromLevel === 'tunnel' ? Math.max(s.a, STATION_HALF) : s.a;
+      const b = i === merged.length - 1 && toLevel === 'tunnel' ? Math.min(s.b, dist - STATION_HALF) : s.b;
+      addTunnel(a, b, i > 0 || fromLevel !== 'tunnel', i < merged.length - 1 || toLevel !== 'tunnel');
+    });
+  };
+  const smooth = (t) => t * t * (3 - 2 * t);
+  const liftAt = (u) => {
+    const { segs } = legPlan;
+    if (!segs.length) return LIFT.grade;
+    let i = segs.findIndex((x) => u < x.b);
+    if (i < 0) i = segs.length - 1;
+    const s = segs[i];
+    let L = LIFT[s.kind];
+    // ramps between a viaduct and the ground; a tunnel portal is always at ground level, so the
+    // ramp happens on the open side
+    const ramp = (A, B, at, room) => {
+      if (LIFT[A.kind] === LIFT[B.kind]) return null;
+      const r = Math.min(RAMP, room);
+      const [r0, r1] = A.kind === 'tunnel' ? [at, at + r] : B.kind === 'tunnel' ? [at - r, at] : [at - r / 2, at + r / 2];
+      if (u < r0 || u > r1) return null;
+      return LIFT[A.kind] + (LIFT[B.kind] - LIFT[A.kind]) * smooth((u - r0) / (r1 - r0));
+    };
+    if (i > 0) { const v = ramp(segs[i - 1], s, s.a, Math.min(s.b - s.a, segs[i - 1].b - segs[i - 1].a)); if (v !== null) L = v; }
+    if (i < segs.length - 1) { const v = ramp(s, segs[i + 1], s.b, Math.min(s.b - s.a, segs[i + 1].b - segs[i + 1].a)); if (v !== null) L = v; }
+    return L;
+  };
+  const kindAt = (u) => (legPlan.segs.find((s) => u < s.b) || legPlan.segs[legPlan.segs.length - 1] || { kind: 'grade' }).kind;
+  const stations = { from: null, to: null }; // the station groups at each end of the current leg
+  // Inside a tunnel or an underground station: nothing outside can be seen.
+  const enclosed = (u) => {
+    if (tunnelPieces.some((t) => u > t.a + 12 && u < t.b - 12)) return true;
+    const { dist } = legPlan;
+    return (stations.from && stations.from.level === 'tunnel' && u < STATION_HALF - 8) || (stations.to && stations.to.level === 'tunnel' && u > dist - STATION_HALF + 8);
+  };
+
+  const clearStations = () => {
+    for (const k of ['from', 'to']) { if (stations[k]) stations[k].dispose(); stations[k] = null; }
+  };
 
   /* ---------- Train sound: a low rumble that follows the speed (optional) ---------- */
   let audio = null;
@@ -539,6 +740,10 @@ export function createTrainRide(scene, { floorY, x: originX = 400 }) {
 
   /* ---------- Ride state ---------- */
   let st = null;
+
+  // The doors that open (or last opened) where the train is now: the station it is leaving until it
+  // goes, then the next one.
+  const doorSide = () => (st.phase === 'boarding' || st.phase === 'closing' ? st.originDoors : st.destDoors);
 
   const drawScreens = () => {
     if (!st) return;
@@ -567,14 +772,14 @@ export function createTrainRide(scene, { floorY, x: originX = 400 }) {
     g.fillText(after ? `then ${after}` : 'Last stop', x + 22, 146, 256 - x - 30);
     g.fillStyle = '#ffd43b'; g.beginPath(); g.arc(x, 300 - prog * 110, 6, 0, TAU); g.fill(); // the train
     g.fillStyle = '#9fb3c4'; g.font = '15px system-ui, sans-serif';
-    g.fillText(st.phase === 'closing' ? 'Doors closing' : 'Doors open on the left', 12, 338);
+    g.fillText(st.phase === 'closing' ? 'Doors closing' : `Doors open on the ${doorSide()}`, 12, 338);
     sideTex.needsUpdate = true;
 
     const o = overCanvas.getContext('2d');
     o.fillStyle = '#050505'; o.fillRect(0, 0, 768, 96);
     o.fillStyle = '#ffb02e'; o.font = 'bold 44px monospace'; o.textBaseline = 'middle';
     const last = st.leg >= st.stops.length - 1;
-    const msg = `${arriving ? 'Now arriving' : 'Next stop'}: ${st.next}${last ? ' (last stop)' : ''}   ·   Train to ${st.dest}   ·   Doors open on the left   ·   `;
+    const msg = `${arriving ? 'Now arriving' : 'Next stop'}: ${st.next}${last ? ' (last stop)' : ''}   ·   Train to ${st.dest}   ·   Doors open on the ${st.destDoors}   ·   `;
     const wMsg = o.measureText(msg).width;
     const off = (st.t * 90) % wMsg;
     for (let xx = -off; xx < 768; xx += wMsg) o.fillText(msg, xx, 50);
@@ -582,19 +787,37 @@ export function createTrainRide(scene, { floorY, x: originX = 400 }) {
   };
 
   const setDoors = (open) => {
-    for (const s of ['-1', '1']) {
-      const o = s === '-1' ? open : 0;
-      for (const { leaf, z, side } of leaves[s]) leaf.position.z = z + side * (dh / 2 + (dh - 0.04) * o);
+    const side = st && doorSide() === 'right' ? 1 : -1;
+    for (const s of [-1, 1]) {
+      const o = s === side ? open : 0;
+      for (const { leaf, z, side: half } of leaves[String(s)]) leaf.position.z = z + half * (dh / 2 + (dh - 0.04) * o);
     }
-    for (const { s, m } of doorLights) m.color.set(s < 0 && open > 0.01 ? (st && st.phase === 'closing' ? 0xff3b2f : 0x3cf06a) : 0x551511);
+    for (const { s, m } of doorLights) m.color.set(s === side && open > 0.01 ? (st && st.phase === 'closing' ? 0xff3b2f : 0x3cf06a) : 0x551511);
   };
 
   const placeWorld = () => {
-    const s = st.s;
-    for (const { obj, u } of movers) obj.position.z = mod(s - u, WRAP) - WRAP / 2;
-    const zo = s, zd = s - st.dist;
-    origin.g.position.z = zo; origin.g.visible = Math.abs(zo) < 300;
-    destPlat.g.position.z = zd; destPlat.g.visible = Math.abs(zd) < 300;
+    const s = st.s, dist = legPlan.dist;
+    const L = liftAt(s), inside = enclosed(s);
+    scenery.position.y = FY - L;
+    scenery.visible = !inside;
+    for (const m of movers) {
+      const z = mod(s - m.u, WRAP) - WRAP / 2;
+      m.obj.position.z = z;
+      if (m.kind === 'land') continue;
+      const u = s - z; // where along the leg this item is
+      const atStation = Math.abs(u) < STATION_HALF + 4 || Math.abs(u - dist) < STATION_HALF + 4;
+      const k = kindAt(u);
+      if (m.kind === 'pier') {
+        m.obj.visible = !inside && L > 2.5 && k !== 'tunnel';
+        m.obj.scale.y = Math.max(0.01, L - 1.45);
+      } else {
+        m.obj.visible = !inside && !atStation && k === 'elevated' && liftAt(u) > 3;
+      }
+    }
+    const zo = s, zd = s - dist;
+    if (stations.from) { stations.from.g.position.z = zo; stations.from.g.visible = Math.abs(zo) < STATION_HALF + 300; }
+    if (stations.to) { stations.to.g.position.z = zd; stations.to.g.visible = Math.abs(zd) < STATION_HALF + 300; }
+    for (const t of tunnelPieces) t.g.position.z = s - (t.a + t.b) / 2;
     groundMat.map.offset.y = mod(s / 20, 1);
     roadMat.map.offset.y = mod(s / 20, 1);
     ballastMat.map.offset.y = mod(s / 2.4, 1);
@@ -604,11 +827,13 @@ export function createTrainRide(scene, { floorY, x: originX = 400 }) {
   const describe = () => {
     const last = st.leg >= st.stops.length - 1;
     let here = null;
-    if (st.phase === 'arrived' && st.open >= 0.9) here = { name: st.next, index: st.leg };
-    else if (st.phase === 'boarding' && st.leg > 0) here = { name: st.from, index: st.leg - 1 };
+    if (st.phase === 'arrived' && st.open >= 0.9) here = { name: st.next, index: st.leg, doors: st.destDoors };
+    else if (st.phase === 'boarding' && st.leg > 0) here = { name: st.from, index: st.leg - 1, doors: st.originDoors };
     return {
       phase: st.phase, speed: st.v, s: st.s, dest: st.dest, next: st.next, from: st.from,
       leg: st.leg, stops: st.stops, last, here,
+      // the side the doors open on at the next stop, and what the track is doing here
+      doors: st.destDoors, track: kindAt(st.s),
       // seconds until the train stops at `next` (null once it has stopped)
       eta: st.phase === 'arrived' ? null : Math.max(0, st.closeAt + RIDE.closeDur + 1 + legSeconds(st.dist) - st.t), remaining: st.stops.length - st.leg - (st.phase === 'arrived' ? 1 : 0),
     };
@@ -621,12 +846,17 @@ export function createTrainRide(scene, { floorY, x: originX = 400 }) {
     bounds: { x: W - 0.3, z: HL - 0.35 },
     // stops: names of every station the train calls at after `from`, in order (the last is the end of the ride).
     // legs: meters of real track before each of those stops (missing ones use RIDE.distance).
-    start({ dest, color, next, stops, legs = [], from = 'Bay Fair' }) {
+    // looks: for each stop, { doors, layout, level, segments } (see stationLook); origin: the same for `from`.
+    start({ dest, color, next, stops, legs = [], from = 'Bay Fair', looks = [], origin = null }) {
       const list = stops && stops.length ? [...stops] : [next || nextStopFrom(dest)];
       const legM = (i) => (legs[i] > 50 ? legs[i] : RIDE.distance);
-      st = { t: 0, s: 0, v: 0, phase: 'boarding', dest: dest || 'Train', stops: list, legM, dist: legM(0), leg: 0, next: list[0], from, origin: from, color: cssColor(color), fired: new Set(), arrivedT: null, closeAt: RIDE.closeAt };
-      destPlat.setName(st.next);
-      origin.setName(from);
+      const look = (i) => stationLook(looks[i]);
+      const o = stationLook(origin);
+      clearStations();
+      st = { t: 0, s: 0, v: 0, phase: 'boarding', dest: dest || 'Train', stops: list, legM, look, dist: legM(0), leg: 0, next: list[0], from, origin: from, color: cssColor(color), fired: new Set(), arrivedT: null, closeAt: RIDE.closeAt, originDoors: o.doors, destDoors: look(0).doors };
+      stations.from = makeStation({ name: from, ...o });
+      stations.to = makeStation({ name: st.next, ...look(0) });
+      planLeg(look(0).segments, st.dist, o.level, look(0).level);
       root.visible = true;
       if (!audio) startAudio();
       if (audio && audio.ac.state === 'suspended') audio.ac.resume();
@@ -636,6 +866,8 @@ export function createTrainRide(scene, { floorY, x: originX = 400 }) {
     },
     stop() {
       st = null;
+      clearStations();
+      clearTunnels();
       root.visible = false;
       if (audio) audio.gain.gain.value = 0;
     },
@@ -653,8 +885,15 @@ export function createTrainRide(scene, { floorY, x: originX = 400 }) {
         st.next = st.stops[st.leg];
         st.dist = st.legM(st.leg);
         st.t = dt; st.s = 0; st.v = 0; st.arrivedT = null; st.fired = new Set();
-        origin.setName(st.from);
-        destPlat.setName(st.next);
+        // the station we're at becomes the start of the next leg; build the one after it
+        const here = stations.to;
+        if (stations.from) stations.from.dispose();
+        stations.from = here;
+        const nl = st.look(st.leg);
+        stations.to = makeStation({ name: st.next, ...nl });
+        st.originDoors = st.destDoors;
+        st.destDoors = nl.doors;
+        planLeg(nl.segments, st.dist, here ? here.level : 'elevated', nl.level);
         events.push('continuing');
       }
       const closeAt = st.closeAt;

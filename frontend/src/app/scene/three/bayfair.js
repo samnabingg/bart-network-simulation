@@ -12,7 +12,7 @@
 // Not affiliated with or endorsed by BART. No BART logos are used.
 
 import * as THREE from 'three';
-import { atLeftDoor, createTrainRide, nextStopFrom } from './train-ride.js';
+import { atDoor, createTrainRide, nextStopFrom } from './train-ride.js';
 import { createFareGates } from './fare-gates.js';
 import { buildFleetTrain } from './fleet.js';
 
@@ -677,7 +677,7 @@ export function createBayFairScene(host, opts = {}) {
       const a = document.createElement('strong'); a.textContent = `Train to ${r.dest}`;
       const b = document.createElement('span'); b.textContent = `${status} · ${Math.round(r.speed * 3.6)} km/h${r.remaining > 0 ? ` · ${r.remaining} more stop${r.remaining === 1 ? '' : 's'}` : ''}`;
       const c = document.createElement('span'); c.className = 'bf-ride-tip';
-      c.textContent = r.here ? `Doors open at ${r.here.name}. Walk to a door on the left and press E to get off.`
+      c.textContent = r.here ? `Doors open at ${r.here.name}. Walk to a door on the ${r.here.doors} and press E to get off.`
         : game.sitting ? 'Sitting. Press E or walk to stand up.' : 'Walk around the car. Press E near a seat to sit.';
       rideEl.append(a, b, c);
     }
@@ -772,7 +772,7 @@ export function createBayFairScene(host, opts = {}) {
   const rideActs = [
     {
       // Doors open at a station and you're standing in a doorway: step off here.
-      test: () => !game.sitting && !!(ride.state && ride.state.here) && atLeftDoor(P.x, P.z),
+      test: () => !game.sitting && !!(ride.state && ride.state.here) && atDoor(P.x, P.z, ride.state.here.doors),
       label: () => `Press E: get off at ${ride.state.here.name}`,
       run() { getOff(ride.state.here.index); },
     },
@@ -811,7 +811,9 @@ export function createBayFairScene(host, opts = {}) {
     const nextName = nx ? nx.name : nextStopFrom(dest);
     rideInfo = { dest, color, destAbbr, direction, next: nx, stops };
     boardEl.hidden = true;
-    ride.start({ dest, color, next: nextName, stops: stops.map((x) => x.name), legs: stops.map((x) => x.meters), from: 'Bay Fair' });
+    // Bay Fair is an elevated island platform: the doors open on the left
+    const origin = { doors: 'left', layout: 'island', level: 'elevated' };
+    ride.start({ dest, color, next: nextName, stops: stops.map((x) => x.name), legs: stops.map((x) => x.meters), looks: stops, origin, from: 'Bay Fair' });
     // step in through the center door on the left, facing into the car
     P.x = -0.95; P.z = 0; P.y = 0; P.yaw = -Math.PI / 2; P.pitch = -0.05;
     beep(520, 0.2);
@@ -838,11 +840,11 @@ export function createBayFairScene(host, opts = {}) {
   const onRideEvent = (e, r) => {
     if (e === 'closing') { chime([[784, 0.18], [659, 0.18], [523, 0.32]]); toast('Doors closing. Please stand clear.'); }
     if (e === 'departed') toast(`Next stop: ${r.next}${r.last ? ', the last stop' : ''}.`);
-    if (e === 'arriving') { chime([[523, 0.2], [659, 0.3]]); toast(`Now arriving at ${r.next}${r.last ? ', the last stop on this train' : ''}. Doors will open on the left.`, 5000); }
+    if (e === 'arriving') { chime([[523, 0.2], [659, 0.3]]); toast(`Now arriving at ${r.next}${r.last ? ', the last stop on this train' : ''}. Doors will open on the ${r.doors}.`, 5000); }
     if (e === 'opened') {
       game.arrived = true;
       chime([[523, 0.18], [659, 0.18], [784, 0.3]]);
-      if (!r.last) { toast(`This is ${r.next}. To get off, walk to a door on the left and press E.`, 6000); return; }
+      if (!r.last) { toast(`This is ${r.next}. To get off, walk to a door on the ${r.doors} and press E.`, 6000); return; }
       toast(`This is ${r.next}, the last stop. Everyone please leave the train: walk to a door and press E.`, 7000);
       // End of the line: if you stay on, offer the menu after a while.
       setTimeout(() => {

@@ -1,5 +1,7 @@
 // A walkable station for every BART station except Bay Fair (which has its own detailed model in
-// bayfair.js). The layout comes from the station's entry in network.js:
+// bayfair.js). Tracks, platforms (island, side or several), platform length and the width of the
+// station box come from the station's OpenStreetMap layout (osm-layout.js); without one, the
+// generic cross-section for the station's reference data below is used:
 //   kind:     'elevated'    concourse at street level, platform 7 m up on a viaduct
 //             'surface'     concourse in an underpass, platform 4.5 m up on an embankment
 //             'underground' mezzanine with a ceiling, platform 6 m below it in a tunnel box
@@ -12,15 +14,17 @@
 //
 // Layout (meters), shared by all kinds. +z is toward the street, -z along the platform.
 //   Concourse:  z from +14 to -1.7 (fare gates at z = -1)
-//   Paid hall:  z from -1.7 to -19, |x| < 9, escalator/stairs from z = -3 to z = -17
-//   Platform:   z from -17 to -90 at height PY
+//   Paid hall:  z from -1.7 to -19, |x| < HW, escalator/stairs from z = -3 to z = -17
+//   Platform:   z from -17 to -17 - length at height PY (73 m generic, about 213 m from OSM)
+//   HW is the half width of the station box (9.8 m generic, wider for more tracks)
 
 import * as THREE from 'three';
 import { RoomEnvironment } from 'three/addons/environments/RoomEnvironment.js';
 import { mergeGeometries } from 'three/addons/utils/BufferGeometryUtils.js';
-import { atLeftDoor, createTrainRide } from './train-ride.js';
+import { atDoor, createTrainRide } from './train-ride.js';
 import { createFareGates } from './fare-gates.js';
 import { buildFleetTrain } from './fleet.js';
+import { layoutFromOsm } from './osm-layout.js';
 
 export const SDIM = {
   eye: 1.6, radius: 0.3, walk: 2.6, run: 4.2, escalatorSpeed: 0.9,
@@ -101,25 +105,6 @@ const easeIn = (u) => u ** 3;
 const hash = (s) => [...s].reduce((h, c) => (h * 31 + c.charCodeAt(0)) >>> 0, 7);
 const css = (hex, f = 1) => `rgb(${[16, 8, 0].map((sh) => Math.round(clamp(((hex >> sh) & 255) * f, 0, 255))).join(',')})`;
 const FONT = '"Helvetica Neue", Helvetica, Arial, sans-serif';
-
-function layoutFor(platform) {
-  if (platform === 'side') {
-    return {
-      tracks: [{ x: 2.1, dir: 'South' }, { x: -2.1, dir: 'North' }],
-      platforms: [{ x0: 3.8, x1: 8.6 }, { x0: -8.6, x1: -3.8 }],
-      ramps: [{ x0: 5.0, x1: 6.2, esc: true, label: 'Southbound · Escalator' }, { x0: -7.4, x1: -5.0, esc: false, label: 'Northbound · Stairs' }],
-      boardX: [6.2, -6.2],
-      columnX: [7.9, -7.9],
-    };
-  }
-  return {
-    tracks: [{ x: 6, dir: 'South' }, { x: -6, dir: 'North' }],
-    platforms: [{ x0: -4, x1: 4 }],
-    ramps: [{ x0: -3.6, x1: -2.4, esc: true, label: 'Platform · Escalator' }, { x0: 1.4, x1: 3.6, esc: false, label: 'Platform · Stairs' }],
-    boardX: [2.8, -2.8],
-    columnX: [2, -2],
-  };
-}
 
 function canvasTex(w, h, draw, repeat = true) {
   const c = document.createElement('canvas');
@@ -258,8 +243,16 @@ export function createStationScene(host, opts = {}) {
   const st = opts.station;
   const kind = HEIGHT[st.kind] !== undefined ? st.kind : 'elevated';
   const under = kind === 'underground';
-  const LAY = layoutFor(st.platform);
-  const D = SDIM;
+  // Cross-section, platform length and station width: from the OpenStreetMap layout when there is one.
+  const LAY = layoutFromOsm(opts.layout, st.platform);
+  const HW = LAY.halfWidth;
+  const D = { ...SDIM, platformZ1: SDIM.platformZ0 - LAY.length, trainStopZ: SDIM.platformZ0 - LAY.length / 2 };
+  // z positions down the platform: from `first` m past its start, every `step` m, stopping `last` m short of its end
+  const along = (first, step, last) => {
+    const out = [];
+    for (let z = D.platformZ0 - first; z >= D.platformZ1 + last - 0.01; z -= step) out.push(z);
+    return out;
+  };
   const PY = HEIGHT[kind];
   const fam = stationFamily(st.abbr, kind);
   const classic = fam.sign === 'classic';
@@ -304,11 +297,12 @@ export function createStationScene(host, opts = {}) {
     scene.fog = new THREE.Fog(horizon, 90, 700);
     scene.add(new THREE.HemisphereLight(0xcfe3f5, 0x8a7a5e, 0.75));
     const sun = new THREE.DirectionalLight(0xfff0d8, 2.4);
-    sun.position.set(-45, 70, 25);
-    sun.target.position.set(0, 0, -35);
+    sun.position.set(-45, 70, D.trainStopZ + 60);
+    sun.target.position.set(0, 0, D.trainStopZ + 19);
     sun.castShadow = true;
     sun.shadow.mapSize.set(2048, 2048);
-    Object.assign(sun.shadow.camera, { left: -70, right: 70, top: 75, bottom: -75, near: 10, far: 220 });
+    const reach = Math.max(75, LAY.length / 2 + 40);
+    Object.assign(sun.shadow.camera, { left: -(HW + 60), right: HW + 60, top: reach, bottom: -reach, near: 10, far: 220 + reach });
     sun.shadow.bias = -0.0004;
     sun.shadow.normalBias = 0.03;
     scene.add(sun, sun.target);
@@ -672,10 +666,11 @@ export function createStationScene(host, opts = {}) {
   }
   slab(gateX0 - 0.2, -gateX0 + 0.2, 2.35, 2.85, -1.75, -0.2, classic ? trim : mat(0x141d26));
   const gateEdge = -gateX0 + PED / 2;
-  slab(gateEdge, 9, 0, 1.1, -1.7, -1.5, steel);
-  slab(-9, -gateEdge, 0, 1.1, -1.7, -1.5, steel);
-  solid(gateEdge, 9.6, -1.75, -1.4);
-  solid(-9.6, -gateEdge, -1.75, -1.4);
+  // barrier from the gates to the hall walls, so the only way into the paid area is through a gate
+  slab(gateEdge, HW - 0.8, 0, 1.1, -1.7, -1.5, steel);
+  slab(-(HW - 0.8), -gateEdge, 0, 1.1, -1.7, -1.5, steel);
+  solid(gateEdge, HW - 0.2, -1.75, -1.4);
+  solid(-(HW - 0.2), -gateEdge, -1.75, -1.4);
 
   /* ----- Paid hall: floor, walls ----- */
   // The hall floor is a slab with openings where the ramps go down (underground) so you can see
@@ -683,24 +678,24 @@ export function createStationScene(host, opts = {}) {
   const hallFloorMat = floorMat(19.2, 19.2);
   const floorStrips = (z0, z1) => {
     const cuts = under ? LAY.ramps.map((r) => [r.x0 - 0.15, r.x1 + 0.15]).sort((a, b) => a[0] - b[0]) : [];
-    let x = -9.6;
-    for (const [c0, c1] of [...cuts, [9.6, 9.6]]) { if (c0 > x) slab(x, c0, -0.3, 0, z0, z1, hallFloorMat); x = c1; }
+    let x = -(HW - 0.2);
+    for (const [c0, c1] of [...cuts, [HW - 0.2, HW - 0.2]]) { if (c0 > x) slab(x, c0, -0.3, 0, z0, z1, hallFloorMat); x = c1; }
   };
   floorStrips(D.platformZ0, D.rampZ0);
-  slab(-9.6, 9.6, -0.3, 0, D.rampZ0, -1.7, hallFloorMat);
-  slab(-9.6, 9.6, -0.3, 0, -19.4, D.platformZ0, hallFloorMat);
+  slab(-(HW - 0.2), HW - 0.2, -0.3, 0, D.rampZ0, -1.7, hallFloorMat);
+  slab(-(HW - 0.2), HW - 0.2, -0.3, 0, -19.4, D.platformZ0, hallFloorMat);
   const hallTop = under ? CEIL : PY - 1.2;
-  for (const s of [-1, 1]) slab(s * 9.2 - 0.2, s * 9.2 + 0.2, 0, hallTop, -19, -1.7, wallMat(17.3, hallTop));
-  slab(-9.4, 9.4, 0, hallTop, -19.4, -19, wallMat(18.8, hallTop));
+  for (const s of [-1, 1]) slab(s * (HW - 0.6) - 0.2, s * (HW - 0.6) + 0.2, 0, hallTop, -19, -1.7, wallMat(17.3, hallTop));
+  slab(-(HW - 0.4), HW - 0.4, 0, hallTop, -19.4, -19, wallMat(2 * (HW - 0.4), hallTop));
   if (under) {
-    ceiling(-9.4, 9.4, -19.4, -2);
+    ceiling(-(HW - 0.4), HW - 0.4, -19.4, -2);
   } else {
     for (let z = -4; z > -18; z -= 4) lamp(0, PY - 1.02, z, 6, 0.25);
-    for (const s of [-1, 1]) posterAt(s + 3, s * 8.98, 1.6, -8, -s * Math.PI / 2);
+    for (const s of [-1, 1]) posterAt(s + 3, s * (HW - 0.82), 1.6, -8, -s * Math.PI / 2);
   }
-  solid(-9.6, -9, -19.6, -1.7);
-  solid(9, 9.6, -19.6, -1.7);
-  solid(-9.6, 9.6, -19.8, -19);
+  solid(-(HW - 0.2), -(HW - 0.8), -19.6, -1.7);
+  solid(HW - 0.8, HW - 0.2, -19.6, -1.7);
+  solid(-(HW - 0.2), HW - 0.2, -19.8, -19);
 
   /* ----- Escalator and stairs between hall and platform ----- */
   const rise = PY;
@@ -768,7 +763,7 @@ export function createStationScene(host, opts = {}) {
   }
 
   /* ----- Track structure ----- */
-  const ZA = 300, ZB = -300; // tracks run far in both directions
+  const ZA = 300, ZB = Math.min(-300, D.platformZ1 - 120); // tracks run far in both directions
   const trackbed = tm('gravel', under ? 0x4a4744 : 0x6a6660, 2.8, 600);
   trackbed.map.repeat.set(2, 500);
   const railMat = mat(0xa9acb2, { metalness: 0.85, roughness: 0.3 });
@@ -782,8 +777,10 @@ export function createStationScene(host, opts = {}) {
       slab(cx + dx - 0.2, cx + dx + 0.2, PY - 0.7, PY - 0.62, ZB, ZA, plinth);
       slab(cx + dx - 0.04, cx + dx + 0.04, PY - 0.62, PY - 0.5, ZB, ZA, railMat);
     }
-    // third rail with its cover board, on the side away from the platform
-    const away = st.platform === 'side' ? -Math.sign(cx) : Math.sign(cx);
+    // third rail with its cover board, on the side away from the nearest platform
+    const mid = (p) => (p.x0 + p.x1) / 2;
+    const np = LAY.platforms.reduce((b, p) => (Math.abs(mid(p) - cx) < Math.abs(mid(b) - cx) ? p : b));
+    const away = Math.sign(cx - mid(np)) || 1;
     const tx = cx + away * 1.42;
     slab(tx - 0.05, tx + 0.05, PY - 0.7, PY - 0.55, ZB, ZA, mat(0x6a6c70, { metalness: 0.6 }));
     slab(tx - 0.16, tx + 0.16, PY - 0.5, PY - 0.47, ZB, ZA, thirdCover);
@@ -793,48 +790,49 @@ export function createStationScene(host, opts = {}) {
   // concourse and the street (the rest sits on an embankment).
   const portal = (z) => {
     for (const s of [-1, 1]) {
-      slab(s * 10 - 0.45, s * 10 + 0.45, 0, PY - 1.2, z - 0.45, z + 0.45, concrete);
-      if (z > -19.5) solid(s * 10 - 0.5, s * 10 + 0.5, z - 0.5, z + 0.5);
+      slab(s * (HW + 0.2) - 0.45, s * (HW + 0.2) + 0.45, 0, PY - 1.2, z - 0.45, z + 0.45, concrete);
+      if (z > -19.5) solid(s * (HW + 0.2) - 0.5, s * (HW + 0.2) + 0.5, z - 0.5, z + 0.5);
     }
-    slab(-10.4, 10.4, PY - 1.9, PY - 1.2, z - 0.5, z + 0.5, concrete);
+    slab(-(HW + 0.6), HW + 0.6, PY - 1.9, PY - 1.2, z - 0.5, z + 0.5, concrete);
   };
   if (kind === 'elevated') {
-    for (let z = 250; z >= -250; z -= 14) portal(z);
+    for (let z = 250; z >= ZB + 50; z -= 14) portal(z);
   } else if (kind === 'surface') {
-    slab(-10.5, 10.5, -0.1, PY - 1.2, ZB, -19.4, tm('board', 0x9a8f7a, 600, 4)); // embankment wall beyond the hall
+    slab(-(HW + 0.7), HW + 0.7, -0.1, PY - 1.2, ZB, -19.4, tm('board', 0x9a8f7a, 600, 4)); // embankment wall beyond the hall
     for (let z = 250; z > -19; z -= 14) portal(z);
     for (const s of [-1, 1]) {
-      slab(s * 10 - 0.5, s * 10 + 0.5, 0, PY - 1.2, -19.4, -1.7, concrete); // underpass walls (the hall walls already block you)
+      slab(s * (HW + 0.2) - 0.5, s * (HW + 0.2) + 0.5, 0, PY - 1.2, -19.4, -1.7, concrete); // underpass walls (the hall walls already block you)
     }
   } else {
     // tunnel box around the platform and tracks
     const tunnelWall = tm(fam.wall, fam.wallColor, 600, -PY + 1);
     for (const s of [-1, 1]) {
-      slab(s * 9.8 - 0.2, s * 9.8 + 0.2, PY - 1, 0, ZB, ZA, tunnelWall);
-      slab(s * 9.58 - 0.02, s * 9.58 + 0.02, PY - 1, PY + 0.3, ZB, ZA, mat(0x2a2826)); // soot-dark base
-      slab(s * 9.58 - 0.02, s * 9.58 + 0.02, PY + 3.4, PY + 3.55, ZB, ZA, trim);
+      slab(s * HW - 0.2, s * HW + 0.2, PY - 1, 0, ZB, ZA, tunnelWall);
+      slab(s * (HW - 0.22) - 0.02, s * (HW - 0.22) + 0.02, PY - 1, PY + 0.3, ZB, ZA, mat(0x2a2826)); // soot-dark base
+      slab(s * (HW - 0.22) - 0.02, s * (HW - 0.22) + 0.02, PY + 3.4, PY + 3.55, ZB, ZA, trim);
     }
     const under_ceil = mat(classic ? 0x5a554e : 0xd9dcde, { roughness: 0.9 });
-    slab(-10, 10, -0.3, 0, ZB, -19.4, under_ceil);
-    slab(-10, 10, -0.3, 0, 14, ZA, under_ceil);
-    slab(-10, 10, PY - 1.1, PY - 0.8, ZB, ZA, mat(0x34302c));
-    slab(-14, 14, -0.3, 0, -1.7, 14, under_ceil);
+    slab(-(HW + 0.2), HW + 0.2, -0.3, 0, ZB, -19.4, under_ceil);
+    slab(-(HW + 0.2), HW + 0.2, -0.3, 0, 14, ZA, under_ceil);
+    slab(-(HW + 0.2), HW + 0.2, PY - 1.1, PY - 0.8, ZB, ZA, mat(0x34302c));
+    slab(-Math.max(14, HW + 0.2), Math.max(14, HW + 0.2), -0.3, 0, -1.7, 14, under_ceil);
     if (fam.ceil === 'coffer' || fam.ceil === 'ribbed') {
-      for (let z = -21; z > D.platformZ1 - 4; z -= 4) slab(-9.6, 9.6, -0.65, -0.3, z - 0.18, z + 0.18, under_ceil);
+      for (let z = -21; z > D.platformZ1 - 4; z -= 4) slab(-(HW - 0.2), HW - 0.2, -0.65, -0.3, z - 0.18, z + 0.18, under_ceil);
     }
   }
 
   /* ----- Platforms ----- */
   const roofY = PY + 4.4;
-  const WAVE_W = 10.2, WAVE_DROP = 1.4, WAVE_R = (WAVE_W * WAVE_W + WAVE_DROP * WAVE_DROP) / (2 * WAVE_DROP);
+  const WAVE_W = HW + 0.4, WAVE_DROP = 1.4, WAVE_R = (WAVE_W * WAVE_W + WAVE_DROP * WAVE_DROP) / (2 * WAVE_DROP);
   // Height of the underside of the platform roof (or tunnel ceiling) at x, for things hung from it.
   const roofAt = (x) => {
     if (under) return -0.3;
     if (fam.roof === 'wave' || fam.roof === 'glass') return roofY + WAVE_DROP + 0.4 - (WAVE_R - Math.sqrt(WAVE_R * WAVE_R - x * x));
-    if (fam.roof === 'gable') return roofY + 0.15 + 0.7 * (1 - Math.abs(x) / 9.8);
+    if (fam.roof === 'gable') return roofY + 0.15 + 0.7 * (1 - Math.abs(x) / HW);
     return roofY;
   };
-  const centerCols = st.platform !== 'side' && ['gable', 'wave'].includes(fam.roof);
+  // one central island under a gable or wave roof: columns down the middle of the platform
+  const centerCols = LAY.platforms.length === 1 && LAY.kind === 'island' && ['gable', 'wave'].includes(fam.roof);
   const colX = centerCols ? [0] : LAY.columnX;
   const tactile = texFor('tactile', 0xe9c21b);
   const edgeStone = mat(0x6c6a66, { roughness: 0.7 });
@@ -846,15 +844,15 @@ export function createStationScene(host, opts = {}) {
     const edgeStrip = (x0, x1, m) => plane(x0, x1, D.platformZ1, D.platformZ0, PY + 0.012, m);
     const tMat = () => { const t = tactile.clone(); t.needsUpdate = true; t.repeat.set(1, plen / 0.6); return new THREE.MeshStandardMaterial({ map: t, roughness: 0.6 }); };
     for (const t of LAY.tracks) {
-      if (Math.abs(t.x - p.x0) < 2.5) { edgeStrip(p.x0, p.x0 + 0.3, edgeStone); edgeStrip(p.x0 + 0.3, p.x0 + 0.9, tMat()); }
-      if (Math.abs(t.x - p.x1) < 2.5) { edgeStrip(p.x1 - 0.3, p.x1, edgeStone); edgeStrip(p.x1 - 0.9, p.x1 - 0.3, tMat()); }
+      if (Math.abs(t.x - p.x0) < 3.2) { edgeStrip(p.x0, p.x0 + 0.3, edgeStone); edgeStrip(p.x0 + 0.3, p.x0 + 0.9, tMat()); }
+      if (Math.abs(t.x - p.x1) < 3.2) { edgeStrip(p.x1 - 0.3, p.x1, edgeStone); edgeStrip(p.x1 - 0.9, p.x1 - 0.3, tMat()); }
     }
     solid(p.x0 - 2, p.x0 + 0.15, D.platformZ1 - 1, D.platformZ0 - 0.2, 'high');
     solid(p.x1 - 0.15, p.x1 + 2, D.platformZ1 - 1, D.platformZ0 - 0.2, 'high');
     solid(p.x0 - 2, p.x1 + 2, D.platformZ1 - 2, D.platformZ1, 'high');
     // benches: wood slats on concrete (classic) or perforated steel (newer)
     const cx = (p.x0 + p.x1) / 2;
-    const benchZ = centerCols ? [-30, -66] : [-36, -54, -72];
+    const benchZ = centerCols ? along(13, 36, 20) : along(19, 18, 17);
     for (const z of benchZ) {
       if (classic) {
         for (const dz of [-0.8, 0.8]) slab(cx - 0.2, cx + 0.2, PY, PY + 0.4, z + dz - 0.15, z + dz + 0.15, concrete);
@@ -867,12 +865,12 @@ export function createStationScene(host, opts = {}) {
     }
     // trash bins and an emergency call box
     const bx = cx + (centerCols ? 1.3 : 0);
-    for (const z of [-46, -78]) { cyl(0.28, 0.95, bx, PY, z, mat(classic ? 0x3a2c22 : 0x2c3238, { roughness: 0.5 }), 18); solid(bx - 0.3, bx + 0.3, z - 0.3, z + 0.3, 'high'); }
-    slab(cx - 0.18, cx + 0.18, PY, PY + 1.5, -86.5, -86.2, mat(0x1f5fae));
-    slab(cx - 0.08, cx + 0.08, PY + 1.5, PY + 1.62, -86.45, -86.25, new THREE.MeshBasicMaterial({ color: 0x5ab8ff, toneMapped: false }));
+    for (const z of along(29, 32, 11)) { cyl(0.28, 0.95, bx, PY, z, mat(classic ? 0x3a2c22 : 0x2c3238, { roughness: 0.5 }), 18); solid(bx - 0.3, bx + 0.3, z - 0.3, z + 0.3, 'high'); }
+    slab(cx - 0.18, cx + 0.18, PY, PY + 1.5, D.platformZ1 + 3.5, D.platformZ1 + 3.8, mat(0x1f5fae));
+    slab(cx - 0.08, cx + 0.08, PY + 1.5, PY + 1.62, D.platformZ1 + 3.55, D.platformZ1 + 3.75, new THREE.MeshBasicMaterial({ color: 0x5ab8ff, toneMapped: false }));
     // hanging station name signs, readable along the platform
     const signTop = roofAt(cx + 1);
-    for (const z of [-28, -58, -82]) {
+    for (const z of along(11, 27, 8)) {
       for (const dz of [0.05, -0.05]) {
         const m = new THREE.Mesh(new THREE.PlaneGeometry(2.8, 0.7), signMat);
         m.position.set(cx, PY + 2.75, z + dz);
@@ -889,7 +887,7 @@ export function createStationScene(host, opts = {}) {
   if (!under) {
     if (fam.roof === 'gable') {
       // 1972 aerial: shallow gable of concrete on a central spine, exposed ribs, dark fascia
-      const half = 9.8, ridge = 0.7, ang = Math.atan2(ridge, half);
+      const half = HW, ridge = 0.7, ang = Math.atan2(ridge, half);
       for (const s of [-1, 1]) {
         const m = new THREE.Mesh(new THREE.BoxGeometry(half / Math.cos(ang) + 0.1, 0.3, zLen), roofMat);
         m.position.set(s * half / 2, roofY + ridge / 2 + 0.15, zMid);
@@ -899,14 +897,14 @@ export function createStationScene(host, opts = {}) {
         lamp(s * 3.4, roofY - 0.37, zMid, 0.22, zLen - 4);
       }
       slab(-0.4, 0.4, roofY - 0.4, roofY + 0.7, zA, zB, concrete);
-      for (let z = zA + 3; z < zB; z += 6) slab(-9.6, 9.6, roofY - 0.35, roofY, z - 0.15, z + 0.15, concrete);
+      for (let z = zA + 3; z < zB; z += 6) slab(-(HW - 0.2), HW - 0.2, roofY - 0.35, roofY, z - 0.15, z + 0.15, concrete);
     } else if (fam.roof === 'flat') {
       // original ground-level: flat concrete roof, deep fascia, a skylight down the middle
-      slab(-9.5, -1.1, roofY, roofY + 0.35, zA, zB, roofMat);
-      slab(1.1, 9.5, roofY, roofY + 0.35, zA, zB, roofMat);
+      slab(-(HW - 0.3), -1.1, roofY, roofY + 0.35, zA, zB, roofMat);
+      slab(1.1, HW - 0.3, roofY, roofY + 0.35, zA, zB, roofMat);
       plane(-1.1, 1.1, zA, zB, roofY + 0.3, new THREE.MeshBasicMaterial({ color: 0xe8f1f8, toneMapped: false, side: THREE.DoubleSide }));
       for (const s of [-1, 1]) {
-        slab(s * 9.5 - 0.1, s * 9.5 + 0.1, roofY - 0.9, roofY + 0.4, zA, zB, trim);
+        slab(s * (HW - 0.3) - 0.1, s * (HW - 0.3) + 0.1, roofY - 0.9, roofY + 0.4, zA, zB, trim);
         slab(s * 1.15 - 0.08, s * 1.15 + 0.08, roofY - 0.3, roofY + 0.6, zA, zB, concrete);
         for (let z = zA + 5; z < zB; z += 10) lamp(s * 4.5, roofY - 0.01, z, 0.35, 3);
       }
@@ -929,38 +927,38 @@ export function createStationScene(host, opts = {}) {
       if (fam.roof === 'glass') {
         // airport: glass walls beyond the tracks with steel mullions
         for (const s of [-1, 1]) {
-          slab(s * 9.9 - 0.03, s * 9.9 + 0.03, PY - 1, roofY + 0.4, zA, zB, glass);
-          for (let z = zA; z <= zB; z += 3) slab(s * 9.9 - 0.06, s * 9.9 + 0.06, PY - 1, roofY + 0.4, z - 0.06, z + 0.06, whiteSteel);
+          slab(s * (HW + 0.1) - 0.03, s * (HW + 0.1) + 0.03, PY - 1, roofY + 0.4, zA, zB, glass);
+          for (let z = zA; z <= zB; z += 3) slab(s * (HW + 0.1) - 0.06, s * (HW + 0.1) + 0.06, PY - 1, roofY + 0.4, z - 0.06, z + 0.06, whiteSteel);
         }
       }
     } else if (fam.roof === 'saw') {
       // Silicon Valley extension: big white roof folded into tilted panels, glass in the steps
       for (let z = zA; z < zB; z += 8) {
         const seg = Math.min(8, zB - z);
-        const m = new THREE.Mesh(new THREE.BoxGeometry(20.4, 0.25, Math.hypot(seg, 1.6)), roofMat);
+        const m = new THREE.Mesh(new THREE.BoxGeometry(2 * (HW + 0.4), 0.25, Math.hypot(seg, 1.6)), roofMat);
         m.position.set(0, roofY + 0.8, z + seg / 2);
         m.rotation.x = -Math.atan2(1.6, seg);
         scene.add(m);
-        slab(-10.2, 10.2, roofY, roofY + 1.6, z + seg - 0.04, z + seg + 0.04, new THREE.MeshBasicMaterial({ color: 0xe6f0f7, toneMapped: false, transparent: true, opacity: 0.85 }));
+        slab(-(HW + 0.4), HW + 0.4, roofY, roofY + 1.6, z + seg - 0.04, z + seg + 0.04, new THREE.MeshBasicMaterial({ color: 0xe6f0f7, toneMapped: false, transparent: true, opacity: 0.85 }));
         for (const x of [-6, 0, 6]) lamp(x, roofY + 0.2, z + seg / 2, 0.25, seg - 2);
       }
-      for (const s of [-1, 1]) slab(s * 10.2 - 0.1, s * 10.2 + 0.1, roofY - 0.2, roofY + 0.3, zA, zB, trim);
+      for (const s of [-1, 1]) slab(s * (HW + 0.4) - 0.1, s * (HW + 0.4) + 0.1, roofY - 0.2, roofY + 0.3, zA, zB, trim);
     }
   } else {
     for (let z = -22; z > D.platformZ1; z -= 8) for (const x of LAY.columnX) lamp(x, -0.7, z, 0.24, 5);
     // station name on the tunnel walls, facing the platform across the tracks
-    for (const z of [-30, -50, -70]) for (const s of [-1, 1]) {
+    for (const z of along(13, 20, 19)) for (const s of [-1, 1]) {
       const m = new THREE.Mesh(new THREE.PlaneGeometry(4.8, 1.2), signMat);
-      m.position.set(s * 9.55, PY + 2.2, z);
+      m.position.set(s * (HW - 0.25), PY + 2.2, z);
       m.rotation.y = -s * Math.PI / 2;
       scene.add(m);
     }
-    for (const [i, z] of [[0, -40], [1, -60], [2, -80]]) for (const s of [-1, 1]) posterAt(i + (s > 0 ? 3 : 0), s * 9.52, PY + 1.6, z, -s * Math.PI / 2);
+    along(23, 20, 9).forEach((z, i) => { for (const s of [-1, 1]) posterAt(i + (s > 0 ? 3 : 0), s * (HW - 0.28), PY + 1.6, z, -s * Math.PI / 2); });
   }
   // Columns
   const colTop = under ? -0.3 : roofY;
   const colMat = under ? tm(fam.col === 'steel' ? 'panel' : fam.col, fam.col === fam.wall ? fam.wallColor : (fam.col === 'steel' ? 0xe0e3e5 : 0xa8a197), 0.6, Math.abs(colTop - PY)) : null;
-  for (let z = -24; z >= -84; z -= 12) {
+  for (let z = D.platformZ0 - 7; z >= D.platformZ1 + 6; z -= 12) {
     for (const x of colX) {
       if (under) {
         slab(x - 0.3, x + 0.3, PY, colTop, z - 0.3, z + 0.3, colMat);
@@ -991,9 +989,11 @@ export function createStationScene(host, opts = {}) {
       scene.add(crown);
     };
     const freeway = FREEWAY.has(st.abbr);
+    const FW = Math.max(0, HW + 8 - 25); // freeway lanes shift out for a wide station
+    const LOT = Math.max(0, HW + 10 - 28); // and so does the parking lot
     for (let i = 0; i < 28; i++) {
       const side = rand() > 0.5 ? 1 : -1;
-      treeAt(side * (freeway ? 50 + rand() * 30 : 16 + rand() * 9), 60 - rand() * 220, 0.8 + rand() * 0.6);
+      treeAt(side * (freeway ? 50 + FW + rand() * 30 : HW + 6.2 + rand() * 9), 60 - rand() * Math.max(220, 100 - D.platformZ1), 0.8 + rand() * 0.6);
     }
     // buildings with window grids; taller in Oakland and around the newer transit villages
     const tall = ['WOAK', 'MCAR', 'FTVL', 'COLS', 'PHIL', 'WCRK', 'MLPT', 'BERY', 'DUBL'].includes(st.abbr);
@@ -1038,16 +1038,16 @@ export function createStationScene(host, opts = {}) {
       // The freeway runs on a raised roadway on both sides of the station and bridges the street.
       const FH = 5.2, barrierMat = mat(0xc2bfb8);
       for (const s of [-1, 1]) {
-        const xa = Math.min(s * 25, s * 41), xb = Math.max(s * 25, s * 41);
+        const xa = Math.min(s * (25 + FW), s * (41 + FW)), xb = Math.max(s * (25 + FW), s * (41 + FW));
         plane(xa, xb, -400, 400, FH + 0.01, texMat(laneTex, 1, 60));
         slab(xa, xb, FH - 0.7, FH, -400, 400, concrete);
         slab(xa, xb, 0, FH - 0.7, -400, 16, tm('board', 0xb3ada2, 400, FH));
         slab(xa, xb, 0, FH - 0.7, 76, 400, tm('board', 0xb3ada2, 400, FH));
-        for (const z of [30, 46, 62]) slab(s * 33 - 0.8, s * 33 + 0.8, 0, FH - 0.7, z - 0.8, z + 0.8, concrete);
-        for (const x of [s * 25.3, s * 40.7]) slab(x - 0.25, x + 0.25, FH, FH + 0.9, -400, 400, barrierMat);
+        for (const z of [30, 46, 62]) slab(s * (33 + FW) - 0.8, s * (33 + FW) + 0.8, 0, FH - 0.7, z - 0.8, z + 0.8, concrete);
+        for (const x of [s * (25.3 + FW), s * (40.7 + FW)]) slab(x - 0.25, x + 0.25, FH, FH + 0.9, -400, 400, barrierMat);
         for (let i = 0; i < 14; i++) {
           const car = makeCar();
-          const lane = 27 + Math.floor(rand() * 4) * 3.6;
+          const lane = 27 + FW + Math.floor(rand() * 4) * 3.6;
           car.position.set(s * lane, FH, -400 + rand() * 800);
           const v = (24 + rand() * 9) * -s; // right-hand traffic
           car.rotation.y = v > 0 ? 0 : Math.PI;
@@ -1062,8 +1062,8 @@ export function createStationScene(host, opts = {}) {
         g.fillStyle = '#eeeeea';
         for (let y = 0; y < h; y += 32) { g.fillRect(0, y, w * 0.42, 3); g.fillRect(w * 0.58, y, w * 0.42, 3); }
       });
-      plane(28, 86, -60, 60, 0.01, texMat(lotTex, 2, 8));
-      for (const zc of [-60, -30, 0, 30]) for (const xr of [30, 52, 70]) {
+      plane(28 + LOT, 86 + LOT, -60, 60, 0.01, texMat(lotTex, 2, 8));
+      for (const zc of [-60, -30, 0, 30]) for (const xr of [30 + LOT, 52 + LOT, 70 + LOT]) {
         for (let k = 0; k < 10; k++) {
           if (rand() < 0.3) continue;
           const car = makeCar();
@@ -1075,17 +1075,19 @@ export function createStationScene(host, opts = {}) {
           scene.remove(car);
         }
       }
-      for (let z = -55; z <= 55; z += 22) { cyl(0.1, 9, 44, 0, z, mat(0x8f9399, { metalness: 0.5 })); lamp(44, 9, z, 1.2, 0.4); }
+      for (let z = -55; z <= 55; z += 22) { cyl(0.1, 9, 44 + LOT, 0, z, mat(0x8f9399, { metalness: 0.5 })); lamp(44 + LOT, 9, z, 1.2, 0.4); }
     }
   }
 
   /* ----- Trains and departure boards ----- */
-  // A 3-car train (BART runs longer trains; 3 cars fit the modeled platform). Each track serves one
-  // direction: South on the +x track, North on the -x track. Trains stand at the platform until the
-  // estimated departure time, then pull out.
-  const APPROACH = 20, DWELL = 35, DEPART = 8, FAR = 170;
+  // Trains as long as the platform holds (BART runs up to 10 cars on its 213 m platforms; the generic
+  // 73 m platform holds 3). Each track serves one direction: South on the higher-x half of the
+  // tracks, North on the rest. Trains stand at the platform until the estimated departure time,
+  // then pull out.
   const CL = 21.3, CG = 0.7;
-  const CAR_Z = [-(CL + CG), 0, CL + CG];
+  const CARS = Math.max(3, Math.min(10, Math.floor((LAY.length - 4) / (CL + CG))));
+  const APPROACH = 20, DWELL = 35, DEPART = 8, FAR = Math.max(170, LAY.length / 2 + 110);
+  const CAR_Z = Array.from({ length: CARS }, (_, i) => (i - (CARS - 1) / 2) * (CL + CG));
   const DOOR_Z = CAR_Z.flatMap((c) => [-6.9, 0, 6.9].map((d) => c + d));
   let skew = 0;
   const nowMs = () => Date.now() + skew;
@@ -1093,7 +1095,7 @@ export function createStationScene(host, opts = {}) {
 
   // Fleet of the Future cars (see fleet.js), the same model at every station.
   const makeTrain = () => {
-    const train = buildFleetTrain({ cars: 3, carLength: CL, gap: CG, floorY: PY, doorZ: [-6.9, 0, 6.9] });
+    const train = buildFleetTrain({ cars: CARS, carLength: CL, gap: CG, floorY: PY, doorZ: [-6.9, 0, 6.9] });
     train.group.visible = false;
     scene.add(train.group);
     return train;
@@ -1109,7 +1111,12 @@ export function createStationScene(host, opts = {}) {
     tex.colorSpace = THREE.SRGBColorSpace;
     return { ...t, i, s: t.dir === 'South' ? 1 : -1, g, train, lineKey: '', tracked: null, phase: 'none', canvas: c, tex, bm: new THREE.MeshBasicMaterial({ map: tex }) };
   });
-  const rowsForTrack = (t) => (live.rows || []).filter((r) => (r.direction || 'South') === t.dir);
+  // Several tracks for one direction (MacArthur has four tracks): they take turns with the departures.
+  const rowsForTrack = (t) => {
+    const same = tracks.filter((k) => k.dir === t.dir);
+    const k = same.indexOf(t);
+    return (live.rows || []).filter((r) => (r.direction || 'South') === t.dir).filter((_, i) => i % same.length === k);
+  };
   const fmtRemain = (sec) => (sec < 45 ? 'Leaving' : `${Math.ceil(sec / 60)} min`);
   const drawBoard = (t) => {
     const g = t.canvas.getContext('2d');
@@ -1130,7 +1137,7 @@ export function createStationScene(host, opts = {}) {
   const boardFrame = mat(0x2a2a2e);
   for (const t of tracks) {
     const x = LAY.boardX[t.i];
-    for (const z of [-42, -68]) {
+    for (const z of along(25, LAY.length > 100 ? 45 : 26, 22)) {
       slab(x - 1.3, x + 1.3, PY + 3.05, PY + 3.85, z - 0.06, z + 0.06, boardFrame);
       slab(x - 0.03, x + 0.03, PY + 3.85, roofAt(x), z - 0.03, z + 0.03, boardFrame);
       for (const dz of [0.08, -0.08]) {
@@ -1250,7 +1257,7 @@ export function createStationScene(host, opts = {}) {
       const a = document.createElement('strong'); a.textContent = `Train to ${r.dest}`;
       const b = document.createElement('span'); b.textContent = `${status} · ${Math.round(r.speed * 3.6)} km/h${r.remaining > 0 ? ` · ${r.remaining} more stop${r.remaining === 1 ? '' : 's'}` : ''}`;
       const c = document.createElement('span'); c.className = 'bf-ride-tip';
-      c.textContent = r.here ? `Doors open at ${r.here.name}. Walk to a door on the left and press E to get off.`
+      c.textContent = r.here ? `Doors open at ${r.here.name}. Walk to a door on the ${r.here.doors} and press E to get off.`
         : game.sitting ? 'Sitting. Press E or walk to stand up.' : 'Walk around the car. Press E near a seat to sit.';
       rideEl.append(a, b, c);
     }
@@ -1278,6 +1285,14 @@ export function createStationScene(host, opts = {}) {
 
   const P = { x: 0, z: 12, y: 0, yaw: 0, pitch: -0.05 };
   const plat0 = LAY.platforms[0];
+  // on the platform beside the southbound track, facing it, next to where the train stops
+  const trainSpot = () => {
+    const t = LAY.tracks.find((k) => k.dir === 'South') || LAY.tracks[0];
+    const gap = (q) => Math.min(Math.abs(t.x - q.x0), Math.abs(t.x - q.x1));
+    const p = LAY.platforms.reduce((b, q) => (gap(q) < gap(b) ? q : b));
+    const toward = t.x > (p.x0 + p.x1) / 2;
+    return { x: toward ? p.x1 - 0.9 : p.x0 + 0.9, z: D.trainStopZ + 9, yaw: toward ? -Math.PI / 2 : Math.PI / 2 };
+  };
   const SPOTS = {
     entrance: { x: 0, z: under ? 5 : 20, yaw: 0 },
     machines: { x: 6.5, z: 3, yaw: 0 },
@@ -1285,7 +1300,7 @@ export function createStationScene(host, opts = {}) {
     hall: { x: 0, z: -7, yaw: 0 },
     platform: { x: (plat0.x0 + plat0.x1) / 2, z: -22, yaw: 0 },
     // beside the +x (southbound) track, facing it
-    'platform-train': st.platform === 'side' ? { x: 5.4, z: -45, yaw: Math.PI / 2 } : { x: 1.8, z: -45, yaw: -Math.PI / 2 },
+    'platform-train': trainSpot(),
   };
 
   const onRamp = (x, z) => z <= D.rampZ0 && z >= D.platformZ0 && LAY.ramps.some((r) => inBand(r, x));
@@ -1326,7 +1341,7 @@ export function createStationScene(host, opts = {}) {
     {
       test: () => game.steps.platform && !!boardable(),
       label: () => 'Press E: board the train',
-      run() { const t = boardable(); if (t) { game.steps.boarded = true; startRide(t.tracked); } },
+      run() { const t = boardable(); if (t) { game.steps.boarded = true; startRide(t.tracked, t); } },
     },
   ];
   const nearestSeat = () => {
@@ -1337,7 +1352,7 @@ export function createStationScene(host, opts = {}) {
   const rideActs = [
     {
       // Doors open at a station and you're standing in a doorway: step off here.
-      test: () => !game.sitting && !!(ride.state && ride.state.here) && atLeftDoor(P.x, P.z),
+      test: () => !game.sitting && !!(ride.state && ride.state.here) && atDoor(P.x, P.z, ride.state.here.doors),
       label: () => `Press E: get off at ${ride.state.here.name}`,
       run() { getOff(ride.state.here.index); },
     },
@@ -1351,20 +1366,29 @@ export function createStationScene(host, opts = {}) {
   const standUp = () => { if (!game.sitting) return; P.x = game.sitting.x0; P.z = game.sitting.z0; game.sitting = null; renderHud(); };
 
   let rideInfo = null;
-  const startRide = (train) => {
+  // track: the track the train is on. The doors you board through face the platform you're on.
+  const startRide = (train, track, sameDoors = null) => {
     // The network knows every stop this train makes; fall back to just the next stop.
     const req = { from: st.abbr, destAbbr: train.destAbbr, hex: train.hex, direction: train.direction };
     const route = (opts.route && train.destAbbr && opts.route(req)) || [];
     const nx = route[0] || (opts.nextStop && train.destAbbr && opts.nextStop(req)) || null;
     const stops = route.length ? route : nx ? [nx] : [];
-    rideInfo = { train, next: nx, stops };
+    rideInfo = { train, track, next: nx, stops };
     game.onBoard = true;
     game.arrived = false;
     game.sitting = null;
     boardEl.hidden = true;
     const nextName = nx ? nx.name : 'the next station';
-    ride.start({ dest: train.dest, color: train.hex, next: nextName, stops: stops.map((x) => x.name), legs: stops.map((x) => x.meters), from: st.name });
-    P.x = -0.95; P.z = 0; P.y = 0; P.yaw = -Math.PI / 2; P.pitch = -0.05;
+    // Southbound trains run toward -z, so their left is -x; northbound the other way round.
+    const south = !track || track.dir === 'South';
+    const doors = sameDoors || (track && P.x > track.x ? (south ? 'right' : 'left') : (south ? 'left' : 'right'));
+    rideInfo.doors = doors;
+    const view = opts.stationView ? opts.stationView(st.abbr) : null;
+    const origin = { doors, layout: LAY.kind, level: view ? view.level : { underground: 'tunnel', surface: 'grade' }[kind] || 'elevated' };
+    ride.start({ dest: train.dest, color: train.hex, next: nextName, stops: stops.map((x) => x.name), legs: stops.map((x) => x.meters), looks: stops, origin, from: st.name });
+    // step in through the center door on the platform side, facing into the car
+    const side = doors === 'right' ? 1 : -1;
+    P.x = side * 0.95; P.z = 0; P.y = 0; P.yaw = side < 0 ? -Math.PI / 2 : Math.PI / 2; P.pitch = -0.05;
     beep(520, 0.2);
     toast(`Welcome aboard the train to ${train.dest}. Next stop: ${nextName}.`, 4500);
     renderHud();
@@ -1383,11 +1407,11 @@ export function createStationScene(host, opts = {}) {
   const onRideEvent = (e, r) => {
     if (e === 'closing') { chime([[784, 0.18], [659, 0.18], [523, 0.32]]); toast('Doors closing. Please stand clear.'); }
     if (e === 'departed') toast(`Next stop: ${r.next}${r.last ? ', the last stop' : ''}.`);
-    if (e === 'arriving') { chime([[523, 0.2], [659, 0.3]]); toast(`Now arriving at ${r.next}${r.last ? ', the last stop on this train' : ''}. Doors will open on the left.`, 5000); }
+    if (e === 'arriving') { chime([[523, 0.2], [659, 0.3]]); toast(`Now arriving at ${r.next}${r.last ? ', the last stop on this train' : ''}. Doors will open on the ${r.doors}.`, 5000); }
     if (e === 'opened') {
       game.arrived = true;
       chime([[523, 0.18], [659, 0.18], [784, 0.3]]);
-      if (!r.last) { toast(`This is ${r.next}. To get off, walk to a door on the left and press E.`, 6000); return; }
+      if (!r.last) { toast(`This is ${r.next}. To get off, walk to a door on the ${r.doors} and press E.`, 6000); return; }
       toast(`This is ${r.next}, the last stop. Everyone please leave the train: walk to a door and press E.`, 7000);
       // End of the line: if you stay on, offer the menu after a while.
       setTimeout(() => {
@@ -1461,7 +1485,7 @@ export function createStationScene(host, opts = {}) {
     if (!act) return;
     if (act.dataset.act === 'interact') interact();
     if (act.dataset.act === 'reset') reset('entrance');
-    if (act.dataset.act === 'ride-again' && rideInfo) startRide(rideInfo.train);
+    if (act.dataset.act === 'ride-again' && rideInfo) startRide(rideInfo.train, rideInfo.track, rideInfo.doors);
     if (act.dataset.act === 'get-off' && rideInfo && rideInfo.stops.length) getOff(rideInfo.stops.length - 1);
   });
 
@@ -1484,8 +1508,8 @@ export function createStationScene(host, opts = {}) {
       }
     }
     if (list !== colliders) return;
-    if (under) P.x = clamp(P.x, -13.5, 13.5); else P.x = clamp(P.x, -23, 23);
-    P.z = clamp(P.z, -88.5, under ? 13.5 : 40);
+    if (under) P.x = clamp(P.x, -Math.max(13.5, HW - 0.2), Math.max(13.5, HW - 0.2)); else P.x = clamp(P.x, -Math.max(23, HW + 5), Math.max(23, HW + 5));
+    P.z = clamp(P.z, D.platformZ1 + 1.5, under ? 13.5 : 40);
   };
 
   const step = (dt) => {
@@ -1612,7 +1636,8 @@ export function createStationScene(host, opts = {}) {
     reset,
     teleport(name) { teleport(name); },
     getState: () => ({
-      station: st.abbr, kind, family: fam.key, platform: st.platform, x: P.x, y: P.y, z: P.z, yaw: P.yaw, balance: game.balance,
+      station: st.abbr, kind, family: fam.key, platform: st.platform,
+      layout: { source: LAY.source, kind: LAY.kind, length: LAY.length, halfWidth: HW, tracks: LAY.tracks.length, platforms: LAY.platforms.length, cars: CARS }, x: P.x, y: P.y, z: P.z, yaw: P.yaw, balance: game.balance,
       gatesOpen: game.gatesOpen, steps: { ...game.steps }, trains: Object.fromEntries(tracks.map((t) => [t.dir, t.phase])),
       live: live.demo ? 'demo' : 'live', ride: game.onBoard ? { ...ride.state, sitting: !!game.sitting } : null,
     }),
@@ -1622,6 +1647,14 @@ export function createStationScene(host, opts = {}) {
     _park(dir = 'South', hex = '#ffe800', dest = 'SFO Airport') {
       const t = tracks.find((k) => k.dir === dir) || tracks[0];
       t.tracked = { etaAt: nowMs() + 30_000, hex, dest, destAbbr: null, direction: t.dir, cars: 3 };
+    },
+    // test hook: ride straight through these stops ({ name, abbr, meters, doors, layout, level, segments })
+    _ride(stops, origin = null) {
+      rideInfo = { train: { dest: stops[stops.length - 1].name, hex: '#ffe800', destAbbr: null, direction: 'South' }, track: null, next: stops[0], stops };
+      game.onBoard = true; game.arrived = false; game.sitting = null; boardEl.hidden = true;
+      ride.start({ dest: rideInfo.train.dest, color: '#ffe800', next: stops[0].name, stops: stops.map((x) => x.name), legs: stops.map((x) => x.meters), looks: stops, origin, from: st.name });
+      P.x = 0; P.z = 0; P.y = 0;
+      renderHud();
     },
     _move(x, z, y = null) { P.x = x; P.z = z; if (y !== null) P.y = y; },
     _look(yaw, pitch = -0.05) { P.yaw = yaw; P.pitch = pitch; },

@@ -23,7 +23,19 @@ export interface SceneNextStop {
   name: string;
   /** meters of track from the previous stop (for ride timing) */
   meters?: number;
+  /** the side the doors open on here, facing the way the train goes */
+  doors?: 'left' | 'right';
+  /** island, side or mixed platforms */
+  layout?: string;
+  /** where the track is at this station */
+  level?: RideLevel;
+  /** tunnel, viaduct and ground-level stretches of the track from the previous stop (fractions 0..1) */
+  segments?: RideSegment[];
 }
+
+export type RideLevel = 'tunnel' | 'elevated' | 'grade';
+export interface RideSegment { from: number; to: number; kind: RideLevel; name: string | null }
+export interface StationView { level: RideLevel; layout: string; doors: 'left' | 'right' }
 
 export interface SceneOptions {
   preserveDrawingBuffer?: boolean;
@@ -38,10 +50,14 @@ export interface SceneOptions {
   /** BART's Clipper fare in dollars; rejects with a readable Error. */
   fare?: (orig: string, dest: string) => Promise<number>;
   stationName?: (abbr: string) => string;
+  /** How a station looks from the train (level, platform layout, door side), when known. */
+  stationView?: (abbr: string) => StationView | null;
 }
 
 export interface StationSceneOptions extends SceneOptions {
   station: { abbr: string; name: string; kind: string; platform: string };
+  /** The station's OpenStreetMap layout; without one the generic cross-section is used. */
+  layout?: import('./osm-layout.js').OsmLayout | null;
   lines: string[];
 }
 
