@@ -1,5 +1,6 @@
 package com.transittwin.api;
 
+import com.transittwin.layout.LineProfileService;
 import com.transittwin.layout.StationLayout;
 import com.transittwin.layout.StationLayoutService;
 import io.swagger.v3.oas.annotations.Operation;
@@ -24,9 +25,11 @@ import org.springframework.web.server.ResponseStatusException;
 public class StationLayoutController {
 
     private final StationLayoutService layouts;
+    private final LineProfileService line;
 
-    public StationLayoutController(StationLayoutService layouts) {
+    public StationLayoutController(StationLayoutService layouts, LineProfileService line) {
         this.layouts = layouts;
+        this.line = line;
     }
 
     @GetMapping("/{abbr}/layout")
@@ -37,5 +40,11 @@ public class StationLayoutController {
         StationLayout l = layouts.layout(code).orElseThrow(() ->
             new ResponseStatusException(HttpStatus.NOT_FOUND, "No layout has been imported for " + code));
         return ResponseEntity.ok().cacheControl(CacheControl.maxAge(Duration.ofHours(1))).body(l);
+    }
+
+    @GetMapping("/ride-profile")
+    @Operation(summary = "For the train ride: tunnels, viaducts and ground-level track between neighbouring stations, and the side each station's doors open on")
+    public ResponseEntity<LineProfileService.RideProfile> rideProfile() {
+        return ResponseEntity.ok().cacheControl(CacheControl.maxAge(Duration.ofHours(1))).body(line.rideProfile());
     }
 }

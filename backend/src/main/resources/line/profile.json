@@ -1,0 +1,1795 @@
+{
+  "source" : {
+    "name" : "OpenStreetMap",
+    "license" : "ODbL 1.0 (https://opendatacommons.org/licenses/odbl/)",
+    "attribution" : "© OpenStreetMap contributors",
+    "importedAt" : "2026-11-26T20:58:50.253378200Z"
+  },
+  "legs" : {
+    "12TH>19TH" : [ {
+      "from" : 0.0,
+      "to" : 1.0,
+      "kind" : "tunnel",
+      "name" : null
+    } ],
+    "12TH>LAKE" : [ {
+      "from" : 0.0,
+      "to" : 1.0,
+      "kind" : "tunnel",
+      "name" : null
+    } ],
+    "12TH>WOAK" : [ {
+      "from" : 0.0,
+      "to" : 0.299,
+      "kind" : "tunnel",
+      "name" : null
+    }, {
+      "from" : 0.299,
+      "to" : 0.424,
+      "kind" : "grade",
+      "name" : null
+    }, {
+      "from" : 0.424,
+      "to" : 1.0,
+      "kind" : "elevated",
+      "name" : null
+    } ],
+    "16TH>24TH" : [ {
+      "from" : 0.0,
+      "to" : 1.0,
+      "kind" : "tunnel",
+      "name" : null
+    } ],
+    "16TH>CIVC" : [ {
+      "from" : 0.0,
+      "to" : 1.0,
+      "kind" : "tunnel",
+      "name" : null
+    } ],
+    "19TH>12TH" : [ {
+      "from" : 0.0,
+      "to" : 1.0,
+      "kind" : "tunnel",
+      "name" : null
+    } ],
+    "19TH>MCAR" : [ {
+      "from" : 0.0,
+      "to" : 0.265,
+      "kind" : "tunnel",
+      "name" : null
+    }, {
+      "from" : 0.265,
+      "to" : 0.368,
+      "kind" : "grade",
+      "name" : null
+    }, {
+      "from" : 0.368,
+      "to" : 0.448,
+      "kind" : "elevated",
+      "name" : null
+    }, {
+      "from" : 0.448,
+      "to" : 0.939,
+      "kind" : "grade",
+      "name" : null
+    }, {
+      "from" : 0.939,
+      "to" : 1.0,
+      "kind" : "elevated",
+      "name" : null
+    } ],
+    "24TH>16TH" : [ {
+      "from" : 0.0,
+      "to" : 1.0,
+      "kind" : "tunnel",
+      "name" : null
+    } ],
+    "24TH>GLEN" : [ {
+      "from" : 0.0,
+      "to" : 1.0,
+      "kind" : "tunnel",
+      "name" : null
+    } ],
+    "ANTC>PCTR" : [ {
+      "from" : 0.0,
+      "to" : 1.0,
+      "kind" : "grade",
+      "name" : null
+    } ],
+    "ASHB>DBRK" : [ {
+      "from" : 0.0,
+      "to" : 1.0,
+      "kind" : "tunnel",
+      "name" : null
+    } ],
+    "ASHB>MCAR" : [ {
+      "from" : 0.0,
+      "to" : 0.185,
+      "kind" : "tunnel",
+      "name" : null
+    }, {
+      "from" : 0.185,
+      "to" : 0.228,
+      "kind" : "grade",
+      "name" : null
+    }, {
+      "from" : 0.228,
+      "to" : 0.764,
+      "kind" : "elevated",
+      "name" : null
+    }, {
+      "from" : 0.764,
+      "to" : 0.808,
+      "kind" : "tunnel",
+      "name" : null
+    }, {
+      "from" : 0.808,
+      "to" : 0.967,
+      "kind" : "grade",
+      "name" : null
+    }, {
+      "from" : 0.967,
+      "to" : 1.0,
+      "kind" : "elevated",
+      "name" : null
+    } ],
+    "BALB>DALY" : [ {
+      "from" : 0.0,
+      "to" : 0.156,
+      "kind" : "tunnel",
+      "name" : null
+    }, {
+      "from" : 0.156,
+      "to" : 0.26,
+      "kind" : "grade",
+      "name" : null
+    }, {
+      "from" : 0.26,
+      "to" : 0.69,
+      "kind" : "elevated",
+      "name" : null
+    }, {
+      "from" : 0.69,
+      "to" : 0.967,
+      "kind" : "grade",
+      "name" : null
+    }, {
+      "from" : 0.967,
+      "to" : 1.0,
+      "kind" : "elevated",
+      "name" : null
+    } ],
+    "BALB>GLEN" : [ {
+      "from" : 0.0,
+      "to" : 0.08,
+      "kind" : "grade",
+      "name" : null
+    }, {
+      "from" : 0.08,
+      "to" : 0.229,
+      "kind" : "tunnel",
+      "name" : null
+    }, {
+      "from" : 0.229,
+      "to" : 0.59,
+      "kind" : "grade",
+      "name" : null
+    }, {
+      "from" : 0.59,
+      "to" : 1.0,
+      "kind" : "tunnel",
+      "name" : null
+    } ],
+    "BAYF>CAST" : [ {
+      "from" : 0.0,
+      "to" : 0.031,
+      "kind" : "elevated",
+      "name" : null
+    }, {
+      "from" : 0.031,
+      "to" : 0.211,
+      "kind" : "grade",
+      "name" : null
+    }, {
+      "from" : 0.211,
+      "to" : 0.231,
+      "kind" : "elevated",
+      "name" : null
+    }, {
+      "from" : 0.231,
+      "to" : 0.276,
+      "kind" : "grade",
+      "name" : null
+    }, {
+      "from" : 0.276,
+      "to" : 0.321,
+      "kind" : "tunnel",
+      "name" : null
+    }, {
+      "from" : 0.321,
+      "to" : 0.607,
+      "kind" : "grade",
+      "name" : null
+    }, {
+      "from" : 0.607,
+      "to" : 0.628,
+      "kind" : "elevated",
+      "name" : null
+    }, {
+      "from" : 0.628,
+      "to" : 0.661,
+      "kind" : "grade",
+      "name" : null
+    }, {
+      "from" : 0.661,
+      "to" : 0.685,
+      "kind" : "elevated",
+      "name" : null
+    }, {
+      "from" : 0.685,
+      "to" : 1.0,
+      "kind" : "grade",
+      "name" : null
+    } ],
+    "BAYF>HAYW" : [ {
+      "from" : 0.0,
+      "to" : 0.032,
+      "kind" : "elevated",
+      "name" : null
+    }, {
+      "from" : 0.032,
+      "to" : 0.22,
+      "kind" : "grade",
+      "name" : null
+    }, {
+      "from" : 0.22,
+      "to" : 0.275,
+      "kind" : "elevated",
+      "name" : null
+    }, {
+      "from" : 0.275,
+      "to" : 0.31,
+      "kind" : "grade",
+      "name" : null
+    }, {
+      "from" : 0.31,
+      "to" : 1.0,
+      "kind" : "elevated",
+      "name" : null
+    } ],
+    "BAYF>SANL" : [ {
+      "from" : 0.0,
+      "to" : 1.0,
+      "kind" : "elevated",
+      "name" : null
+    } ],
+    "BERY>MLPT" : [ {
+      "from" : 0.0,
+      "to" : 0.084,
+      "kind" : "elevated",
+      "name" : null
+    }, {
+      "from" : 0.084,
+      "to" : 0.265,
+      "kind" : "grade",
+      "name" : null
+    }, {
+      "from" : 0.265,
+      "to" : 0.306,
+      "kind" : "tunnel",
+      "name" : null
+    }, {
+      "from" : 0.306,
+      "to" : 0.943,
+      "kind" : "grade",
+      "name" : null
+    }, {
+      "from" : 0.943,
+      "to" : 1.0,
+      "kind" : "tunnel",
+      "name" : null
+    } ],
+    "CAST>BAYF" : [ {
+      "from" : 0.0,
+      "to" : 0.239,
+      "kind" : "grade",
+      "name" : null
+    }, {
+      "from" : 0.239,
+      "to" : 0.26,
+      "kind" : "elevated",
+      "name" : null
+    }, {
+      "from" : 0.26,
+      "to" : 0.317,
+      "kind" : "grade",
+      "name" : null
+    }, {
+      "from" : 0.317,
+      "to" : 0.337,
+      "kind" : "elevated",
+      "name" : null
+    }, {
+      "from" : 0.337,
+      "to" : 0.37,
+      "kind" : "grade",
+      "name" : null
+    }, {
+      "from" : 0.37,
+      "to" : 0.395,
+      "kind" : "elevated",
+      "name" : null
+    }, {
+      "from" : 0.395,
+      "to" : 0.681,
+      "kind" : "grade",
+      "name" : null
+    }, {
+      "from" : 0.681,
+      "to" : 0.726,
+      "kind" : "tunnel",
+      "name" : null
+    }, {
+      "from" : 0.726,
+      "to" : 0.767,
+      "kind" : "grade",
+      "name" : null
+    }, {
+      "from" : 0.767,
+      "to" : 0.787,
+      "kind" : "elevated",
+      "name" : null
+    }, {
+      "from" : 0.787,
+      "to" : 0.972,
+      "kind" : "grade",
+      "name" : null
+    }, {
+      "from" : 0.972,
+      "to" : 1.0,
+      "kind" : "elevated",
+      "name" : null
+    } ],
+    "CAST>WDUB" : [ {
+      "from" : 0.0,
+      "to" : 0.208,
+      "kind" : "grade",
+      "name" : null
+    }, {
+      "from" : 0.208,
+      "to" : 0.236,
+      "kind" : "elevated",
+      "name" : null
+    }, {
+      "from" : 0.236,
+      "to" : 0.283,
+      "kind" : "grade",
+      "name" : null
+    }, {
+      "from" : 0.283,
+      "to" : 0.298,
+      "kind" : "elevated",
+      "name" : null
+    }, {
+      "from" : 0.298,
+      "to" : 1.0,
+      "kind" : "grade",
+      "name" : null
+    } ],
+    "CIVC>16TH" : [ {
+      "from" : 0.0,
+      "to" : 1.0,
+      "kind" : "tunnel",
+      "name" : null
+    } ],
+    "CIVC>POWL" : [ {
+      "from" : 0.0,
+      "to" : 1.0,
+      "kind" : "tunnel",
+      "name" : null
+    } ],
+    "COLM>DALY" : [ {
+      "from" : 0.0,
+      "to" : 0.143,
+      "kind" : "grade",
+      "name" : null
+    }, {
+      "from" : 0.143,
+      "to" : 0.182,
+      "kind" : "tunnel",
+      "name" : null
+    }, {
+      "from" : 0.182,
+      "to" : 0.492,
+      "kind" : "grade",
+      "name" : null
+    }, {
+      "from" : 0.492,
+      "to" : 0.546,
+      "kind" : "tunnel",
+      "name" : null
+    }, {
+      "from" : 0.546,
+      "to" : 0.693,
+      "kind" : "grade",
+      "name" : null
+    }, {
+      "from" : 0.693,
+      "to" : 1.0,
+      "kind" : "elevated",
+      "name" : null
+    } ],
+    "COLM>SSAN" : [ {
+      "from" : 0.0,
+      "to" : 0.082,
+      "kind" : "grade",
+      "name" : null
+    }, {
+      "from" : 0.082,
+      "to" : 0.135,
+      "kind" : "elevated",
+      "name" : null
+    }, {
+      "from" : 0.135,
+      "to" : 1.0,
+      "kind" : "tunnel",
+      "name" : null
+    } ],
+    "COLS>FTVL" : [ {
+      "from" : 0.0,
+      "to" : 1.0,
+      "kind" : "elevated",
+      "name" : null
+    } ],
+    "COLS>OAKL" : [ {
+      "from" : 0.0,
+      "to" : 0.603,
+      "kind" : "elevated",
+      "name" : null
+    }, {
+      "from" : 0.603,
+      "to" : 0.718,
+      "kind" : "grade",
+      "name" : null
+    }, {
+      "from" : 0.718,
+      "to" : 1.0,
+      "kind" : "elevated",
+      "name" : null
+    } ],
+    "COLS>SANL" : [ {
+      "from" : 0.0,
+      "to" : 1.0,
+      "kind" : "elevated",
+      "name" : null
+    } ],
+    "CONC>NCON" : [ {
+      "from" : 0.0,
+      "to" : 0.047,
+      "kind" : "grade",
+      "name" : null
+    }, {
+      "from" : 0.047,
+      "to" : 0.454,
+      "kind" : "elevated",
+      "name" : null
+    }, {
+      "from" : 0.454,
+      "to" : 1.0,
+      "kind" : "grade",
+      "name" : null
+    } ],
+    "CONC>PHIL" : [ {
+      "from" : 0.0,
+      "to" : 0.035,
+      "kind" : "grade",
+      "name" : null
+    }, {
+      "from" : 0.035,
+      "to" : 0.149,
+      "kind" : "elevated",
+      "name" : null
+    }, {
+      "from" : 0.149,
+      "to" : 0.838,
+      "kind" : "grade",
+      "name" : null
+    }, {
+      "from" : 0.838,
+      "to" : 0.86,
+      "kind" : "elevated",
+      "name" : null
+    }, {
+      "from" : 0.86,
+      "to" : 0.909,
+      "kind" : "grade",
+      "name" : null
+    }, {
+      "from" : 0.909,
+      "to" : 1.0,
+      "kind" : "elevated",
+      "name" : null
+    } ],
+    "DALY>BALB" : [ {
+      "from" : 0.0,
+      "to" : 0.031,
+      "kind" : "elevated",
+      "name" : null
+    }, {
+      "from" : 0.031,
+      "to" : 0.309,
+      "kind" : "grade",
+      "name" : null
+    }, {
+      "from" : 0.309,
+      "to" : 0.739,
+      "kind" : "elevated",
+      "name" : null
+    }, {
+      "from" : 0.739,
+      "to" : 0.843,
+      "kind" : "grade",
+      "name" : null
+    }, {
+      "from" : 0.843,
+      "to" : 1.0,
+      "kind" : "tunnel",
+      "name" : null
+    } ],
+    "DALY>COLM" : [ {
+      "from" : 0.0,
+      "to" : 0.306,
+      "kind" : "elevated",
+      "name" : null
+    }, {
+      "from" : 0.306,
+      "to" : 0.453,
+      "kind" : "grade",
+      "name" : null
+    }, {
+      "from" : 0.453,
+      "to" : 0.515,
+      "kind" : "tunnel",
+      "name" : null
+    }, {
+      "from" : 0.515,
+      "to" : 0.817,
+      "kind" : "grade",
+      "name" : null
+    }, {
+      "from" : 0.817,
+      "to" : 0.856,
+      "kind" : "tunnel",
+      "name" : null
+    }, {
+      "from" : 0.856,
+      "to" : 1.0,
+      "kind" : "grade",
+      "name" : null
+    } ],
+    "DBRK>ASHB" : [ {
+      "from" : 0.0,
+      "to" : 1.0,
+      "kind" : "tunnel",
+      "name" : null
+    } ],
+    "DBRK>NBRK" : [ {
+      "from" : 0.0,
+      "to" : 1.0,
+      "kind" : "tunnel",
+      "name" : null
+    } ],
+    "DELN>PLZA" : [ {
+      "from" : 0.0,
+      "to" : 1.0,
+      "kind" : "elevated",
+      "name" : null
+    } ],
+    "DELN>RICH" : [ {
+      "from" : 0.0,
+      "to" : 0.257,
+      "kind" : "elevated",
+      "name" : null
+    }, {
+      "from" : 0.257,
+      "to" : 0.713,
+      "kind" : "grade",
+      "name" : null
+    }, {
+      "from" : 0.713,
+      "to" : 0.866,
+      "kind" : "elevated",
+      "name" : null
+    }, {
+      "from" : 0.866,
+      "to" : 1.0,
+      "kind" : "grade",
+      "name" : null
+    } ],
+    "DUBL>WDUB" : [ {
+      "from" : 0.0,
+      "to" : 1.0,
+      "kind" : "grade",
+      "name" : null
+    } ],
+    "EMBR>MONT" : [ {
+      "from" : 0.0,
+      "to" : 1.0,
+      "kind" : "tunnel",
+      "name" : null
+    } ],
+    "EMBR>WOAK" : [ {
+      "from" : 0.0,
+      "to" : 0.798,
+      "kind" : "tunnel",
+      "name" : "Transbay Tube"
+    }, {
+      "from" : 0.798,
+      "to" : 0.815,
+      "kind" : "grade",
+      "name" : null
+    }, {
+      "from" : 0.815,
+      "to" : 1.0,
+      "kind" : "elevated",
+      "name" : null
+    } ],
+    "FRMT>UCTY" : [ {
+      "from" : 0.0,
+      "to" : 0.052,
+      "kind" : "grade",
+      "name" : null
+    }, {
+      "from" : 0.052,
+      "to" : 0.098,
+      "kind" : "elevated",
+      "name" : null
+    }, {
+      "from" : 0.098,
+      "to" : 0.306,
+      "kind" : "grade",
+      "name" : null
+    }, {
+      "from" : 0.306,
+      "to" : 0.329,
+      "kind" : "elevated",
+      "name" : null
+    }, {
+      "from" : 0.329,
+      "to" : 0.976,
+      "kind" : "grade",
+      "name" : null
+    }, {
+      "from" : 0.976,
+      "to" : 1.0,
+      "kind" : "tunnel",
+      "name" : null
+    } ],
+    "FRMT>WARM" : [ {
+      "from" : 0.0,
+      "to" : 0.112,
+      "kind" : "grade",
+      "name" : null
+    }, {
+      "from" : 0.112,
+      "to" : 0.3,
+      "kind" : "tunnel",
+      "name" : null
+    }, {
+      "from" : 0.3,
+      "to" : 1.0,
+      "kind" : "grade",
+      "name" : null
+    } ],
+    "FTVL>COLS" : [ {
+      "from" : 0.0,
+      "to" : 1.0,
+      "kind" : "elevated",
+      "name" : null
+    } ],
+    "FTVL>LAKE" : [ {
+      "from" : 0.0,
+      "to" : 0.468,
+      "kind" : "elevated",
+      "name" : null
+    }, {
+      "from" : 0.468,
+      "to" : 0.81,
+      "kind" : "grade",
+      "name" : null
+    }, {
+      "from" : 0.81,
+      "to" : 1.0,
+      "kind" : "tunnel",
+      "name" : null
+    } ],
+    "GLEN>24TH" : [ {
+      "from" : 0.0,
+      "to" : 1.0,
+      "kind" : "tunnel",
+      "name" : null
+    } ],
+    "GLEN>BALB" : [ {
+      "from" : 0.0,
+      "to" : 0.409,
+      "kind" : "tunnel",
+      "name" : null
+    }, {
+      "from" : 0.409,
+      "to" : 0.771,
+      "kind" : "grade",
+      "name" : null
+    }, {
+      "from" : 0.771,
+      "to" : 0.919,
+      "kind" : "tunnel",
+      "name" : null
+    }, {
+      "from" : 0.919,
+      "to" : 1.0,
+      "kind" : "grade",
+      "name" : null
+    } ],
+    "HAYW>BAYF" : [ {
+      "from" : 0.0,
+      "to" : 0.694,
+      "kind" : "elevated",
+      "name" : null
+    }, {
+      "from" : 0.694,
+      "to" : 0.724,
+      "kind" : "grade",
+      "name" : null
+    }, {
+      "from" : 0.724,
+      "to" : 0.779,
+      "kind" : "elevated",
+      "name" : null
+    }, {
+      "from" : 0.779,
+      "to" : 0.972,
+      "kind" : "grade",
+      "name" : null
+    }, {
+      "from" : 0.972,
+      "to" : 1.0,
+      "kind" : "elevated",
+      "name" : null
+    } ],
+    "HAYW>SHAY" : [ {
+      "from" : 0.0,
+      "to" : 0.019,
+      "kind" : "elevated",
+      "name" : null
+    }, {
+      "from" : 0.019,
+      "to" : 1.0,
+      "kind" : "grade",
+      "name" : null
+    } ],
+    "LAFY>ORIN" : [ {
+      "from" : 0.0,
+      "to" : 0.287,
+      "kind" : "grade",
+      "name" : null
+    }, {
+      "from" : 0.287,
+      "to" : 0.316,
+      "kind" : "elevated",
+      "name" : null
+    }, {
+      "from" : 0.316,
+      "to" : 0.972,
+      "kind" : "grade",
+      "name" : null
+    }, {
+      "from" : 0.972,
+      "to" : 1.0,
+      "kind" : "elevated",
+      "name" : null
+    } ],
+    "LAFY>WCRK" : [ {
+      "from" : 0.0,
+      "to" : 0.197,
+      "kind" : "grade",
+      "name" : null
+    }, {
+      "from" : 0.197,
+      "to" : 0.233,
+      "kind" : "elevated",
+      "name" : null
+    }, {
+      "from" : 0.233,
+      "to" : 0.638,
+      "kind" : "grade",
+      "name" : null
+    }, {
+      "from" : 0.638,
+      "to" : 0.721,
+      "kind" : "tunnel",
+      "name" : null
+    }, {
+      "from" : 0.721,
+      "to" : 0.793,
+      "kind" : "grade",
+      "name" : null
+    }, {
+      "from" : 0.793,
+      "to" : 0.822,
+      "kind" : "elevated",
+      "name" : null
+    }, {
+      "from" : 0.822,
+      "to" : 0.862,
+      "kind" : "grade",
+      "name" : null
+    }, {
+      "from" : 0.862,
+      "to" : 1.0,
+      "kind" : "elevated",
+      "name" : null
+    } ],
+    "LAKE>12TH" : [ {
+      "from" : 0.0,
+      "to" : 1.0,
+      "kind" : "tunnel",
+      "name" : null
+    } ],
+    "LAKE>FTVL" : [ {
+      "from" : 0.0,
+      "to" : 0.189,
+      "kind" : "tunnel",
+      "name" : null
+    }, {
+      "from" : 0.189,
+      "to" : 0.532,
+      "kind" : "grade",
+      "name" : null
+    }, {
+      "from" : 0.532,
+      "to" : 1.0,
+      "kind" : "elevated",
+      "name" : null
+    } ],
+    "LAKE>WOAK" : [ {
+      "from" : 0.0,
+      "to" : 0.392,
+      "kind" : "tunnel",
+      "name" : null
+    }, {
+      "from" : 0.392,
+      "to" : 0.494,
+      "kind" : "grade",
+      "name" : null
+    }, {
+      "from" : 0.494,
+      "to" : 1.0,
+      "kind" : "elevated",
+      "name" : null
+    } ],
+    "MCAR>19TH" : [ {
+      "from" : 0.0,
+      "to" : 0.115,
+      "kind" : "elevated",
+      "name" : null
+    }, {
+      "from" : 0.115,
+      "to" : 0.55,
+      "kind" : "grade",
+      "name" : null
+    }, {
+      "from" : 0.55,
+      "to" : 0.63,
+      "kind" : "elevated",
+      "name" : null
+    }, {
+      "from" : 0.63,
+      "to" : 0.733,
+      "kind" : "grade",
+      "name" : null
+    }, {
+      "from" : 0.733,
+      "to" : 1.0,
+      "kind" : "tunnel",
+      "name" : null
+    } ],
+    "MCAR>ASHB" : [ {
+      "from" : 0.0,
+      "to" : 0.033,
+      "kind" : "elevated",
+      "name" : null
+    }, {
+      "from" : 0.033,
+      "to" : 0.192,
+      "kind" : "grade",
+      "name" : null
+    }, {
+      "from" : 0.192,
+      "to" : 0.235,
+      "kind" : "tunnel",
+      "name" : null
+    }, {
+      "from" : 0.235,
+      "to" : 0.771,
+      "kind" : "elevated",
+      "name" : null
+    }, {
+      "from" : 0.771,
+      "to" : 0.815,
+      "kind" : "grade",
+      "name" : null
+    }, {
+      "from" : 0.815,
+      "to" : 1.0,
+      "kind" : "tunnel",
+      "name" : null
+    } ],
+    "MCAR>ROCK" : [ {
+      "from" : 0.0,
+      "to" : 0.036,
+      "kind" : "elevated",
+      "name" : null
+    }, {
+      "from" : 0.036,
+      "to" : 0.382,
+      "kind" : "grade",
+      "name" : null
+    }, {
+      "from" : 0.382,
+      "to" : 0.423,
+      "kind" : "elevated",
+      "name" : null
+    }, {
+      "from" : 0.423,
+      "to" : 0.471,
+      "kind" : "grade",
+      "name" : null
+    }, {
+      "from" : 0.471,
+      "to" : 0.624,
+      "kind" : "elevated",
+      "name" : null
+    }, {
+      "from" : 0.624,
+      "to" : 0.737,
+      "kind" : "grade",
+      "name" : null
+    }, {
+      "from" : 0.737,
+      "to" : 0.809,
+      "kind" : "elevated",
+      "name" : null
+    }, {
+      "from" : 0.809,
+      "to" : 0.89,
+      "kind" : "grade",
+      "name" : null
+    }, {
+      "from" : 0.89,
+      "to" : 1.0,
+      "kind" : "elevated",
+      "name" : null
+    } ],
+    "MLBR>SBRN" : [ {
+      "from" : 0.0,
+      "to" : 0.042,
+      "kind" : "grade",
+      "name" : null
+    }, {
+      "from" : 0.042,
+      "to" : 0.304,
+      "kind" : "tunnel",
+      "name" : null
+    }, {
+      "from" : 0.304,
+      "to" : 0.34,
+      "kind" : "grade",
+      "name" : null
+    }, {
+      "from" : 0.34,
+      "to" : 0.543,
+      "kind" : "elevated",
+      "name" : null
+    }, {
+      "from" : 0.543,
+      "to" : 0.575,
+      "kind" : "grade",
+      "name" : null
+    }, {
+      "from" : 0.575,
+      "to" : 1.0,
+      "kind" : "tunnel",
+      "name" : null
+    } ],
+    "MLPT>BERY" : [ {
+      "from" : 0.0,
+      "to" : 0.055,
+      "kind" : "tunnel",
+      "name" : null
+    }, {
+      "from" : 0.055,
+      "to" : 0.696,
+      "kind" : "grade",
+      "name" : null
+    }, {
+      "from" : 0.696,
+      "to" : 0.746,
+      "kind" : "tunnel",
+      "name" : null
+    }, {
+      "from" : 0.746,
+      "to" : 0.914,
+      "kind" : "grade",
+      "name" : null
+    }, {
+      "from" : 0.914,
+      "to" : 1.0,
+      "kind" : "elevated",
+      "name" : null
+    } ],
+    "MLPT>WARM" : [ {
+      "from" : 0.0,
+      "to" : 0.031,
+      "kind" : "tunnel",
+      "name" : null
+    }, {
+      "from" : 0.031,
+      "to" : 0.342,
+      "kind" : "grade",
+      "name" : null
+    }, {
+      "from" : 0.342,
+      "to" : 0.353,
+      "kind" : "elevated",
+      "name" : null
+    }, {
+      "from" : 0.353,
+      "to" : 0.836,
+      "kind" : "grade",
+      "name" : null
+    }, {
+      "from" : 0.836,
+      "to" : 0.845,
+      "kind" : "elevated",
+      "name" : null
+    }, {
+      "from" : 0.845,
+      "to" : 1.0,
+      "kind" : "grade",
+      "name" : null
+    } ],
+    "MONT>EMBR" : [ {
+      "from" : 0.0,
+      "to" : 1.0,
+      "kind" : "tunnel",
+      "name" : null
+    } ],
+    "MONT>POWL" : [ {
+      "from" : 0.0,
+      "to" : 1.0,
+      "kind" : "tunnel",
+      "name" : null
+    } ],
+    "NBRK>DBRK" : [ {
+      "from" : 0.0,
+      "to" : 1.0,
+      "kind" : "tunnel",
+      "name" : null
+    } ],
+    "NBRK>PLZA" : [ {
+      "from" : 0.0,
+      "to" : 0.221,
+      "kind" : "tunnel",
+      "name" : null
+    }, {
+      "from" : 0.221,
+      "to" : 0.277,
+      "kind" : "grade",
+      "name" : null
+    }, {
+      "from" : 0.277,
+      "to" : 1.0,
+      "kind" : "elevated",
+      "name" : null
+    } ],
+    "NCON>CONC" : [ {
+      "from" : 0.0,
+      "to" : 0.542,
+      "kind" : "grade",
+      "name" : null
+    }, {
+      "from" : 0.542,
+      "to" : 0.954,
+      "kind" : "elevated",
+      "name" : null
+    }, {
+      "from" : 0.954,
+      "to" : 1.0,
+      "kind" : "grade",
+      "name" : null
+    } ],
+    "NCON>PITT" : [ {
+      "from" : 0.0,
+      "to" : 0.115,
+      "kind" : "grade",
+      "name" : null
+    }, {
+      "from" : 0.115,
+      "to" : 0.141,
+      "kind" : "tunnel",
+      "name" : null
+    }, {
+      "from" : 0.141,
+      "to" : 0.189,
+      "kind" : "grade",
+      "name" : null
+    }, {
+      "from" : 0.189,
+      "to" : 0.214,
+      "kind" : "elevated",
+      "name" : null
+    }, {
+      "from" : 0.214,
+      "to" : 1.0,
+      "kind" : "grade",
+      "name" : null
+    } ],
+    "OAKL>COLS" : [ {
+      "from" : 0.0,
+      "to" : 0.284,
+      "kind" : "elevated",
+      "name" : null
+    }, {
+      "from" : 0.284,
+      "to" : 0.398,
+      "kind" : "grade",
+      "name" : null
+    }, {
+      "from" : 0.398,
+      "to" : 1.0,
+      "kind" : "elevated",
+      "name" : null
+    } ],
+    "ORIN>LAFY" : [ {
+      "from" : 0.0,
+      "to" : 0.028,
+      "kind" : "elevated",
+      "name" : null
+    }, {
+      "from" : 0.028,
+      "to" : 0.683,
+      "kind" : "grade",
+      "name" : null
+    }, {
+      "from" : 0.683,
+      "to" : 0.713,
+      "kind" : "elevated",
+      "name" : null
+    }, {
+      "from" : 0.713,
+      "to" : 1.0,
+      "kind" : "grade",
+      "name" : null
+    } ],
+    "ORIN>ROCK" : [ {
+      "from" : 0.0,
+      "to" : 0.072,
+      "kind" : "grade",
+      "name" : null
+    }, {
+      "from" : 0.072,
+      "to" : 0.807,
+      "kind" : "tunnel",
+      "name" : null
+    }, {
+      "from" : 0.807,
+      "to" : 0.832,
+      "kind" : "grade",
+      "name" : null
+    }, {
+      "from" : 0.832,
+      "to" : 0.872,
+      "kind" : "tunnel",
+      "name" : null
+    }, {
+      "from" : 0.872,
+      "to" : 0.894,
+      "kind" : "elevated",
+      "name" : null
+    }, {
+      "from" : 0.894,
+      "to" : 0.976,
+      "kind" : "grade",
+      "name" : null
+    }, {
+      "from" : 0.976,
+      "to" : 1.0,
+      "kind" : "elevated",
+      "name" : null
+    } ],
+    "PCTR>ANTC" : [ {
+      "from" : 0.0,
+      "to" : 1.0,
+      "kind" : "grade",
+      "name" : null
+    } ],
+    "PCTR>PITT" : [ {
+      "from" : 0.0,
+      "to" : 1.0,
+      "kind" : "grade",
+      "name" : null
+    } ],
+    "PHIL>CONC" : [ {
+      "from" : 0.0,
+      "to" : 0.094,
+      "kind" : "elevated",
+      "name" : null
+    }, {
+      "from" : 0.094,
+      "to" : 0.139,
+      "kind" : "grade",
+      "name" : null
+    }, {
+      "from" : 0.139,
+      "to" : 0.161,
+      "kind" : "elevated",
+      "name" : null
+    }, {
+      "from" : 0.161,
+      "to" : 0.851,
+      "kind" : "grade",
+      "name" : null
+    }, {
+      "from" : 0.851,
+      "to" : 0.964,
+      "kind" : "elevated",
+      "name" : null
+    }, {
+      "from" : 0.964,
+      "to" : 1.0,
+      "kind" : "grade",
+      "name" : null
+    } ],
+    "PHIL>WCRK" : [ {
+      "from" : 0.0,
+      "to" : 0.132,
+      "kind" : "elevated",
+      "name" : null
+    }, {
+      "from" : 0.132,
+      "to" : 0.711,
+      "kind" : "grade",
+      "name" : null
+    }, {
+      "from" : 0.711,
+      "to" : 1.0,
+      "kind" : "elevated",
+      "name" : null
+    } ],
+    "PITT>NCON" : [ {
+      "from" : 0.0,
+      "to" : 0.785,
+      "kind" : "grade",
+      "name" : null
+    }, {
+      "from" : 0.785,
+      "to" : 0.81,
+      "kind" : "elevated",
+      "name" : null
+    }, {
+      "from" : 0.81,
+      "to" : 0.861,
+      "kind" : "grade",
+      "name" : null
+    }, {
+      "from" : 0.861,
+      "to" : 0.884,
+      "kind" : "tunnel",
+      "name" : null
+    }, {
+      "from" : 0.884,
+      "to" : 1.0,
+      "kind" : "grade",
+      "name" : null
+    } ],
+    "PITT>PCTR" : [ {
+      "from" : 0.0,
+      "to" : 1.0,
+      "kind" : "grade",
+      "name" : null
+    } ],
+    "PLZA>DELN" : [ {
+      "from" : 0.0,
+      "to" : 1.0,
+      "kind" : "elevated",
+      "name" : null
+    } ],
+    "PLZA>NBRK" : [ {
+      "from" : 0.0,
+      "to" : 0.72,
+      "kind" : "elevated",
+      "name" : null
+    }, {
+      "from" : 0.72,
+      "to" : 0.782,
+      "kind" : "grade",
+      "name" : null
+    }, {
+      "from" : 0.782,
+      "to" : 1.0,
+      "kind" : "tunnel",
+      "name" : null
+    } ],
+    "POWL>CIVC" : [ {
+      "from" : 0.0,
+      "to" : 1.0,
+      "kind" : "tunnel",
+      "name" : null
+    } ],
+    "POWL>MONT" : [ {
+      "from" : 0.0,
+      "to" : 1.0,
+      "kind" : "tunnel",
+      "name" : null
+    } ],
+    "RICH>DELN" : [ {
+      "from" : 0.0,
+      "to" : 0.135,
+      "kind" : "grade",
+      "name" : null
+    }, {
+      "from" : 0.135,
+      "to" : 0.283,
+      "kind" : "elevated",
+      "name" : null
+    }, {
+      "from" : 0.283,
+      "to" : 0.745,
+      "kind" : "grade",
+      "name" : null
+    }, {
+      "from" : 0.745,
+      "to" : 1.0,
+      "kind" : "elevated",
+      "name" : null
+    } ],
+    "ROCK>MCAR" : [ {
+      "from" : 0.0,
+      "to" : 0.109,
+      "kind" : "elevated",
+      "name" : null
+    }, {
+      "from" : 0.109,
+      "to" : 0.189,
+      "kind" : "grade",
+      "name" : null
+    }, {
+      "from" : 0.189,
+      "to" : 0.262,
+      "kind" : "elevated",
+      "name" : null
+    }, {
+      "from" : 0.262,
+      "to" : 0.374,
+      "kind" : "grade",
+      "name" : null
+    }, {
+      "from" : 0.374,
+      "to" : 0.527,
+      "kind" : "elevated",
+      "name" : null
+    }, {
+      "from" : 0.527,
+      "to" : 0.962,
+      "kind" : "grade",
+      "name" : null
+    }, {
+      "from" : 0.962,
+      "to" : 1.0,
+      "kind" : "elevated",
+      "name" : null
+    } ],
+    "ROCK>ORIN" : [ {
+      "from" : 0.0,
+      "to" : 0.024,
+      "kind" : "elevated",
+      "name" : null
+    }, {
+      "from" : 0.024,
+      "to" : 0.106,
+      "kind" : "grade",
+      "name" : null
+    }, {
+      "from" : 0.106,
+      "to" : 0.129,
+      "kind" : "elevated",
+      "name" : null
+    }, {
+      "from" : 0.129,
+      "to" : 0.168,
+      "kind" : "tunnel",
+      "name" : null
+    }, {
+      "from" : 0.168,
+      "to" : 0.194,
+      "kind" : "grade",
+      "name" : null
+    }, {
+      "from" : 0.194,
+      "to" : 0.928,
+      "kind" : "tunnel",
+      "name" : null
+    }, {
+      "from" : 0.928,
+      "to" : 1.0,
+      "kind" : "grade",
+      "name" : null
+    } ],
+    "SANL>BAYF" : [ {
+      "from" : 0.0,
+      "to" : 1.0,
+      "kind" : "elevated",
+      "name" : null
+    } ],
+    "SANL>COLS" : [ {
+      "from" : 0.0,
+      "to" : 1.0,
+      "kind" : "elevated",
+      "name" : null
+    } ],
+    "SBRN>MLBR" : [ {
+      "from" : 0.0,
+      "to" : 0.428,
+      "kind" : "tunnel",
+      "name" : null
+    }, {
+      "from" : 0.428,
+      "to" : 0.456,
+      "kind" : "grade",
+      "name" : null
+    }, {
+      "from" : 0.456,
+      "to" : 0.659,
+      "kind" : "elevated",
+      "name" : null
+    }, {
+      "from" : 0.659,
+      "to" : 0.694,
+      "kind" : "grade",
+      "name" : null
+    }, {
+      "from" : 0.694,
+      "to" : 0.961,
+      "kind" : "tunnel",
+      "name" : null
+    }, {
+      "from" : 0.961,
+      "to" : 1.0,
+      "kind" : "grade",
+      "name" : null
+    } ],
+    "SBRN>SFIA" : [ {
+      "from" : 0.0,
+      "to" : 0.603,
+      "kind" : "tunnel",
+      "name" : null
+    }, {
+      "from" : 0.603,
+      "to" : 0.642,
+      "kind" : "grade",
+      "name" : null
+    }, {
+      "from" : 0.642,
+      "to" : 1.0,
+      "kind" : "elevated",
+      "name" : null
+    } ],
+    "SBRN>SSAN" : [ {
+      "from" : 0.0,
+      "to" : 1.0,
+      "kind" : "tunnel",
+      "name" : null
+    } ],
+    "SFIA>SBRN" : [ {
+      "from" : 0.0,
+      "to" : 0.356,
+      "kind" : "elevated",
+      "name" : null
+    }, {
+      "from" : 0.356,
+      "to" : 0.401,
+      "kind" : "grade",
+      "name" : null
+    }, {
+      "from" : 0.401,
+      "to" : 1.0,
+      "kind" : "tunnel",
+      "name" : null
+    } ],
+    "SHAY>HAYW" : [ {
+      "from" : 0.0,
+      "to" : 1.0,
+      "kind" : "grade",
+      "name" : null
+    } ],
+    "SHAY>UCTY" : [ {
+      "from" : 0.0,
+      "to" : 0.793,
+      "kind" : "grade",
+      "name" : null
+    }, {
+      "from" : 0.793,
+      "to" : 0.957,
+      "kind" : "elevated",
+      "name" : null
+    }, {
+      "from" : 0.957,
+      "to" : 1.0,
+      "kind" : "tunnel",
+      "name" : null
+    } ],
+    "SSAN>COLM" : [ {
+      "from" : 0.0,
+      "to" : 0.866,
+      "kind" : "tunnel",
+      "name" : null
+    }, {
+      "from" : 0.866,
+      "to" : 0.918,
+      "kind" : "elevated",
+      "name" : null
+    }, {
+      "from" : 0.918,
+      "to" : 1.0,
+      "kind" : "grade",
+      "name" : null
+    } ],
+    "SSAN>SBRN" : [ {
+      "from" : 0.0,
+      "to" : 1.0,
+      "kind" : "tunnel",
+      "name" : null
+    } ],
+    "UCTY>FRMT" : [ {
+      "from" : 0.0,
+      "to" : 0.025,
+      "kind" : "tunnel",
+      "name" : null
+    }, {
+      "from" : 0.025,
+      "to" : 0.672,
+      "kind" : "grade",
+      "name" : null
+    }, {
+      "from" : 0.672,
+      "to" : 0.695,
+      "kind" : "elevated",
+      "name" : null
+    }, {
+      "from" : 0.695,
+      "to" : 0.903,
+      "kind" : "grade",
+      "name" : null
+    }, {
+      "from" : 0.903,
+      "to" : 0.949,
+      "kind" : "elevated",
+      "name" : null
+    }, {
+      "from" : 0.949,
+      "to" : 1.0,
+      "kind" : "grade",
+      "name" : null
+    } ],
+    "UCTY>SHAY" : [ {
+      "from" : 0.0,
+      "to" : 0.044,
+      "kind" : "tunnel",
+      "name" : null
+    }, {
+      "from" : 0.044,
+      "to" : 0.208,
+      "kind" : "elevated",
+      "name" : null
+    }, {
+      "from" : 0.208,
+      "to" : 1.0,
+      "kind" : "grade",
+      "name" : null
+    } ],
+    "WARM>FRMT" : [ {
+      "from" : 0.0,
+      "to" : 0.702,
+      "kind" : "grade",
+      "name" : null
+    }, {
+      "from" : 0.702,
+      "to" : 0.887,
+      "kind" : "tunnel",
+      "name" : null
+    }, {
+      "from" : 0.887,
+      "to" : 1.0,
+      "kind" : "grade",
+      "name" : null
+    } ],
+    "WARM>MLPT" : [ {
+      "from" : 0.0,
+      "to" : 0.154,
+      "kind" : "grade",
+      "name" : null
+    }, {
+      "from" : 0.154,
+      "to" : 0.163,
+      "kind" : "elevated",
+      "name" : null
+    }, {
+      "from" : 0.163,
+      "to" : 0.648,
+      "kind" : "grade",
+      "name" : null
+    }, {
+      "from" : 0.648,
+      "to" : 0.657,
+      "kind" : "elevated",
+      "name" : null
+    }, {
+      "from" : 0.657,
+      "to" : 0.969,
+      "kind" : "grade",
+      "name" : null
+    }, {
+      "from" : 0.969,
+      "to" : 1.0,
+      "kind" : "tunnel",
+      "name" : null
+    } ],
+    "WCRK>LAFY" : [ {
+      "from" : 0.0,
+      "to" : 0.139,
+      "kind" : "elevated",
+      "name" : null
+    }, {
+      "from" : 0.139,
+      "to" : 0.179,
+      "kind" : "grade",
+      "name" : null
+    }, {
+      "from" : 0.179,
+      "to" : 0.204,
+      "kind" : "elevated",
+      "name" : null
+    }, {
+      "from" : 0.204,
+      "to" : 0.28,
+      "kind" : "grade",
+      "name" : null
+    }, {
+      "from" : 0.28,
+      "to" : 0.359,
+      "kind" : "tunnel",
+      "name" : null
+    }, {
+      "from" : 0.359,
+      "to" : 0.768,
+      "kind" : "grade",
+      "name" : null
+    }, {
+      "from" : 0.768,
+      "to" : 0.804,
+      "kind" : "elevated",
+      "name" : null
+    }, {
+      "from" : 0.804,
+      "to" : 1.0,
+      "kind" : "grade",
+      "name" : null
+    } ],
+    "WCRK>PHIL" : [ {
+      "from" : 0.0,
+      "to" : 0.289,
+      "kind" : "elevated",
+      "name" : null
+    }, {
+      "from" : 0.289,
+      "to" : 0.868,
+      "kind" : "grade",
+      "name" : null
+    }, {
+      "from" : 0.868,
+      "to" : 1.0,
+      "kind" : "elevated",
+      "name" : null
+    } ],
+    "WDUB>CAST" : [ {
+      "from" : 0.0,
+      "to" : 0.703,
+      "kind" : "grade",
+      "name" : null
+    }, {
+      "from" : 0.703,
+      "to" : 0.718,
+      "kind" : "elevated",
+      "name" : null
+    }, {
+      "from" : 0.718,
+      "to" : 0.764,
+      "kind" : "grade",
+      "name" : null
+    }, {
+      "from" : 0.764,
+      "to" : 0.791,
+      "kind" : "elevated",
+      "name" : null
+    }, {
+      "from" : 0.791,
+      "to" : 0.867,
+      "kind" : "grade",
+      "name" : null
+    }, {
+      "from" : 0.867,
+      "to" : 0.874,
+      "kind" : "elevated",
+      "name" : null
+    }, {
+      "from" : 0.874,
+      "to" : 1.0,
+      "kind" : "grade",
+      "name" : null
+    } ],
+    "WDUB>DUBL" : [ {
+      "from" : 0.0,
+      "to" : 1.0,
+      "kind" : "grade",
+      "name" : null
+    } ],
+    "WOAK>12TH" : [ {
+      "from" : 0.0,
+      "to" : 0.579,
+      "kind" : "elevated",
+      "name" : null
+    }, {
+      "from" : 0.579,
+      "to" : 0.696,
+      "kind" : "grade",
+      "name" : null
+    }, {
+      "from" : 0.696,
+      "to" : 1.0,
+      "kind" : "tunnel",
+      "name" : null
+    } ],
+    "WOAK>EMBR" : [ {
+      "from" : 0.0,
+      "to" : 0.184,
+      "kind" : "elevated",
+      "name" : null
+    }, {
+      "from" : 0.184,
+      "to" : 0.201,
+      "kind" : "grade",
+      "name" : null
+    }, {
+      "from" : 0.201,
+      "to" : 1.0,
+      "kind" : "tunnel",
+      "name" : "Transbay Tube"
+    } ],
+    "WOAK>LAKE" : [ {
+      "from" : 0.0,
+      "to" : 0.508,
+      "kind" : "elevated",
+      "name" : null
+    }, {
+      "from" : 0.508,
+      "to" : 0.61,
+      "kind" : "grade",
+      "name" : null
+    }, {
+      "from" : 0.61,
+      "to" : 1.0,
+      "kind" : "tunnel",
+      "name" : null
+    } ]
+  }
+}

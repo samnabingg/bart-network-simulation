@@ -62,6 +62,10 @@ class OsmLayoutImporter implements ApplicationRunner {
         Files.createDirectories(out);
         Path raw = osm.rawDir() == null || osm.rawDir().isBlank() ? null : Files.createDirectories(Path.of(osm.rawDir()));
         if (osm.rebuild() && raw == null) throw new IllegalStateException("app.osm.rebuild needs app.osm.raw-dir");
+        if ("line".equalsIgnoreCase(osm.target())) {
+            importLine(overpass, raw, osm);
+            return;
+        }
 
         List<StationInfo> wanted = select(osm.stations());
         List<String> failed = new ArrayList<>();
@@ -87,6 +91,35 @@ class OsmLayoutImporter implements ApplicationRunner {
         log.info("OSM import done: {} of {} stations written to {}{}", wanted.size() - failed.size(), wanted.size(),
             out.toAbsolutePath(), failed.isEmpty() ? "" : "; failed: " + failed);
         System.exit(SpringApplication.exit(context, () -> failed.isEmpty() ? 0 : 1));
+    }
+
+    /**
+     * Tunnels, viaducts and ground-level track between every pair of neighbouring stations
+     * ({@code --app.osm.target=line}): one Overpass request for all BART track, one file out.
+     */
+    private void importLine(OverpassClient overpass, Path raw, AppProperties.Osm osm) throws Exception {
+        int status = 0;
+        try {
+            JsonNode body;
+            Path saved = raw == null ? null : raw.resolve("line.json");
+            if (osm.rebuild()) {
+                body = json.readTree(saved.toFile());
+            } else {
+                body = overpass.query(LineProfileBuilder.overpassQuery());
+                if (saved != null) json.writeValue(saved.toFile(), body);
+            }
+            LineProfile profile = LineProfileBuilder.build(OsmData.parse(body), network.model().paths(), clock.instant());
+            Path out = Path.of(osm.lineFile());
+            Files.createDirectories(out.toAbsolutePath().getParent());
+            json.writeValue(out.toFile(), profile);
+            long tunnels = profile.legs().values().stream().filter(l -> l.stream().anyMatch(s -> LineProfile.TUNNEL.equals(s.kind()))).count();
+            log.info("Line profile: {} legs ({} with a tunnel), written to {}", profile.legs().size(), tunnels, out.toAbsolutePath());
+        } catch (Exception e) {
+            status = 1;
+            log.error("Line profile import failed: {}", e.getMessage());
+        }
+        int code = status;
+        System.exit(SpringApplication.exit(context, () -> code));
     }
 
     private List<StationInfo> select(String stations) {

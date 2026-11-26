@@ -51,6 +51,19 @@ class ApiTest {
     }
 
     @Test
+    void rideProfileHasTunnelsAndDoorSides() throws Exception {
+        mvc.perform(get("/api/stations/ride-profile"))
+            .andExpect(status().isOk())
+            // San Leandro has side platforms: the doors open on the right
+            .andExpect(jsonPath("$.stations.SANL.layout").value("side"))
+            .andExpect(jsonPath("$.stations.SANL.doors").value("right"))
+            .andExpect(jsonPath("$.stations.LAKE.level").value("tunnel"))
+            // Fruitvale to Lake Merritt ends in the tunnel under downtown Oakland
+            .andExpect(jsonPath("$.legs['FTVL>LAKE'][-1:].kind").value(org.hamcrest.Matchers.contains("tunnel")))
+            .andExpect(jsonPath("$.legs['WOAK>EMBR'][-1:].name").value(org.hamcrest.Matchers.contains("Transbay Tube")));
+    }
+
+    @Test
     void geoHasTrackAndEntrancesInTheOldGeoJsonShape() throws Exception {
         mvc.perform(get("/api/geo"))
             .andExpect(status().isOk())

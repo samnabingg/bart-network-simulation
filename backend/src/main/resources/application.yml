@@ -63,6 +63,8 @@ app:
     raw-dir:
     pause: 3s
     rebuild: false   # true: rebuild the layouts from the answers saved in raw-dir, without asking Overpass
+    target: layouts  # layouts: one file per station; line: tunnels and viaducts between stations
+    line-file: src/main/resources/line/profile.json
 
 bart:
   api-key: ${BART_API_KEY:}

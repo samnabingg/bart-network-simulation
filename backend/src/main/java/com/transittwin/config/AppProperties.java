@@ -17,9 +17,11 @@ public record AppProperties(Events events, Geo geo, Osm osm) {
      * @param rawDir    optional: also save Overpass's raw answers here (for tests and debugging)
      * @param pause     wait between requests, to be kind to the public Overpass server
      * @param rebuild   true: don't ask Overpass, rebuild the layouts from the answers saved in rawDir
+     * @param target    what to import: layouts (one file per station) or line (tunnels and viaducts between stations)
+     * @param lineFile  where the line profile is written (committed and loaded from the classpath)
      */
     public record Osm(String overpassUrl, String stations, String outputDir, String rawDir, java.time.Duration pause,
-                      boolean rebuild) {
+                      boolean rebuild, String target, String lineFile) {
     }
 
     public record Events(String transport, String departuresTopic) {
