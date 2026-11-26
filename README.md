@@ -87,6 +87,7 @@ Poll interval, timeouts, retry and circuit breaker settings are in `backend/src/
 | `GET /api/live/status` | Whether a key is set and live data is fresh. |
 | `GET /api/live/trains` | Estimated position of every live train. |
 | `GET /api/fares?orig=&dest=` | Today's Clipper fare between two stations, from BART. 422 for the same station (excursion fare), 503 when BART can't be asked. |
+| `GET /api/stations/{abbr}/layout` | The station's layout imported from OpenStreetMap (see below). 404 if it hasn't been imported. |
 
 Errors are RFC 9457 problem details. Every response carries `X-Correlation-Id` (sent by the frontend or generated), which is also in every log line.
 
@@ -99,6 +100,7 @@ cd frontend && npm test         # Vitest
 
 - `BartResponseParserTest`, `KmlParserTest`, `NetworkSimulationTest` are the prototype's `node --test` suites ported to JUnit. The Java model was also checked against the JavaScript one: identical timetable for all 12 trips, identical lengths for all 100 track paths, identical demo boards.
 - `ApiTest`: every endpoint, validation, problem details, correlation IDs.
+- `StationLayoutBuilderTest`: the OSM layout builder on saved Overpass answers for five stations (an island mapped as one area, as two touching halves, as edge lines; side platforms as edge lines; two islands with four tracks). `FareServiceTest`: reading BART's fare answer.
 - `BartIntegrationTest`: the live pipeline against a stub BART server (poll, publish, consume, estimate, serve), plus retries on 5xx, no retry on 4xx, the circuit opening, and the key never leaking into errors.
 - `PostgresKafkaIntegrationTest`: Flyway on real PostgreSQL, snapshots through real Kafka, and a poison message landing on the dead-letter topic. Skipped automatically when Docker isn't available; runs in CI.
 - Frontend: train placement and live extrapolation, the API client (problem details, correlation IDs), the station board (countdowns, cancellations, delays) and the station search form.
@@ -117,6 +119,24 @@ CI (`.github/workflows/ci.yml`) runs both suites and builds the Docker images.
 The backend imports `backend/src/main/resources/geo/geo.json` into the database the first time it starts with an empty database: 96 track segments (simplified from 8,937 to 985 points) and 132 entrances.
 
 To rebuild from a newer BART download ("Stations, tracks and entrances" KML, Developer Program, Geospatial Data), unzip it and start the backend with `GEO_KML_FILE=path/to/doc.kml`. It parses the KML, simplifies the track (Douglas-Peucker, about 2 m), and replaces the track and entrances in one transaction. This replaces the old `build-geo.mjs`.
+
+## Station layouts from OpenStreetMap
+
+`backend/src/main/resources/stations/{ABBR}.json` holds each imported station's real layout: platforms (outline, length, width, ref, level), the tracks beside them, whether the platforms are island or side, and, where OSM has them, entrances, escalators, stairs, elevators, fare gates, ticket machines and indoor rooms. Coordinates are meters in a station frame (origin in the middle of the platforms, +z along them, `bearingDeg` says which way that is). Each file lists what OSM had (`coverage`) and what is missing or disagrees with the reference data (`warnings`).
+
+The import is a one-off job, not part of startup, so the app never depends on the public Overpass server. To import or refresh (the normal backend can keep running; this one has no web server):
+
+```sh
+cd backend
+./mvnw spring-boot:run -Dspring-boot.run.profiles=local,osm-import "-Dspring-boot.run.arguments=--app.osm.stations=MCAR,16TH,EMBR"
+# PowerShell: .\mvnw.cmd spring-boot:run "-Dspring-boot.run.profiles=local,osm-import" "-Dspring-boot.run.arguments=--app.osm.stations=MCAR,16TH,EMBR"
+```
+
+`--app.osm.stations=ALL` imports every station (about 3 minutes with the polite pause between requests). Add `--app.osm.raw-dir=target/osm-raw` to keep Overpass's answers; the test fixtures in `src/test/resources/osm` came from there.
+
+Imported so far: BAYF, EMBR, MCAR, 16TH, FTVL. OSM detail varies a lot: Embarcadero has escalators, gates and indoor rooms; Bay Fair and Fruitvale have only platforms. Open questions the import raised: OSM shows an island at 16th St Mission and side platforms at Fruitvale, the opposite of the reference data; check on site or against BART's station overview maps before changing either.
+
+Map data © OpenStreetMap contributors, available under the [Open Database License](https://opendatacommons.org/licenses/odbl/). The credit is also in every layout file and must stay wherever the data is shown.
 
 Map notes: zoomed out, entrance dots are pushed up to 25 times farther from the station so they stay visible; from zoom 15 they sit on their true spots. Station names appear from zoom 12.
 
