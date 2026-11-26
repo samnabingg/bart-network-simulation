@@ -46,7 +46,7 @@ export class App {
 
   /** Re-feed the 3D station every 15 s (every 3 s when the demo runs fast), or when its board changes. */
   private readonly feedTick = computed(() => {
-    const fast = !this.sim.usingLive() && this.sim.speed() > 1;
+    const fast = this.sim.mode() === 'demo' && this.sim.speed() > 1;
     return Math.floor(this.sim.slowFrame() / (fast ? 6 : 30));
   });
 

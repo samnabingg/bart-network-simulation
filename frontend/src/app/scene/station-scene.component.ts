@@ -117,7 +117,9 @@ export class StationSceneComponent implements OnDestroy {
     if (!scene || !st) return;
     const rows = (feed.rows ?? []).filter((r) => !r.cancelled && r.minutes != null);
     if (!rows.length) {
-      scene.setLive(null, `Demo timing (no departures listed for ${st.name} right now)`);
+      // An empty list, not null: null makes the scene run its own made-up train.
+      const why = feed.rows === null ? feed.note || 'Waiting for departures' : `No departures listed for ${st.name} right now`;
+      scene.setLive([], why);
       this.caption.set(SCENE_HINT);
       return;
     }
