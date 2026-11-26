@@ -47,6 +47,8 @@
       [station]="sceneStation()"
       [lines]="sim.lines()"
       [stations]="sim.network()?.stations ?? []"
+      [paths]="sim.network()?.paths ?? {}"
+      [tripFrom]="sceneTrip()"
       [feed]="sceneFeed()"
       [balance]="sceneBalance()"
       [spawn]="sceneSpawn()"

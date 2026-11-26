@@ -24,16 +24,18 @@ export const CAR = {
   doorH: 1.95,
 };
 
-// Ride timing. Real BART stations are 2 to 5 km apart; each leg is shortened to about a minute.
-// The train stops at every station on its route; you get off by pressing E at an open door.
+// Ride timing. Each leg is as long as the real track between the two stations (from the network's
+// track paths), at real time. Speed and acceleration match the backend's running-time model
+// (Timetables.runSeconds: 35 s to speed up and brake, then 22 m/s), so a ride takes as long as the
+// same trip does on the map. The train stops at every station; press E at an open door to get off.
 export const RIDE = {
   vmax: 22,        // m/s at cruise (about 80 km/h)
-  accel: 1.1,      // m/s^2, same for braking
-  distance: 900,   // m between the two platforms
+  accel: 22 / 35,  // m/s^2, same for braking: V/A = 35 s, as in the backend model
+  distance: 2000,  // m between platforms when the real track length isn't known (backend fallback)
   closeAt: 3,      // s after boarding when the doors start to close
   closeDur: 2,     // s the doors take to close
-  announce: 350,   // m before the next station: "now arriving"
-  dwell: 12,       // s the doors stay open at each stop along the way before they start to close
+  announce: 600,   // m before the next station: "now arriving" (braking takes about 385 m)
+  dwell: 20,       // s the doors stay open at each stop; with opening and closing about the backend's 25 s
 };
 
 // Is a rider at (x, z) standing at one of the left-side doors (the platform side)?
@@ -53,14 +55,23 @@ export function nextStopFrom(dest = '') {
   return 'San Leandro';
 }
 
-function profile(tau) {
-  const { vmax: V, accel: A, distance: S } = RIDE;
+// Distance and speed tau seconds after leaving, for a leg of S meters. Short legs never reach
+// full speed: the train speeds up for half the way and brakes for the other half.
+function profile(tau, S) {
+  const { accel: A } = RIDE;
+  const V = Math.min(RIDE.vmax, Math.sqrt(A * S));
   const t1 = V / A, s1 = 0.5 * A * t1 * t1, tc = (S - 2 * s1) / V;
   if (tau <= 0) return { s: 0, v: 0, done: false };
   if (tau < t1) return { s: 0.5 * A * tau * tau, v: A * tau, done: false };
   if (tau < t1 + tc) return { s: s1 + V * (tau - t1), v: V, done: false };
   if (tau < 2 * t1 + tc) { const d = tau - t1 - tc; return { s: s1 + V * tc + V * d - 0.5 * A * d * d, v: V - A * d, done: false }; }
   return { s: S, v: 0, done: true };
+}
+
+// Seconds from leaving to stopping on a leg of S meters (the length of profile()).
+export function legSeconds(S) {
+  const A = RIDE.accel, V = Math.min(RIDE.vmax, Math.sqrt(A * S));
+  return 2 * (V / A) + (S - (V * V) / A) / V;
 }
 
 function canvasTex(w, h, draw, repeat = true) {
@@ -546,7 +557,7 @@ export function createTrainRide(scene, { floorY, x: originX = 400 }) {
     const x = 40;
     g.strokeStyle = color; g.lineWidth = 8; g.beginPath(); g.moveTo(x, 316); g.lineTo(x, 160); g.stroke();
     g.setLineDash([6, 8]); g.beginPath(); g.moveTo(x, 160); g.lineTo(x, 140); g.stroke(); g.setLineDash([]);
-    const prog = clamp(st.s / RIDE.distance, 0, 1);
+    const prog = clamp(st.s / st.dist, 0, 1);
     g.fillStyle = '#5c6a76'; g.beginPath(); g.arc(x, 300, 8, 0, TAU); g.fill();
     g.fillStyle = '#9fb3c4'; g.font = '17px system-ui, sans-serif'; g.fillText(st.from.slice(0, 18), x + 22, 300);
     g.fillStyle = '#0d1824'; g.strokeStyle = '#fff'; g.lineWidth = 4; g.beginPath(); g.arc(x, 190, 12, 0, TAU); g.fill(); g.stroke();
@@ -581,7 +592,7 @@ export function createTrainRide(scene, { floorY, x: originX = 400 }) {
   const placeWorld = () => {
     const s = st.s;
     for (const { obj, u } of movers) obj.position.z = mod(s - u, WRAP) - WRAP / 2;
-    const zo = s, zd = s - RIDE.distance;
+    const zo = s, zd = s - st.dist;
     origin.g.position.z = zo; origin.g.visible = Math.abs(zo) < 300;
     destPlat.g.position.z = zd; destPlat.g.visible = Math.abs(zd) < 300;
     groundMat.map.offset.y = mod(s / 20, 1);
@@ -597,7 +608,9 @@ export function createTrainRide(scene, { floorY, x: originX = 400 }) {
     else if (st.phase === 'boarding' && st.leg > 0) here = { name: st.from, index: st.leg - 1 };
     return {
       phase: st.phase, speed: st.v, s: st.s, dest: st.dest, next: st.next, from: st.from,
-      leg: st.leg, stops: st.stops, last, here, remaining: st.stops.length - st.leg - (st.phase === 'arrived' ? 1 : 0),
+      leg: st.leg, stops: st.stops, last, here,
+      // seconds until the train stops at `next` (null once it has stopped)
+      eta: st.phase === 'arrived' ? null : Math.max(0, st.closeAt + RIDE.closeDur + 1 + legSeconds(st.dist) - st.t), remaining: st.stops.length - st.leg - (st.phase === 'arrived' ? 1 : 0),
     };
   };
 
@@ -607,9 +620,11 @@ export function createTrainRide(scene, { floorY, x: originX = 400 }) {
     seats,
     bounds: { x: W - 0.3, z: HL - 0.35 },
     // stops: names of every station the train calls at after `from`, in order (the last is the end of the ride).
-    start({ dest, color, next, stops, from = 'Bay Fair' }) {
+    // legs: meters of real track before each of those stops (missing ones use RIDE.distance).
+    start({ dest, color, next, stops, legs = [], from = 'Bay Fair' }) {
       const list = stops && stops.length ? [...stops] : [next || nextStopFrom(dest)];
-      st = { t: 0, s: 0, v: 0, phase: 'boarding', dest: dest || 'Train', stops: list, leg: 0, next: list[0], from, origin: from, color: cssColor(color), fired: new Set(), arrivedT: null, closeAt: RIDE.closeAt };
+      const legM = (i) => (legs[i] > 50 ? legs[i] : RIDE.distance);
+      st = { t: 0, s: 0, v: 0, phase: 'boarding', dest: dest || 'Train', stops: list, legM, dist: legM(0), leg: 0, next: list[0], from, origin: from, color: cssColor(color), fired: new Set(), arrivedT: null, closeAt: RIDE.closeAt };
       destPlat.setName(st.next);
       origin.setName(from);
       root.visible = true;
@@ -636,6 +651,7 @@ export function createTrainRide(scene, { floorY, x: originX = 400 }) {
         st.from = st.next;
         st.leg += 1;
         st.next = st.stops[st.leg];
+        st.dist = st.legM(st.leg);
         st.t = dt; st.s = 0; st.v = 0; st.arrivedT = null; st.fired = new Set();
         origin.setName(st.from);
         destPlat.setName(st.next);
@@ -643,14 +659,14 @@ export function createTrainRide(scene, { floorY, x: originX = 400 }) {
       }
       const closeAt = st.closeAt;
       const departAt = closeAt + RIDE.closeDur + 1;
-      const p = profile(st.t - departAt);
+      const p = profile(st.t - departAt, st.dist);
       st.s = p.s; st.v = p.v;
       let open;
       if (st.t < closeAt) { open = 1; st.phase = 'boarding'; }
       else if (st.t < closeAt + RIDE.closeDur) { open = 1 - (st.t - closeAt) / RIDE.closeDur; st.phase = 'closing'; fire('closing'); }
       else if (!p.done) {
         open = 0;
-        st.phase = st.s > RIDE.distance - RIDE.announce ? 'arriving' : 'moving';
+        st.phase = st.s > st.dist - Math.min(RIDE.announce, st.dist * 0.4) ? 'arriving' : 'moving';
         if (st.t >= departAt) fire('departed');
         if (st.phase === 'arriving') fire('arriving');
       } else {

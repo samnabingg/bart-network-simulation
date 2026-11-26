@@ -13,6 +13,7 @@
 
 import * as THREE from 'three';
 import { atLeftDoor, createTrainRide, nextStopFrom } from './train-ride.js';
+import { createFareGates } from './fare-gates.js';
 import { buildFleetTrain } from './fleet.js';
 
 /* ---------- Dimensions and settings (estimates, edit freely) ---------- */
@@ -31,8 +32,7 @@ export const DIM = {
   trainLength: 36,
   trainStopZ: -54,     // center of the stopped train
   gateZ: -1,
-  fare: 4.0,           // demo fare in dollars. Not a real fare.
-  topUp: 20,           // demo amount added at the ticket machine
+  topUp: 20,           // what the ticket machine adds to your card; fares come from BART when you tap out
 };
 
 const C = {
@@ -623,6 +623,8 @@ export function createBayFairScene(host, opts = {}) {
     onBoard: false,
     sitting: null,
     arrived: false,
+    // where the trip on the card started (carried over when you arrive by train)
+    tripFrom: (opts.trip && opts.trip.from) || null,
   };
 
   const hud = document.createElement('div');
@@ -663,13 +665,14 @@ export function createBayFairScene(host, opts = {}) {
       if (game.steps[k]) li.className = 'done';
       return li;
     }));
-    walletEl.textContent = `Card balance (demo): $${game.balance.toFixed(2)}`;
+    walletEl.textContent = `Clipper card balance: $${game.balance.toFixed(2)}`;
     liveEl.textContent = live.note;
     stepsEl.hidden = game.onBoard;
     rideEl.hidden = !game.onBoard;
     const r = game.onBoard && ride.state;
     if (r) {
-      const status = { boarding: 'Doors open', closing: 'Doors closing', moving: `Next stop: ${r.next}`, arriving: `Now arriving: ${r.next}`, arrived: `Arrived at ${r.next}` }[r.phase];
+      const eta = r.eta == null ? '' : ` in ${Math.floor(r.eta / 60)}:${String(Math.floor(r.eta % 60)).padStart(2, '0')}`;
+      const status = { boarding: 'Doors open', closing: 'Doors closing', moving: `Next stop: ${r.next}${eta}`, arriving: `Now arriving: ${r.next}`, arrived: `Arrived at ${r.next}` }[r.phase];
       rideEl.innerHTML = '';
       const a = document.createElement('strong'); a.textContent = `Train to ${r.dest}`;
       const b = document.createElement('span'); b.textContent = `${status} · ${Math.round(r.speed * 3.6)} km/h${r.remaining > 0 ? ` · ${r.remaining} more stop${r.remaining === 1 ? '' : 's'}` : ''}`;
@@ -698,6 +701,8 @@ export function createBayFairScene(host, opts = {}) {
     } catch { /* audio is optional */ }
   };
 
+  const gates = createFareGates({ opts, game, here: { abbr: 'BAYF', name: 'Bay Fair' }, toast, beep, onChange: () => renderHud() });
+
   const P = { x: 0, z: 20, y: 0, yaw: 0, pitch: -0.05 };
   const SPOTS = {
     entrance: { x: 0, z: 22, yaw: 0 },
@@ -723,7 +728,7 @@ export function createBayFairScene(host, opts = {}) {
   const interactables = [
     {
       test: () => P.y < 1 && Math.hypot(P.x - 6.5, P.z - 0.6) < 2.6 && P.z > 0.4,
-      label: () => `Press E: add $${D.topUp} to your card (demo)`,
+      label: () => `Press E: add $${D.topUp} to your Clipper card`,
       run() {
         game.balance += D.topUp;
         game.steps.funds = true;
@@ -733,22 +738,14 @@ export function createBayFairScene(host, opts = {}) {
     },
     {
       test: () => P.y < 1 && Math.abs(P.x) < 4.6 && P.z > -0.1 && P.z < 2.4,
-      label: () => (game.gatesOpen ? 'Gates are open, walk through' : `Press E: tap your card at the gate (demo fare $${D.fare.toFixed(2)})`),
-      run() {
-        if (game.gatesOpen) return;
-        if (game.balance < D.fare) {
-          game.flash = 1.2;
-          beep(220, 0.3);
-          toast('The gate shows a red X: not enough value. Add money at a ticket machine first.');
-          return;
-        }
-        game.balance -= D.fare;
-        game.steps.tapped = true;
-        game.gatesOpen = true;
-        game.openUntil = performance.now() + 10_000;
-        beep(990);
-        toast(`Tap accepted, $${D.fare.toFixed(2)} charged. Walk through the green arrows.`);
-      },
+      label: () => gates.inLabel(),
+      run() { gates.tapIn(); },
+    },
+    {
+      // the same gates from the paid side: tap out, pay BART's fare for the trip
+      test: () => P.y < 1 && Math.abs(P.x) < 4.6 && P.z < D.gateZ - 0.4 && P.z > -3.4,
+      label: () => gates.outLabel(),
+      run() { gates.tapOut(); },
     },
     {
       test: () => P.y < 1 && Math.hypot(P.x + 7, P.z - 3.4) < 2.6,
@@ -814,7 +811,7 @@ export function createBayFairScene(host, opts = {}) {
     const nextName = nx ? nx.name : nextStopFrom(dest);
     rideInfo = { dest, color, destAbbr, direction, next: nx, stops };
     boardEl.hidden = true;
-    ride.start({ dest, color, next: nextName, stops: stops.map((x) => x.name), from: 'Bay Fair' });
+    ride.start({ dest, color, next: nextName, stops: stops.map((x) => x.name), legs: stops.map((x) => x.meters), from: 'Bay Fair' });
     // step in through the center door on the left, facing into the car
     P.x = -0.95; P.z = 0; P.y = 0; P.yaw = -Math.PI / 2; P.pitch = -0.05;
     beep(520, 0.2);
@@ -831,7 +828,7 @@ export function createBayFairScene(host, opts = {}) {
   // Step off at stop `index` of the route: load that station with you on its platform.
   const getOff = (index) => {
     const stop = rideInfo && rideInfo.stops[index];
-    if (stop && stop.abbr && opts.onExit) { opts.onExit(stop.abbr, { balance: game.balance }); return; }
+    if (stop && stop.abbr && opts.onExit) { opts.onExit(stop.abbr, { balance: game.balance, tripFrom: game.tripFrom }); return; }
     // Not a station we can load (no network data): end the demo ride with the menu.
     boardEl.querySelector('strong').textContent = `You got off at ${ride.state ? ride.state.here?.name || ride.state.next : 'the station'}.`;
     boardEl.querySelector('span').textContent = 'That\'s the end of the demo ride. You can ride again or go back to Bay Fair.';
@@ -870,7 +867,7 @@ export function createBayFairScene(host, opts = {}) {
 
   const reset = (spot = 'entrance') => {
     stopRide();
-    Object.assign(game, { balance: 0, gatesOpen: false, openUntil: 0, flash: 0, onBoard: false, steps: { funds: false, tapped: false, platform: false, boarded: false } });
+    Object.assign(game, { balance: 0, gatesOpen: false, openUntil: 0, flash: 0, onBoard: false, steps: { funds: false, tapped: false, platform: false, boarded: false }, tripFrom: null });
     boardEl.hidden = true;
     teleport(spot);
     renderHud();
@@ -1004,7 +1001,7 @@ export function createBayFairScene(host, opts = {}) {
     // arrived by train from another station: already paid and on the platform
     Object.assign(game.steps, { funds: true, tapped: true, platform: true });
     teleport('platform-train');
-    toast('Welcome to Bay Fair.', 4000);
+    toast('Welcome to Bay Fair. Tap out at the gates to leave, or catch another train.', 5000);
   } else {
     teleport('entrance');
   }

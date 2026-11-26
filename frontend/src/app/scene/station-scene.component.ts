@@ -1,10 +1,14 @@
-import { Component, ElementRef, OnDestroy, effect, input, output, signal, untracked, viewChild } from '@angular/core';
-import { DepartureRow, LineDef, StationInfo } from '../core/models';
+import { Component, ElementRef, OnDestroy, effect, inject, input, output, signal, untracked, viewChild } from '@angular/core';
+import { firstValueFrom } from 'rxjs';
+import { NetworkApi } from '../core/network-api.service';
+import { DepartureRow, LineDef, StationInfo, TrackPath } from '../core/models';
 import type { SceneNextStop, SceneRow, StationScene } from './three/scene-api';
 
 export interface SceneExit {
   next: string;
   balance: number;
+  /** where the trip on the card started; you pay for it when you tap out */
+  tripFrom: string | null;
 }
 
 export interface SceneFeed {
@@ -31,6 +35,10 @@ export class StationSceneComponent implements OnDestroy {
   readonly lines = input<LineDef[]>([]);
   /** All stations, for naming the stops along a ride. */
   readonly stations = input<StationInfo[]>([]);
+  /** Track between neighbouring stations, keyed "ABBR>ABBR": real leg lengths for the ride. */
+  readonly paths = input<Record<string, TrackPath>>({});
+  /** Where the trip on the card started, when arriving by train. */
+  readonly tripFrom = input<string | null>(null);
   readonly feed = input<SceneFeed>({ rows: null, note: '' });
   /** Card balance carried over from the previous station. */
   readonly balance = input<number | undefined>(undefined);
@@ -43,6 +51,7 @@ export class StationSceneComponent implements OnDestroy {
   readonly heading = signal('Station walkthrough');
   readonly caption = signal(SCENE_HINT);
 
+  private readonly api = inject(NetworkApi);
   private readonly host = viewChild.required<ElementRef<HTMLDivElement>>('host');
   private scene: StationScene | null = null;
   private loadToken = 0;
@@ -91,7 +100,11 @@ export class StationSceneComponent implements OnDestroy {
         this.nextStopFor(from, destAbbr, hex, direction),
       route: ({ from, destAbbr, hex, direction }: { from: string; destAbbr: string; hex: string; direction: string }) =>
         this.routeFor(from, destAbbr, hex, direction),
-      onExit: (next: string, carry: { balance: number }) => this.exit.emit({ next, balance: carry.balance }),
+      onExit: (next: string, carry: { balance: number; tripFrom: string | null }) =>
+        this.exit.emit({ next, balance: carry.balance, tripFrom: carry.tripFrom }),
+      trip: this.tripFrom() ? { from: this.tripFrom()! } : null,
+      fare: async (orig: string, dest: string) => (await firstValueFrom(this.api.fare(orig, dest))).clipper,
+      stationName: (abbr: string) => this.stations().find((s) => s.abbr === abbr)?.name ?? abbr,
     };
     const kind = KIND_LABEL[st.kind] ?? st.kind;
     const platforms = `${st.platform} platform${st.platform === 'side' ? 's' : ''}`;
@@ -159,7 +172,13 @@ export class StationSceneComponent implements OnDestroy {
     if (i < 0 || stops[i + 1] !== ns.abbr) return [{ abbr: ns.abbr, name: ns.name }];
     const end = stops.indexOf(destAbbr, i + 1);
     const names = new Map(this.stations().map((s) => [s.abbr, s.name]));
-    return stops.slice(i + 1, end > i ? end + 1 : undefined).map((abbr) => ({ abbr, name: names.get(abbr) ?? abbr }));
+    const paths = this.paths();
+    const upto = end > i ? end + 1 : stops.length;
+    return stops.slice(i + 1, upto).map((abbr, k) => ({
+      abbr,
+      name: names.get(abbr) ?? abbr,
+      meters: paths[`${stops[i + k]}>${abbr}`]?.len,
+    }));
   }
 }
 

@@ -1,7 +1,7 @@
 import { HttpClient, HttpErrorResponse, HttpParams } from '@angular/common/http';
 import { Injectable, inject } from '@angular/core';
 import { Observable, catchError, throwError } from 'rxjs';
-import { DataMode, Departures, GeoDocument, LiveStatus, LiveTrainsResponse, NetworkResponse } from './models';
+import { DataMode, Departures, Fare, GeoDocument, LiveStatus, LiveTrainsResponse, NetworkResponse } from './models';
 
 /** Typed access to the Spring Boot API. Errors come back as Error with the server's problem detail. */
 @Injectable({ providedIn: 'root' })
@@ -22,6 +22,12 @@ export class NetworkApi {
 
   liveTrains(): Observable<LiveTrainsResponse> {
     return this.http.get<LiveTrainsResponse>('/api/live/trains').pipe(catchError(toError));
+  }
+
+  /** Today's real Clipper fare between two stations, from BART. */
+  fare(orig: string, dest: string): Observable<Fare> {
+    const params = new HttpParams().set('orig', orig).set('dest', dest);
+    return this.http.get<Fare>('/api/fares', { params }).pipe(catchError(toError));
   }
 
   /** @param simTime demo only: the simulated time (epoch seconds) the board is for */

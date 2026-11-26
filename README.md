@@ -86,6 +86,7 @@ Poll interval, timeouts, retry and circuit breaker settings are in `backend/src/
 | `GET /api/stations/{abbr}/departures?source=live\|demo&t=` | A station's board. `t` is the simulated time for demo boards (epoch seconds). 404 for an unknown station, 503 for live when there's no fresh data. |
 | `GET /api/live/status` | Whether a key is set and live data is fresh. |
 | `GET /api/live/trains` | Estimated position of every live train. |
+| `GET /api/fares?orig=&dest=` | Today's Clipper fare between two stations, from BART. 422 for the same station (excursion fare), 503 when BART can't be asked. |
 
 Errors are RFC 9457 problem details. Every response carries `X-Correlation-Id` (sent by the frontend or generated), which is also in every log line.
 

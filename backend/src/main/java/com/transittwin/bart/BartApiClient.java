@@ -53,6 +53,13 @@ public class BartApiClient {
         return get("/etd.aspx", Map.of("cmd", "etd", "orig", "ALL"));
     }
 
+    /** sched.aspx?cmd=fare: today's fares for one trip. BART answers 400 when orig equals dest. */
+    @Retry(name = RESILIENCE_NAME)
+    @CircuitBreaker(name = RESILIENCE_NAME)
+    public JsonNode fetchFare(String orig, String dest) {
+        return get("/sched.aspx", Map.of("cmd", "fare", "orig", orig, "dest", dest, "date", "today"));
+    }
+
     private JsonNode get(String path, Map<String, String> params) {
         if (!props.hasKey()) {
             throw new BartClientErrorException("BART_API_KEY is not set");
