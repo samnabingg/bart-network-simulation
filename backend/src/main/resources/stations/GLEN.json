@@ -1,0 +1,111 @@
+{
+  "abbr" : "GLEN",
+  "name" : "Glen Park",
+  "source" : {
+    "name" : "OpenStreetMap",
+    "license" : "ODbL 1.0 (https://opendatacommons.org/licenses/odbl/)",
+    "attribution" : "© OpenStreetMap contributors",
+    "importedAt" : "2026-11-26T02:00:32.861532Z"
+  },
+  "origin" : {
+    "lat" : 37.733241,
+    "lon" : -122.433584
+  },
+  "bearingDeg" : 50.1,
+  "layout" : "island",
+  "platformLevel" : "-2",
+  "levels" : [ "-2" ],
+  "platforms" : [ {
+    "osmId" : "way/370555322",
+    "ref" : "2",
+    "level" : "-2",
+    "shape" : "line",
+    "lengthM" : 213.5,
+    "widthM" : null,
+    "centerX" : 2.3,
+    "zMin" : -106.8,
+    "zMax" : 106.7,
+    "tracksAlongside" : "right",
+    "outline" : [ [ 2.3, -106.8 ], [ 2.4, 106.7 ] ]
+  }, {
+    "osmId" : "way/370555323",
+    "ref" : "1",
+    "level" : "-2",
+    "shape" : "line",
+    "lengthM" : 213.5,
+    "widthM" : null,
+    "centerX" : -2.3,
+    "zMin" : -106.7,
+    "zMax" : 106.8,
+    "tracksAlongside" : "left",
+    "outline" : [ [ -2.3, 106.8 ], [ -2.3, -106.7 ] ]
+  } ],
+  "tracks" : [ {
+    "osmId" : "way/28049694",
+    "x" : -3.8,
+    "zMin" : -106.8,
+    "zMax" : 106.8
+  }, {
+    "osmId" : "way/51052359",
+    "x" : 3.9,
+    "zMin" : -106.8,
+    "zMax" : 106.8
+  } ],
+  "features" : [ {
+    "kind" : "ticket_machine",
+    "osmId" : "node/5316315193",
+    "level" : null,
+    "name" : null,
+    "points" : [ [ -14.8, -40.0 ] ]
+  }, {
+    "kind" : "entrance",
+    "osmId" : "node/5316315197",
+    "level" : null,
+    "name" : null,
+    "points" : [ [ -11.3, -24.6 ] ]
+  }, {
+    "kind" : "stairs",
+    "osmId" : "way/48446211",
+    "level" : null,
+    "name" : null,
+    "points" : [ [ 62.2, -93.6 ], [ 64.0, -79.7 ] ]
+  }, {
+    "kind" : "stairs",
+    "osmId" : "way/48446212",
+    "level" : null,
+    "name" : null,
+    "points" : [ [ 52.8, -92.3 ], [ 54.6, -78.6 ] ]
+  }, {
+    "kind" : "stairs",
+    "osmId" : "way/550418605",
+    "level" : null,
+    "name" : null,
+    "points" : [ [ -29.2, -19.9 ], [ -27.4, -20.9 ], [ -26.1, -22.6 ], [ -25.6, -24.6 ], [ -26.2, -24.6 ], [ -26.6, -22.8 ], [ -27.8, -21.4 ], [ -29.4, -20.5 ], [ -30.5, -20.4 ], [ -30.5, -19.8 ], [ -29.2, -19.9 ] ]
+  }, {
+    "kind" : "stairs",
+    "osmId" : "way/550418610",
+    "level" : null,
+    "name" : null,
+    "points" : [ [ -12.2, -8.0 ], [ -12.2, -3.2 ] ]
+  }, {
+    "kind" : "stairs",
+    "osmId" : "way/550418614",
+    "level" : null,
+    "name" : null,
+    "points" : [ [ -20.2, -31.3 ], [ -26.3, -35.7 ] ]
+  } ],
+  "areas" : [ ],
+  "building" : [ [ -13.0, -46.4 ], [ -19.6, -37.0 ], [ -17.4, -35.4 ], [ -11.3, -44.1 ], [ -11.3, -24.6 ], [ -11.3, -8.0 ], [ -11.3, -1.9 ], [ -4.2, -1.9 ], [ -4.2, 2.8 ], [ 4.2, 2.8 ], [ 4.3, -1.9 ], [ 11.5, -1.9 ], [ 11.5, -47.5 ], [ -11.3, -47.5 ], [ -11.3, -46.4 ], [ -13.0, -46.4 ] ],
+  "coverage" : {
+    "platforms" : 2,
+    "tracks" : 2,
+    "entrance" : 1,
+    "elevator" : 0,
+    "escalator" : 0,
+    "stairs" : 5,
+    "fare_gate" : 0,
+    "ticket_machine" : 1,
+    "indoor_areas" : 0
+  },
+  "warnings" : [ "No escalators mapped in OSM: fill in by hand.", "No elevators mapped in OSM: fill in by hand.", "No fare gates mapped in OSM: fill in by hand." ]
+}

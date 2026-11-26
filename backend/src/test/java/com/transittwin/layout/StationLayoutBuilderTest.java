@@ -83,6 +83,21 @@ class StationLayoutBuilderTest {
     }
 
     @Test
+    void platformTaggedOnlyWithBartAsOperatorCounts() throws Exception {
+        // eBART at Antioch: no subway/train tag, just operator=San Francisco Bay Area Rapid Transit District
+        StationLayout l = build("ANTC", "island", 37.99581, -121.77998);
+        assertThat(l.platforms()).singleElement().satisfies(p -> assertThat(p.ref()).isEqualTo("1;2"));
+    }
+
+    @Test
+    void untaggedPlatformIsUsedWhenNothingIsTaggedBart() throws Exception {
+        // Oakland Airport connector: the platform has no operator, network or mode tag
+        StationLayout l = build("OAKL", "island", 37.71293, -122.21254);
+        assertThat(l.platforms()).hasSize(1);
+        assertThat(l.warnings()).anyMatch(w -> w.contains("untagged"));
+    }
+
+    @Test
     void framePointsRoundTripToLatLon() {
         LocalFrame f = new LocalFrame(37.8, -122.27, 37.5);
         double[] p = f.toLocal(37.801, -122.268);

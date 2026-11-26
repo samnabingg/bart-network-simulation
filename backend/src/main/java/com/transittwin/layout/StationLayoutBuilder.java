@@ -53,7 +53,12 @@ public final class StationLayoutBuilder {
         List<String> warnings = new ArrayList<>();
         List<Element> els = osm.elements();
 
-        List<Element> bart = els.stream().filter(Element::isWay).filter(StationLayoutBuilder::isBartPlatform).toList();
+        List<Element> tagged = els.stream().filter(Element::isWay).filter(StationLayoutBuilder::isBartPlatform).toList();
+        List<Element> bart = !tagged.isEmpty() ? tagged
+            : els.stream().filter(Element::isWay).filter(StationLayoutBuilder::isUntaggedRailPlatform).toList();
+        if (tagged.isEmpty() && !bart.isEmpty()) {
+            warnings.add("No platform here is tagged as BART; using untagged rail platforms.");
+        }
         List<Element> areas = bart.stream().filter(e -> e.closed() && !e.is("railway", "platform_edge") && !e.is("area", "no")).toList();
         List<Element> lines = bart.stream().filter(e -> !areas.contains(e)).toList();
         List<Element> main = areas.isEmpty() ? lines : areas;
@@ -145,12 +150,19 @@ public final class StationLayoutBuilder {
 
     static boolean isBartPlatform(Element e) {
         boolean platformish = e.is("railway", "platform") || e.is("railway", "platform_edge") || e.is("public_transport", "platform");
-        if (!platformish) return false;
-        if (e.yes("bus") || e.yes("tram") || e.yes("light_rail") || e.yes("trolleybus")) return false;
+        if (!platformish || e.yes("bus") || e.yes("trolleybus")) return false;
         String net = (e.tag("network") + ";" + e.tag("operator")).toLowerCase(Locale.ROOT);
-        boolean bartNet = net.contains("bart") || net.contains("bay area rapid transit");
-        if (!bartNet && !net.replace(";", "").isBlank()) return false; // another operator's platform
-        return bartNet || e.yes("subway") || e.yes("train");
+        // BART's own platforms count whatever the mode tag: eBART (Antioch, Pittsburg Center) is light_rail=yes
+        if (net.contains("bart") || net.contains("bay area rapid transit")) return true;
+        if (!net.replace(";", "").isBlank()) return false; // another operator's platform
+        if (e.yes("tram") || e.yes("light_rail")) return false; // Muni and the like, untagged by operator
+        return e.yes("subway") || e.yes("train");
+    }
+
+    /** Fallback when nothing is tagged as BART: a rail platform with no operator, network or mode at all. */
+    static boolean isUntaggedRailPlatform(Element e) {
+        return e.is("railway", "platform") && e.tag("network").isBlank() && e.tag("operator").isBlank()
+            && !e.yes("bus") && !e.yes("tram") && !e.yes("light_rail") && !e.yes("trolleybus");
     }
 
     static boolean isBartTrack(Element e) {

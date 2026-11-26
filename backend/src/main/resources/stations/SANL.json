@@ -1,0 +1,75 @@
+{
+  "abbr" : "SANL",
+  "name" : "San Leandro",
+  "source" : {
+    "name" : "OpenStreetMap",
+    "license" : "ODbL 1.0 (https://opendatacommons.org/licenses/odbl/)",
+    "attribution" : "© OpenStreetMap contributors",
+    "importedAt" : "2026-11-26T02:00:32.939310600Z"
+  },
+  "origin" : {
+    "lat" : 37.721785,
+    "lon" : -122.160748
+  },
+  "bearingDeg" : 151.3,
+  "layout" : "side",
+  "platformLevel" : null,
+  "levels" : [ ],
+  "platforms" : [ {
+    "osmId" : "way/50982110",
+    "ref" : "1",
+    "level" : null,
+    "shape" : "line",
+    "lengthM" : 214.7,
+    "widthM" : null,
+    "centerX" : 4.5,
+    "zMin" : -107.1,
+    "zMax" : 107.6,
+    "tracksAlongside" : "left",
+    "outline" : [ [ 4.5, -107.1 ], [ 4.5, 107.6 ] ]
+  }, {
+    "osmId" : "way/50982111",
+    "ref" : "2",
+    "level" : null,
+    "shape" : "line",
+    "lengthM" : 214.6,
+    "widthM" : null,
+    "centerX" : -4.5,
+    "zMin" : -107.6,
+    "zMax" : 107.0,
+    "tracksAlongside" : "right",
+    "outline" : [ [ -4.2, 107.0 ], [ -4.8, -107.6 ] ]
+  } ],
+  "tracks" : [ {
+    "osmId" : "way/50982719",
+    "x" : -2.1,
+    "zMin" : -107.6,
+    "zMax" : 107.6
+  }, {
+    "osmId" : "way/50982103",
+    "x" : 2.1,
+    "zMin" : -107.6,
+    "zMax" : 107.6
+  } ],
+  "features" : [ {
+    "kind" : "entrance",
+    "osmId" : "node/9704975820",
+    "level" : null,
+    "name" : null,
+    "points" : [ [ 0.7, 21.6 ] ]
+  } ],
+  "areas" : [ ],
+  "building" : [ [ 11.3, 5.2 ], [ 11.3, -43.7 ], [ -10.1, -43.7 ], [ -10.0, 5.2 ], [ -13.0, 5.2 ], [ -13.0, 8.0 ], [ -10.0, 8.0 ], [ -10.0, 42.4 ], [ 11.4, 42.4 ], [ 11.3, 7.9 ], [ 14.0, 7.9 ], [ 14.0, 5.2 ], [ 11.3, 5.2 ] ],
+  "coverage" : {
+    "platforms" : 2,
+    "tracks" : 2,
+    "entrance" : 1,
+    "elevator" : 0,
+    "escalator" : 0,
+    "stairs" : 0,
+    "fare_gate" : 0,
+    "ticket_machine" : 0,
+    "indoor_areas" : 0
+  },
+  "warnings" : [ "OSM looks like side platforms; the reference data says island.", "Platform level isn't tagged.", "No escalators mapped in OSM: fill in by hand.", "No elevators mapped in OSM: fill in by hand.", "No fare gates mapped in OSM: fill in by hand." ]
+}

@@ -1,0 +1,135 @@
+{
+  "abbr" : "FRMT",
+  "name" : "Fremont",
+  "source" : {
+    "name" : "OpenStreetMap",
+    "license" : "ODbL 1.0 (https://opendatacommons.org/licenses/odbl/)",
+    "attribution" : "© OpenStreetMap contributors",
+    "importedAt" : "2026-11-26T02:00:32.857151Z"
+  },
+  "origin" : {
+    "lat" : 37.557479,
+    "lon" : -121.976633
+  },
+  "bearingDeg" : 131.2,
+  "layout" : "island",
+  "platformLevel" : "1",
+  "levels" : [ "1" ],
+  "platforms" : [ {
+    "osmId" : "way/50959014",
+    "ref" : null,
+    "level" : "1",
+    "shape" : "line",
+    "lengthM" : 212.8,
+    "widthM" : null,
+    "centerX" : -3.1,
+    "zMin" : -106.4,
+    "zMax" : 106.4,
+    "tracksAlongside" : "left",
+    "outline" : [ [ -3.1, 106.4 ], [ -3.1, -106.4 ] ]
+  }, {
+    "osmId" : "way/154369974",
+    "ref" : null,
+    "level" : "1",
+    "shape" : "line",
+    "lengthM" : 212.8,
+    "widthM" : null,
+    "centerX" : 3.1,
+    "zMin" : -106.4,
+    "zMax" : 106.4,
+    "tracksAlongside" : "right",
+    "outline" : [ [ 3.1, 106.4 ], [ 3.1, -106.4 ] ]
+  } ],
+  "tracks" : [ {
+    "osmId" : "way/50957244",
+    "x" : -5.6,
+    "zMin" : -106.4,
+    "zMax" : 106.4
+  }, {
+    "osmId" : "way/50966999",
+    "x" : 5.3,
+    "zMin" : -106.4,
+    "zMax" : 106.4
+  } ],
+  "features" : [ {
+    "kind" : "entrance",
+    "osmId" : "node/2388765287",
+    "level" : null,
+    "name" : null,
+    "points" : [ [ 6.7, 0.9 ] ]
+  }, {
+    "kind" : "entrance",
+    "osmId" : "node/2388765288",
+    "level" : null,
+    "name" : null,
+    "points" : [ [ -23.1, 1.7 ] ]
+  }, {
+    "kind" : "fare_gate",
+    "osmId" : "node/3570518493",
+    "level" : null,
+    "name" : null,
+    "points" : [ [ 4.4, 0.9 ] ]
+  }, {
+    "kind" : "fare_gate",
+    "osmId" : "node/3570518494",
+    "level" : null,
+    "name" : null,
+    "points" : [ [ -6.4, 1.2 ] ]
+  }, {
+    "kind" : "entrance",
+    "osmId" : "node/3570518506",
+    "level" : null,
+    "name" : null,
+    "points" : [ [ -15.2, 11.2 ] ]
+  }, {
+    "kind" : "entrance",
+    "osmId" : "node/14080814622",
+    "level" : null,
+    "name" : null,
+    "points" : [ [ -19.7, -10.8 ] ]
+  }, {
+    "kind" : "stairs",
+    "osmId" : "way/351280729",
+    "level" : null,
+    "name" : null,
+    "points" : [ [ -23.1, 1.7 ], [ -26.0, 1.7 ] ]
+  }, {
+    "kind" : "stairs",
+    "osmId" : "way/353153348",
+    "level" : null,
+    "name" : null,
+    "points" : [ [ 20.1, -25.3 ], [ 20.0, -26.8 ] ]
+  }, {
+    "kind" : "stairs",
+    "osmId" : "way/353153352",
+    "level" : null,
+    "name" : null,
+    "points" : [ [ 25.4, 0.9 ], [ 23.3, 0.8 ] ]
+  }, {
+    "kind" : "stairs",
+    "osmId" : "way/738050745",
+    "level" : null,
+    "name" : null,
+    "points" : [ [ 19.5, 27.9 ], [ 19.5, 25.3 ] ]
+  }, {
+    "kind" : "stairs",
+    "osmId" : "way/1548174544",
+    "level" : null,
+    "name" : null,
+    "points" : [ [ -20.0, -25.2 ], [ -20.1, -27.4 ] ]
+  } ],
+  "areas" : [ ],
+  "building" : [ [ -23.1, 11.2 ], [ -23.1, 1.7 ], [ -23.1, -10.8 ], [ -19.7, -10.8 ], [ -7.9, -10.7 ], [ -7.8, -45.0 ], [ 6.7, -45.0 ], [ 7.8, -25.4 ], [ 6.7, 0.9 ], [ 6.6, 21.9 ], [ 7.2, 25.1 ], [ 6.6, 45.8 ], [ -8.1, 45.8 ], [ -7.9, 21.8 ], [ -8.1, 11.2 ], [ -15.2, 11.2 ], [ -23.1, 11.2 ] ],
+  "coverage" : {
+    "platforms" : 2,
+    "tracks" : 2,
+    "entrance" : 4,
+    "elevator" : 0,
+    "escalator" : 0,
+    "stairs" : 5,
+    "fare_gate" : 2,
+    "ticket_machine" : 0,
+    "indoor_areas" : 0
+  },
+  "warnings" : [ "No escalators mapped in OSM: fill in by hand.", "No elevators mapped in OSM: fill in by hand." ]
+}

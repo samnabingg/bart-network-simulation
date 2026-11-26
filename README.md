@@ -132,9 +132,14 @@ cd backend
 # PowerShell: .\mvnw.cmd spring-boot:run "-Dspring-boot.run.profiles=local,osm-import" "-Dspring-boot.run.arguments=--app.osm.stations=MCAR,16TH,EMBR"
 ```
 
-`--app.osm.stations=ALL` imports every station (about 3 minutes with the polite pause between requests). Add `--app.osm.raw-dir=target/osm-raw` to keep Overpass's answers; the test fixtures in `src/test/resources/osm` came from there.
+`--app.osm.stations=ALL` imports every station. Each Overpass request takes 30 to 40 s and the public server often answers 502, so a full run takes 30 minutes or more. Add `--app.osm.raw-dir=target/osm-raw` to keep Overpass's answers; then `--app.osm.rebuild=true` (with the same raw-dir) rebuilds every layout from them in seconds, without asking Overpass, after a change to the builder. The test fixtures in `src/test/resources/osm` came from there.
 
-Imported so far: BAYF, EMBR, MCAR, 16TH, FTVL. OSM detail varies a lot: Embarcadero has escalators, gates and indoor rooms; Bay Fair and Fruitvale have only platforms. Open questions the import raised: OSM shows an island at 16th St Mission and side platforms at Fruitvale, the opposite of the reference data; check on site or against BART's station overview maps before changing either.
+All 50 stations are imported (Nov 25, 2026). Every station has its platforms; OSM detail beyond that varies a lot:
+
+- Layout: 33 island, 11 side, 6 unknown (CAST, CONC, DALY, OAKL, PCTR, SFIA: no tracks mapped next to the platforms, platforms in pieces, or both).
+- Escalators mapped at 20 stations, elevators at 21, fare gates at 16, indoor rooms at 10, platform level tagged at 23. The downtown SF stations (EMBR, MONT, POWL, CIVC) are the most detailed.
+- Platforms split into pieces in OSM: ANTC, BALB, COLM, CONC, DALY, MLPT, OAKL, PCTR, SBRN. eBART (ANTC, PCTR) and the Oakland Airport connector (OAKL) really have shorter platforms.
+- OSM disagrees with the reference data's island/side guess at 13 stations: 16TH and 24TH (OSM: island), and DELN, FTVL, HAYW, MLPT, PHIL, PLZA, SANL, SHAY, UCTY, WCRK, WOAK (OSM: side). The reference values are marked approximate; check on site or against BART's station overview maps before changing them.
 
 Map data © OpenStreetMap contributors, available under the [Open Database License](https://opendatacommons.org/licenses/odbl/). The credit is also in every layout file and must stay wherever the data is shown.
 

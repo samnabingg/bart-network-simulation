@@ -61,13 +61,19 @@ class OsmLayoutImporter implements ApplicationRunner {
         Path out = Path.of(osm.outputDir());
         Files.createDirectories(out);
         Path raw = osm.rawDir() == null || osm.rawDir().isBlank() ? null : Files.createDirectories(Path.of(osm.rawDir()));
+        if (osm.rebuild() && raw == null) throw new IllegalStateException("app.osm.rebuild needs app.osm.raw-dir");
 
         List<StationInfo> wanted = select(osm.stations());
         List<String> failed = new ArrayList<>();
         for (StationInfo st : wanted) {
             try {
-                JsonNode body = overpass.query(StationLayoutBuilder.overpassQuery(st.lat(), st.lon()));
-                if (raw != null) json.writeValue(raw.resolve(st.abbr() + ".json").toFile(), body);
+                JsonNode body;
+                if (osm.rebuild()) {
+                    body = json.readTree(raw.resolve(st.abbr() + ".json").toFile());
+                } else {
+                    body = overpass.query(StationLayoutBuilder.overpassQuery(st.lat(), st.lon()));
+                    if (raw != null) json.writeValue(raw.resolve(st.abbr() + ".json").toFile(), body);
+                }
                 StationLayout layout = StationLayoutBuilder.build(st, OsmData.parse(body), clock.instant());
                 json.writeValue(out.resolve(st.abbr() + ".json").toFile(), layout);
                 log.info("{}: {} platforms, layout {}, {}{}", st.abbr(), layout.platforms().size(), layout.layout(),
@@ -76,7 +82,7 @@ class OsmLayoutImporter implements ApplicationRunner {
                 failed.add(st.abbr());
                 log.error("{}: import failed: {}", st.abbr(), e.getMessage());
             }
-            Thread.sleep(osm.pause().toMillis()); // be kind to the public Overpass server
+            if (!osm.rebuild()) Thread.sleep(osm.pause().toMillis()); // be kind to the public Overpass server
         }
         log.info("OSM import done: {} of {} stations written to {}{}", wanted.size() - failed.size(), wanted.size(),
             out.toAbsolutePath(), failed.isEmpty() ? "" : "; failed: " + failed);

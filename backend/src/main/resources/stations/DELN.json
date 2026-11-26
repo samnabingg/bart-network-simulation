@@ -1,0 +1,165 @@
+{
+  "abbr" : "DELN",
+  "name" : "El Cerrito del Norte",
+  "source" : {
+    "name" : "OpenStreetMap",
+    "license" : "ODbL 1.0 (https://opendatacommons.org/licenses/odbl/)",
+    "attribution" : "© OpenStreetMap contributors",
+    "importedAt" : "2026-11-26T02:00:32.843790500Z"
+  },
+  "origin" : {
+    "lat" : 37.925078,
+    "lon" : -122.316824
+  },
+  "bearingDeg" : 148.3,
+  "layout" : "side",
+  "platformLevel" : "1",
+  "levels" : [ "0", "1" ],
+  "platforms" : [ {
+    "osmId" : "way/155225513",
+    "ref" : null,
+    "level" : "1",
+    "shape" : "line",
+    "lengthM" : 213.8,
+    "widthM" : null,
+    "centerX" : 4.7,
+    "zMin" : -120.6,
+    "zMax" : 93.2,
+    "tracksAlongside" : "left",
+    "outline" : [ [ 4.7, 93.2 ], [ 4.7, 28.1 ], [ 4.7, 18.5 ], [ 4.7, 7.1 ], [ 4.7, -26.5 ], [ 4.7, -120.6 ] ]
+  }, {
+    "osmId" : "way/155225514",
+    "ref" : null,
+    "level" : "1",
+    "shape" : "line",
+    "lengthM" : 213.6,
+    "widthM" : null,
+    "centerX" : -4.7,
+    "zMin" : -120.4,
+    "zMax" : 93.1,
+    "tracksAlongside" : "right",
+    "outline" : [ [ -4.8, 93.1 ], [ -4.8, 28.0 ], [ -4.7, 18.5 ], [ -4.7, 7.2 ], [ -4.7, -26.2 ], [ -4.6, -120.4 ] ]
+  } ],
+  "tracks" : [ {
+    "osmId" : "way/155061872",
+    "x" : -2.4,
+    "zMin" : -120.6,
+    "zMax" : 93.2
+  }, {
+    "osmId" : "way/155061879",
+    "x" : 2.1,
+    "zMin" : -120.6,
+    "zMax" : 93.2
+  } ],
+  "features" : [ {
+    "kind" : "fare_gate",
+    "osmId" : "node/6362136507",
+    "level" : "0",
+    "name" : null,
+    "points" : [ [ -0.3, 32.6 ] ]
+  }, {
+    "kind" : "entrance",
+    "osmId" : "node/6362136512",
+    "level" : null,
+    "name" : null,
+    "points" : [ [ -0.1, -24.0 ] ]
+  }, {
+    "kind" : "elevator",
+    "osmId" : "node/11292071083",
+    "level" : "0;1",
+    "name" : null,
+    "points" : [ [ -10.6, 18.5 ] ]
+  }, {
+    "kind" : "elevator",
+    "osmId" : "node/11292071084",
+    "level" : "0;1",
+    "name" : null,
+    "points" : [ [ 10.9, 18.5 ] ]
+  }, {
+    "kind" : "ticket_machine",
+    "osmId" : "node/11546045792",
+    "level" : null,
+    "name" : null,
+    "points" : [ [ 4.1, 34.7 ] ]
+  }, {
+    "kind" : "ticket_machine",
+    "osmId" : "node/11546045796",
+    "level" : null,
+    "name" : null,
+    "points" : [ [ -3.4, 35.1 ] ]
+  }, {
+    "kind" : "ticket_machine",
+    "osmId" : "node/11546045797",
+    "level" : "0",
+    "name" : null,
+    "points" : [ [ 3.5, -37.0 ] ]
+  }, {
+    "kind" : "ticket_machine",
+    "osmId" : "node/11546045798",
+    "level" : "0",
+    "name" : null,
+    "points" : [ [ -3.6, -37.0 ] ]
+  }, {
+    "kind" : "fare_gate",
+    "osmId" : "node/12774753336",
+    "level" : "0",
+    "name" : null,
+    "points" : [ [ -0.1, -23.3 ] ]
+  }, {
+    "kind" : "entrance",
+    "osmId" : "node/12774753339",
+    "level" : "0",
+    "name" : null,
+    "points" : [ [ -0.3, 38.6 ] ]
+  }, {
+    "kind" : "stairs",
+    "osmId" : "way/1218648118",
+    "level" : "1;0",
+    "name" : null,
+    "points" : [ [ -8.1, -26.3 ], [ -8.4, -14.6 ] ]
+  }, {
+    "kind" : "stairs",
+    "osmId" : "way/1218648119",
+    "level" : "1;0",
+    "name" : null,
+    "points" : [ [ 7.8, -26.4 ], [ 7.6, -14.6 ] ]
+  }, {
+    "kind" : "escalator",
+    "osmId" : "way/1218648120",
+    "level" : "1;0",
+    "name" : null,
+    "points" : [ [ 7.3, 7.0 ], [ 7.5, -4.3 ] ]
+  }, {
+    "kind" : "escalator",
+    "osmId" : "way/1218648121",
+    "level" : "1;0",
+    "name" : null,
+    "points" : [ [ -8.3, 7.1 ], [ -8.4, -4.3 ] ]
+  }, {
+    "kind" : "stairs",
+    "osmId" : "way/1379676460",
+    "level" : "0;1",
+    "name" : null,
+    "points" : [ [ -8.0, 29.3 ], [ -8.2, 36.8 ], [ -11.3, 36.7 ], [ -11.1, 27.9 ] ]
+  }, {
+    "kind" : "stairs",
+    "osmId" : "way/1379676462",
+    "level" : "0;1",
+    "name" : null,
+    "points" : [ [ 9.0, 29.5 ], [ 9.0, 37.1 ], [ 12.1, 37.1 ], [ 12.2, 28.2 ] ]
+  } ],
+  "areas" : [ ],
+  "building" : [ [ 11.4, 16.8 ], [ 11.6, -24.0 ], [ 11.7, -31.7 ], [ 11.7, -32.9 ], [ 11.7, -58.8 ], [ -8.0, -58.8 ], [ -11.0, -58.9 ], [ -11.1, -33.1 ], [ -11.1, -27.1 ], [ -11.1, -24.1 ], [ -11.3, 16.7 ], [ -12.6, 16.7 ], [ -12.7, 38.5 ], [ -0.3, 38.6 ], [ 13.4, 38.6 ], [ 13.5, 16.8 ], [ 11.4, 16.8 ] ],
+  "coverage" : {
+    "platforms" : 2,
+    "tracks" : 2,
+    "entrance" : 2,
+    "elevator" : 2,
+    "escalator" : 2,
+    "stairs" : 4,
+    "fare_gate" : 2,
+    "ticket_machine" : 4,
+    "indoor_areas" : 0
+  },
+  "warnings" : [ "OSM looks like side platforms; the reference data says island." ]
+}

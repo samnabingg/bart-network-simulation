@@ -1,0 +1,128 @@
+{
+  "abbr" : "19TH",
+  "name" : "19th St. Oakland",
+  "source" : {
+    "name" : "OpenStreetMap",
+    "license" : "ODbL 1.0 (https://opendatacommons.org/licenses/odbl/)",
+    "attribution" : "© OpenStreetMap contributors",
+    "importedAt" : "2026-11-26T02:00:32.779772300Z"
+  },
+  "origin" : {
+    "lat" : 37.808193,
+    "lon" : -122.268772
+  },
+  "bearingDeg" : 26.2,
+  "layout" : "island",
+  "platformLevel" : null,
+  "levels" : [ ],
+  "platforms" : [ {
+    "osmId" : "way/654376779",
+    "ref" : "2",
+    "level" : null,
+    "shape" : "line",
+    "lengthM" : 237.8,
+    "widthM" : null,
+    "centerX" : 3.8,
+    "zMin" : -118.9,
+    "zMax" : 118.9,
+    "tracksAlongside" : "right",
+    "outline" : [ [ 3.8, 118.9 ], [ 3.7, -118.9 ] ]
+  }, {
+    "osmId" : "way/654376780",
+    "ref" : "3",
+    "level" : null,
+    "shape" : "line",
+    "lengthM" : 237.8,
+    "widthM" : null,
+    "centerX" : -6.0,
+    "zMin" : -118.9,
+    "zMax" : 118.9,
+    "tracksAlongside" : "left",
+    "outline" : [ [ -6.0, -118.9 ], [ -6.0, 118.9 ] ]
+  }, {
+    "osmId" : "way/654376781",
+    "ref" : "1",
+    "level" : null,
+    "shape" : "line",
+    "lengthM" : 237.8,
+    "widthM" : null,
+    "centerX" : 2.2,
+    "zMin" : -118.9,
+    "zMax" : 118.9,
+    "tracksAlongside" : "right",
+    "outline" : [ [ 2.2, -118.9 ], [ 2.2, 118.9 ] ]
+  } ],
+  "tracks" : [ {
+    "osmId" : "way/654376792",
+    "x" : -8.0,
+    "zMin" : -118.9,
+    "zMax" : 118.9
+  }, {
+    "osmId" : "way/51894712",
+    "x" : 4.5,
+    "zMin" : -118.9,
+    "zMax" : 118.9
+  }, {
+    "osmId" : "way/654376787",
+    "x" : 6.0,
+    "zMin" : -118.9,
+    "zMax" : 118.9
+  } ],
+  "features" : [ {
+    "kind" : "entrance",
+    "osmId" : "node/430037155",
+    "level" : null,
+    "name" : null,
+    "points" : [ [ 8.6, 33.9 ] ]
+  }, {
+    "kind" : "entrance",
+    "osmId" : "node/430037162",
+    "level" : null,
+    "name" : null,
+    "points" : [ [ -11.6, 77.1 ] ]
+  }, {
+    "kind" : "entrance",
+    "osmId" : "node/430561654",
+    "level" : null,
+    "name" : null,
+    "points" : [ [ -35.0, -130.9 ] ]
+  }, {
+    "kind" : "entrance",
+    "osmId" : "node/430561655",
+    "level" : null,
+    "name" : null,
+    "points" : [ [ 8.9, -154.8 ] ]
+  }, {
+    "kind" : "entrance",
+    "osmId" : "node/430561656",
+    "level" : null,
+    "name" : null,
+    "points" : [ [ 33.1, 113.5 ] ]
+  }, {
+    "kind" : "entrance",
+    "osmId" : "node/1325354931",
+    "level" : null,
+    "name" : null,
+    "points" : [ [ 8.4, -74.4 ] ]
+  }, {
+    "kind" : "entrance",
+    "osmId" : "node/4194436461",
+    "level" : null,
+    "name" : "19th Street BART Street Elevator",
+    "points" : [ [ 15.8, -131.3 ] ]
+  } ],
+  "areas" : [ ],
+  "building" : null,
+  "coverage" : {
+    "platforms" : 3,
+    "tracks" : 3,
+    "entrance" : 7,
+    "elevator" : 0,
+    "escalator" : 0,
+    "stairs" : 0,
+    "fare_gate" : 0,
+    "ticket_machine" : 0,
+    "indoor_areas" : 0
+  },
+  "warnings" : [ "Platform level isn't tagged.", "No escalators mapped in OSM: fill in by hand.", "No elevators mapped in OSM: fill in by hand.", "No fare gates mapped in OSM: fill in by hand.", "No station building outline in OSM." ]
+}

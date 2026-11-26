@@ -1,0 +1,111 @@
+{
+  "abbr" : "RICH",
+  "name" : "Richmond",
+  "source" : {
+    "name" : "OpenStreetMap",
+    "license" : "ODbL 1.0 (https://opendatacommons.org/licenses/odbl/)",
+    "attribution" : "© OpenStreetMap contributors",
+    "importedAt" : "2026-11-26T02:00:32.926747Z"
+  },
+  "origin" : {
+    "lat" : 37.936819,
+    "lon" : -122.353115
+  },
+  "bearingDeg" : 143.7,
+  "layout" : "island",
+  "platformLevel" : null,
+  "levels" : [ ],
+  "platforms" : [ {
+    "osmId" : "way/155225458",
+    "ref" : "1;2",
+    "level" : null,
+    "shape" : "area",
+    "lengthM" : 212.7,
+    "widthM" : 11.7,
+    "centerX" : 0.0,
+    "zMin" : -98.6,
+    "zMax" : 114.2,
+    "tracksAlongside" : "both",
+    "outline" : [ [ 5.9, -98.6 ], [ 5.9, -15.7 ], [ 5.9, 114.1 ], [ -5.8, 114.2 ], [ -5.9, -15.4 ], [ -5.9, -98.6 ], [ 5.9, -98.6 ] ]
+  } ],
+  "tracks" : [ {
+    "osmId" : "way/155225389",
+    "x" : -7.7,
+    "zMin" : -98.6,
+    "zMax" : 114.2
+  }, {
+    "osmId" : "way/214434821",
+    "x" : 8.1,
+    "zMin" : -88.4,
+    "zMax" : 104.0
+  } ],
+  "features" : [ {
+    "kind" : "entrance",
+    "osmId" : "node/1352756450",
+    "level" : null,
+    "name" : "Marina Way / 16th Street",
+    "points" : [ [ 69.8, -59.6 ] ]
+  }, {
+    "kind" : "entrance",
+    "osmId" : "node/1352756679",
+    "level" : null,
+    "name" : "B",
+    "points" : [ [ -10.9, 5.6 ] ]
+  }, {
+    "kind" : "entrance",
+    "osmId" : "node/5309379301",
+    "level" : null,
+    "name" : null,
+    "points" : [ [ 63.6, -46.9 ] ]
+  }, {
+    "kind" : "elevator",
+    "osmId" : "node/14262169536",
+    "level" : null,
+    "name" : null,
+    "points" : [ [ 0.2, -37.1 ] ]
+  }, {
+    "kind" : "elevator",
+    "osmId" : "node/14262169542",
+    "level" : null,
+    "name" : null,
+    "points" : [ [ 32.5, -39.4 ] ]
+  }, {
+    "kind" : "stairs",
+    "osmId" : "way/520155499",
+    "level" : null,
+    "name" : null,
+    "points" : [ [ -30.2, 18.1 ], [ -26.0, 18.0 ], [ -15.9, 9.0 ] ]
+  }, {
+    "kind" : "stairs",
+    "osmId" : "way/1566318425",
+    "level" : null,
+    "name" : null,
+    "points" : [ [ 59.6, -55.3 ], [ 66.4, -58.3 ] ]
+  }, {
+    "kind" : "stairs",
+    "osmId" : "way/1566318428",
+    "level" : null,
+    "name" : null,
+    "points" : [ [ -0.3, -19.1 ], [ 0.0, -28.3 ] ]
+  }, {
+    "kind" : "stairs",
+    "osmId" : "way/1566318434",
+    "level" : null,
+    "name" : null,
+    "points" : [ [ 32.1, -25.4 ], [ 32.5, -7.8 ] ]
+  } ],
+  "areas" : [ ],
+  "building" : [ [ 15.4, 15.0 ], [ 19.1, 15.0 ], [ 19.6, -8.5 ], [ 15.9, -8.6 ], [ 15.4, 15.0 ] ],
+  "coverage" : {
+    "platforms" : 1,
+    "tracks" : 2,
+    "entrance" : 3,
+    "elevator" : 2,
+    "escalator" : 0,
+    "stairs" : 4,
+    "fare_gate" : 0,
+    "ticket_machine" : 0,
+    "indoor_areas" : 0
+  },
+  "warnings" : [ "Platform level isn't tagged.", "No escalators mapped in OSM: fill in by hand.", "No fare gates mapped in OSM: fill in by hand." ]
+}

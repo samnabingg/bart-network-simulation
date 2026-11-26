@@ -46,7 +46,7 @@ class ApiTest {
             .andExpect(jsonPath("$.layout").value("island"))
             .andExpect(jsonPath("$.platforms", hasSize(2)))
             .andExpect(jsonPath("$.source.attribution").value("© OpenStreetMap contributors"));
-        mvc.perform(get("/api/stations/WARM/layout"))
+        mvc.perform(get("/api/stations/ZZZ/layout"))
             .andExpect(status().isNotFound());
     }
 

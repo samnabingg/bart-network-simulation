@@ -62,6 +62,7 @@ app:
     output-dir: src/main/resources/stations
     raw-dir:
     pause: 3s
+    rebuild: false   # true: rebuild the layouts from the answers saved in raw-dir, without asking Overpass
 
 bart:
   api-key: ${BART_API_KEY:}

@@ -1,0 +1,71 @@
+{
+  "abbr" : "CONC",
+  "name" : "Concord",
+  "source" : {
+    "name" : "OpenStreetMap",
+    "license" : "ODbL 1.0 (https://opendatacommons.org/licenses/odbl/)",
+    "attribution" : "© OpenStreetMap contributors",
+    "importedAt" : "2026-11-26T02:00:32.831445800Z"
+  },
+  "origin" : {
+    "lat" : 37.973704,
+    "lon" : -122.02911
+  },
+  "bearingDeg" : 19.2,
+  "layout" : "unknown",
+  "platformLevel" : "1",
+  "levels" : [ "1" ],
+  "platforms" : [ {
+    "osmId" : "way/208008315",
+    "ref" : null,
+    "level" : null,
+    "shape" : "line",
+    "lengthM" : 53.4,
+    "widthM" : null,
+    "centerX" : 0.0,
+    "zMin" : -100.0,
+    "zMax" : -46.6,
+    "tracksAlongside" : "none",
+    "outline" : [ [ 0.0, -100.0 ], [ 0.0, -46.6 ] ]
+  }, {
+    "osmId" : "way/654084290",
+    "ref" : null,
+    "level" : "1",
+    "shape" : "line",
+    "lengthM" : 85.9,
+    "widthM" : null,
+    "centerX" : 0.0,
+    "zMin" : -46.6,
+    "zMax" : 39.3,
+    "tracksAlongside" : "none",
+    "outline" : [ [ 0.0, -46.6 ], [ 0.0, 39.3 ] ]
+  }, {
+    "osmId" : "way/654084293",
+    "ref" : null,
+    "level" : null,
+    "shape" : "line",
+    "lengthM" : 75.5,
+    "widthM" : null,
+    "centerX" : 0.0,
+    "zMin" : 39.3,
+    "zMax" : 114.8,
+    "tracksAlongside" : "none",
+    "outline" : [ [ 0.0, 39.3 ], [ 0.0, 114.8 ] ]
+  } ],
+  "tracks" : [ ],
+  "features" : [ ],
+  "areas" : [ ],
+  "building" : null,
+  "coverage" : {
+    "platforms" : 3,
+    "tracks" : 0,
+    "entrance" : 0,
+    "elevator" : 0,
+    "escalator" : 0,
+    "stairs" : 0,
+    "fare_gate" : 0,
+    "ticket_machine" : 0,
+    "indoor_areas" : 0
+  },
+  "warnings" : [ "Couldn't tell island from side platforms.", "Platform way/208008315 is 53.4 m long; BART platforms are about 213 m.", "Platform way/654084290 is 85.9 m long; BART platforms are about 213 m.", "Platform way/654084293 is 75.5 m long; BART platforms are about 213 m.", "No entrances mapped in OSM: fill in by hand.", "No escalators mapped in OSM: fill in by hand.", "No elevators mapped in OSM: fill in by hand.", "No fare gates mapped in OSM: fill in by hand.", "No station building outline in OSM." ]
+}

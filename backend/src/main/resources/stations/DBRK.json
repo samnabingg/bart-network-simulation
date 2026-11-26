@@ -1,0 +1,259 @@
+{
+  "abbr" : "DBRK",
+  "name" : "Downtown Berkeley",
+  "source" : {
+    "name" : "OpenStreetMap",
+    "license" : "ODbL 1.0 (https://opendatacommons.org/licenses/odbl/)",
+    "attribution" : "© OpenStreetMap contributors",
+    "importedAt" : "2026-11-26T02:00:32.837608100Z"
+  },
+  "origin" : {
+    "lat" : 37.870291,
+    "lon" : -122.268174
+  },
+  "bearingDeg" : 174.5,
+  "layout" : "island",
+  "platformLevel" : "-2",
+  "levels" : [ "-2", "-1", "0", "1" ],
+  "platforms" : [ {
+    "osmId" : "way/654069771",
+    "ref" : "1",
+    "level" : "-2",
+    "shape" : "line",
+    "lengthM" : 213.6,
+    "widthM" : null,
+    "centerX" : -2.3,
+    "zMin" : -103.9,
+    "zMax" : 109.8,
+    "tracksAlongside" : "left",
+    "outline" : [ [ -2.3, -103.9 ], [ -2.3, -80.6 ], [ -2.3, -52.1 ], [ -2.3, -5.3 ], [ -2.3, 18.6 ], [ -2.3, 24.9 ], [ -2.3, 89.0 ], [ -2.3, 109.8 ] ]
+  }, {
+    "osmId" : "way/654069772",
+    "ref" : "2",
+    "level" : "-2",
+    "shape" : "line",
+    "lengthM" : 213.6,
+    "widthM" : null,
+    "centerX" : 2.3,
+    "zMin" : -103.9,
+    "zMax" : 109.8,
+    "tracksAlongside" : "right",
+    "outline" : [ [ 2.3, -103.9 ], [ 2.3, -80.6 ], [ 2.3, -52.2 ], [ 2.3, -5.4 ], [ 2.3, 18.5 ], [ 2.3, 24.7 ], [ 2.3, 88.9 ], [ 2.3, 109.8 ] ]
+  } ],
+  "tracks" : [ {
+    "osmId" : "way/654069778",
+    "x" : -3.9,
+    "zMin" : -103.9,
+    "zMax" : 109.8
+  }, {
+    "osmId" : "way/654069775",
+    "x" : 3.8,
+    "zMin" : -103.9,
+    "zMax" : 109.8
+  } ],
+  "features" : [ {
+    "kind" : "entrance",
+    "osmId" : "node/431022082",
+    "level" : null,
+    "name" : "B4",
+    "points" : [ [ 10.4, 90.1 ] ]
+  }, {
+    "kind" : "entrance",
+    "osmId" : "node/431022094",
+    "level" : null,
+    "name" : "B2",
+    "points" : [ [ -28.1, 70.0 ] ]
+  }, {
+    "kind" : "entrance",
+    "osmId" : "node/431022136",
+    "level" : "1;-1",
+    "name" : "B2",
+    "points" : [ [ 9.6, -21.7 ] ]
+  }, {
+    "kind" : "entrance",
+    "osmId" : "node/431022312",
+    "level" : null,
+    "name" : "A1",
+    "points" : [ [ -10.5, -79.0 ] ]
+  }, {
+    "kind" : "entrance",
+    "osmId" : "node/431022346",
+    "level" : null,
+    "name" : "B1",
+    "points" : [ [ 10.4, -78.6 ] ]
+  }, {
+    "kind" : "entrance",
+    "osmId" : "node/431022401",
+    "level" : "0",
+    "name" : "B3",
+    "points" : [ [ 8.3, 21.1 ] ]
+  }, {
+    "kind" : "entrance",
+    "osmId" : "node/1928228258",
+    "level" : null,
+    "name" : "B2",
+    "points" : [ [ 8.5, -14.8 ] ]
+  }, {
+    "kind" : "fare_gate",
+    "osmId" : "node/7151065368",
+    "level" : "-1",
+    "name" : null,
+    "points" : [ [ 2.4, 79.4 ] ]
+  }, {
+    "kind" : "ticket_machine",
+    "osmId" : "node/7151065370",
+    "level" : "-1",
+    "name" : null,
+    "points" : [ [ 8.4, 78.6 ] ]
+  }, {
+    "kind" : "fare_gate",
+    "osmId" : "node/7151080092",
+    "level" : "-1",
+    "name" : null,
+    "points" : [ [ 5.1, 28.1 ] ]
+  }, {
+    "kind" : "ticket_machine",
+    "osmId" : "node/7151080096",
+    "level" : "-1",
+    "name" : null,
+    "points" : [ [ -19.0, 26.9 ] ]
+  }, {
+    "kind" : "fare_gate",
+    "osmId" : "node/7151080108",
+    "level" : "-1",
+    "name" : null,
+    "points" : [ [ 5.2, 14.8 ] ]
+  }, {
+    "kind" : "ticket_machine",
+    "osmId" : "node/7151080111",
+    "level" : "-1",
+    "name" : null,
+    "points" : [ [ -19.0, 16.2 ] ]
+  }, {
+    "kind" : "fare_gate",
+    "osmId" : "node/7151080121",
+    "level" : "-1",
+    "name" : null,
+    "points" : [ [ 5.3, -0.2 ] ]
+  }, {
+    "kind" : "ticket_machine",
+    "osmId" : "node/7151080141",
+    "level" : "-1",
+    "name" : null,
+    "points" : [ [ 8.4, -41.6 ] ]
+  }, {
+    "kind" : "fare_gate",
+    "osmId" : "node/7151080143",
+    "level" : "-1",
+    "name" : null,
+    "points" : [ [ 2.9, -41.8 ] ]
+  }, {
+    "kind" : "elevator",
+    "osmId" : "node/7151080177",
+    "level" : "-1;-2",
+    "name" : null,
+    "points" : [ [ 0.0, -81.7 ] ]
+  }, {
+    "kind" : "stairs",
+    "osmId" : "way/315995498",
+    "level" : null,
+    "name" : "Trumpetvine Court",
+    "points" : [ [ -60.5, 53.7 ], [ -63.4, 49.6 ] ]
+  }, {
+    "kind" : "escalator",
+    "osmId" : "way/765677498",
+    "level" : "1;-1",
+    "name" : null,
+    "points" : [ [ 8.3, 21.1 ], [ -12.4, 21.4 ] ]
+  }, {
+    "kind" : "stairs",
+    "osmId" : "way/765677501",
+    "level" : "1;-1",
+    "name" : null,
+    "points" : [ [ -28.1, 70.0 ], [ -26.5, 78.9 ], [ -24.5, 89.4 ] ]
+  }, {
+    "kind" : "stairs",
+    "osmId" : "way/765677506",
+    "level" : "-1;-2",
+    "name" : null,
+    "points" : [ [ -0.1, -44.2 ], [ 0.0, -52.1 ] ]
+  }, {
+    "kind" : "escalator",
+    "osmId" : "way/765677507",
+    "level" : "-1;-2",
+    "name" : null,
+    "points" : [ [ -0.1, 2.6 ], [ -0.1, -5.4 ] ]
+  }, {
+    "kind" : "stairs",
+    "osmId" : "way/765677508",
+    "level" : "-1;-2",
+    "name" : null,
+    "points" : [ [ 0.0, 81.0 ], [ 0.0, 88.9 ] ]
+  }, {
+    "kind" : "stairs",
+    "osmId" : "way/765677509",
+    "level" : "1;-1",
+    "name" : null,
+    "points" : [ [ 10.4, -78.6 ], [ 10.5, -67.0 ], [ 10.5, -59.0 ] ]
+  }, {
+    "kind" : "stairs",
+    "osmId" : "way/765677510",
+    "level" : "-1;-2",
+    "name" : null,
+    "points" : [ [ 0.0, 10.6 ], [ 0.0, 18.5 ] ]
+  }, {
+    "kind" : "stairs",
+    "osmId" : "way/765677512",
+    "level" : "-1;-2",
+    "name" : null,
+    "points" : [ [ 0.0, 32.7 ], [ 0.0, 24.8 ] ]
+  }, {
+    "kind" : "stairs",
+    "osmId" : "way/765677513",
+    "level" : "1;-1",
+    "name" : null,
+    "points" : [ [ 10.4, 90.1 ], [ 10.2, 77.8 ], [ 10.1, 70.3 ] ]
+  }, {
+    "kind" : "stairs",
+    "osmId" : "way/765677529",
+    "level" : "1;-1",
+    "name" : null,
+    "points" : [ [ -10.5, -79.0 ], [ -10.3, -68.5 ], [ -11.6, -66.9 ], [ -11.7, -59.2 ] ]
+  }, {
+    "kind" : "stairs",
+    "osmId" : "way/765677537",
+    "level" : "1;-1",
+    "name" : null,
+    "points" : [ [ 8.5, -14.8 ], [ 8.3, -19.3 ], [ 10.2, -19.4 ], [ 10.5, -14.1 ], [ 8.6, -14.0 ] ]
+  }, {
+    "kind" : "stairs",
+    "osmId" : "way/935885158",
+    "level" : "1;-1",
+    "name" : null,
+    "points" : [ [ 8.6, -14.0 ], [ 8.3, -19.3 ], [ 10.2, -19.3 ], [ 10.4, -14.0 ] ]
+  } ],
+  "areas" : [ {
+    "kind" : "room",
+    "osmId" : "way/765903383",
+    "level" : "-1",
+    "outline" : [ [ -8.4, 42.8 ], [ -13.8, 42.8 ], [ -13.8, 32.1 ], [ -8.4, 32.1 ], [ -8.4, 42.8 ] ]
+  }, {
+    "kind" : "room",
+    "osmId" : "way/765903384",
+    "level" : "-1",
+    "outline" : [ [ -8.4, 10.8 ], [ -13.8, 10.8 ], [ -13.8, 0.1 ], [ -8.4, 0.1 ], [ -8.4, 10.8 ] ]
+  } ],
+  "building" : [ [ 8.4, -103.9 ], [ 5.3, -103.9 ], [ 3.8, -103.9 ], [ 2.3, -103.9 ], [ -2.3, -103.9 ], [ -3.9, -103.9 ], [ -5.3, -103.9 ], [ -8.4, -103.9 ], [ -8.4, -81.7 ], [ -8.4, -66.9 ], [ -11.6, -66.9 ], [ -12.5, -66.9 ], [ -13.7, -66.9 ], [ -13.7, -47.2 ], [ -8.4, -47.1 ], [ -8.4, 0.1 ], [ -13.8, 0.1 ], [ -13.8, 10.8 ], [ -19.0, 10.8 ], [ -19.0, 16.2 ], [ -19.0, 26.9 ], [ -19.0, 32.1 ], [ -13.8, 32.1 ], [ -13.8, 42.8 ], [ -8.4, 42.8 ], [ -8.4, 86.4 ], [ -13.7, 86.4 ], [ -13.7, 89.3 ], [ -22.8, 89.3 ], [ -24.6, 78.5 ], [ -26.5, 78.9 ], [ -28.5, 79.2 ], [ -25.9, 94.3 ], [ -13.7, 94.3 ], [ -13.7, 97.0 ], [ -8.4, 97.0 ], [ -8.4, 98.8 ], [ -8.4, 109.8 ], [ -5.4, 109.8 ], [ -3.8, 109.8 ], [ -2.3, 109.8 ], [ 2.3, 109.8 ], [ 3.8, 109.8 ], [ 5.3, 109.8 ], [ 8.4, 109.8 ], [ 8.4, 98.8 ], [ 8.4, 97.0 ], [ 8.4, 90.1 ], [ 8.4, 78.6 ], [ 8.4, 77.8 ], [ 10.2, 77.8 ], [ 12.2, 77.8 ], [ 13.6, 77.7 ], [ 13.7, 64.9 ], [ 13.7, 54.2 ], [ 8.4, 54.2 ], [ 8.4, 32.1 ], [ 13.7, 32.1 ], [ 13.7, 10.8 ], [ 8.4, 10.8 ], [ 8.4, -5.6 ], [ 11.4, -5.6 ], [ 11.4, -13.1 ], [ 11.3, -20.1 ], [ 11.3, -22.8 ], [ 8.4, -22.8 ], [ 8.4, -41.6 ], [ 8.4, -47.2 ], [ 12.7, -47.2 ], [ 12.7, -57.8 ], [ 12.7, -67.0 ], [ 10.5, -67.0 ], [ 8.7, -67.0 ], [ 8.4, -67.0 ], [ 8.4, -103.9 ] ],
+  "coverage" : {
+    "platforms" : 2,
+    "tracks" : 2,
+    "entrance" : 7,
+    "elevator" : 1,
+    "escalator" : 2,
+    "stairs" : 11,
+    "fare_gate" : 5,
+    "ticket_machine" : 4,
+    "indoor_areas" : 2
+  },
+  "warnings" : [ ]
+}

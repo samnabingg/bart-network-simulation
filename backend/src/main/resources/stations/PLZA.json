@@ -1,0 +1,111 @@
+{
+  "abbr" : "PLZA",
+  "name" : "El Cerrito Plaza",
+  "source" : {
+    "name" : "OpenStreetMap",
+    "license" : "ODbL 1.0 (https://opendatacommons.org/licenses/odbl/)",
+    "attribution" : "© OpenStreetMap contributors",
+    "importedAt" : "2026-11-26T02:00:32.847834700Z"
+  },
+  "origin" : {
+    "lat" : 37.902614,
+    "lon" : -122.298932
+  },
+  "bearingDeg" : 147.8,
+  "layout" : "side",
+  "platformLevel" : null,
+  "levels" : [ ],
+  "platforms" : [ {
+    "osmId" : "way/155225877",
+    "ref" : null,
+    "level" : null,
+    "shape" : "line",
+    "lengthM" : 216.5,
+    "widthM" : null,
+    "centerX" : -4.6,
+    "zMin" : -108.2,
+    "zMax" : 108.3,
+    "tracksAlongside" : "right",
+    "outline" : [ [ -4.6, 108.3 ], [ -4.6, -108.2 ] ]
+  }, {
+    "osmId" : "way/155225879",
+    "ref" : null,
+    "level" : null,
+    "shape" : "line",
+    "lengthM" : 216.5,
+    "widthM" : null,
+    "centerX" : 4.6,
+    "zMin" : -108.3,
+    "zMax" : 108.2,
+    "tracksAlongside" : "left",
+    "outline" : [ [ 4.6, 108.2 ], [ 4.7, -108.3 ] ]
+  } ],
+  "tracks" : [ {
+    "osmId" : "way/155061872",
+    "x" : -1.7,
+    "zMin" : -108.3,
+    "zMax" : 108.3
+  }, {
+    "osmId" : "way/155061879",
+    "x" : 2.1,
+    "zMin" : -108.3,
+    "zMax" : 108.3
+  } ],
+  "features" : [ {
+    "kind" : "entrance",
+    "osmId" : "node/5308494339",
+    "level" : null,
+    "name" : null,
+    "points" : [ [ 0.5, 30.9 ] ]
+  }, {
+    "kind" : "entrance",
+    "osmId" : "node/5308494340",
+    "level" : null,
+    "name" : null,
+    "points" : [ [ 0.4, -9.5 ] ]
+  }, {
+    "kind" : "ticket_machine",
+    "osmId" : "node/5308494341",
+    "level" : null,
+    "name" : null,
+    "points" : [ [ 5.5, -20.9 ] ]
+  }, {
+    "kind" : "ticket_machine",
+    "osmId" : "node/5308494343",
+    "level" : null,
+    "name" : null,
+    "points" : [ [ -5.7, -19.6 ] ]
+  }, {
+    "kind" : "entrance",
+    "osmId" : "node/12183514641",
+    "level" : null,
+    "name" : null,
+    "points" : [ [ 7.1, -26.5 ] ]
+  }, {
+    "kind" : "entrance",
+    "osmId" : "node/12183514642",
+    "level" : null,
+    "name" : null,
+    "points" : [ [ -6.3, -25.9 ] ]
+  }, {
+    "kind" : "stairs",
+    "osmId" : "way/189997572",
+    "level" : null,
+    "name" : null,
+    "points" : [ [ -25.6, -37.1 ], [ -28.7, -37.6 ] ]
+  } ],
+  "areas" : [ ],
+  "building" : [ [ -11.4, 44.1 ], [ -2.2, 44.1 ], [ 2.5, 44.2 ], [ 10.8, 44.2 ], [ 11.0, -46.5 ], [ 2.6, -46.5 ], [ -2.0, -46.5 ], [ -11.2, -46.5 ], [ -11.4, 44.1 ] ],
+  "coverage" : {
+    "platforms" : 2,
+    "tracks" : 2,
+    "entrance" : 4,
+    "elevator" : 0,
+    "escalator" : 0,
+    "stairs" : 1,
+    "fare_gate" : 0,
+    "ticket_machine" : 2,
+    "indoor_areas" : 0
+  },
+  "warnings" : [ "OSM looks like side platforms; the reference data says island.", "Platform level isn't tagged.", "No escalators mapped in OSM: fill in by hand.", "No elevators mapped in OSM: fill in by hand.", "No fare gates mapped in OSM: fill in by hand." ]
+}

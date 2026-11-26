@@ -1,0 +1,63 @@
+{
+  "abbr" : "WARM",
+  "name" : "Warm Springs/South Fremont",
+  "source" : {
+    "name" : "OpenStreetMap",
+    "license" : "ODbL 1.0 (https://opendatacommons.org/licenses/odbl/)",
+    "attribution" : "© OpenStreetMap contributors",
+    "importedAt" : "2026-11-26T02:00:32.949992600Z"
+  },
+  "origin" : {
+    "lat" : 37.502289,
+    "lon" : -121.939414
+  },
+  "bearingDeg" : 157.7,
+  "layout" : "island",
+  "platformLevel" : null,
+  "levels" : [ ],
+  "platforms" : [ {
+    "osmId" : "way/377219763",
+    "ref" : null,
+    "level" : null,
+    "shape" : "area",
+    "lengthM" : 213.6,
+    "widthM" : 9.8,
+    "centerX" : 0.0,
+    "zMin" : -106.8,
+    "zMax" : 106.8,
+    "tracksAlongside" : "both",
+    "outline" : [ [ -4.9, -106.8 ], [ 4.9, -106.8 ], [ 4.9, 106.8 ], [ -4.9, 106.8 ], [ -4.9, -106.8 ] ]
+  } ],
+  "tracks" : [ {
+    "osmId" : "way/66829150",
+    "x" : -6.6,
+    "zMin" : -106.8,
+    "zMax" : 106.8
+  }, {
+    "osmId" : "way/482827499",
+    "x" : 6.5,
+    "zMin" : -106.8,
+    "zMax" : 106.8
+  } ],
+  "features" : [ {
+    "kind" : "entrance",
+    "osmId" : "node/3850502774",
+    "level" : null,
+    "name" : null,
+    "points" : [ [ -60.1, 37.3 ] ]
+  } ],
+  "areas" : [ ],
+  "building" : [ [ -13.8, 32.2 ], [ -13.8, 37.3 ], [ -13.8, 42.4 ], [ -13.8, 47.1 ], [ -10.0, 47.1 ], [ -10.1, 76.4 ], [ 10.2, 76.4 ], [ 10.2, 37.7 ], [ 10.2, -54.9 ], [ -10.1, -54.9 ], [ -10.1, -0.4 ], [ -13.8, -0.3 ], [ -13.8, 32.2 ] ],
+  "coverage" : {
+    "platforms" : 1,
+    "tracks" : 2,
+    "entrance" : 1,
+    "elevator" : 0,
+    "escalator" : 0,
+    "stairs" : 0,
+    "fare_gate" : 0,
+    "ticket_machine" : 0,
+    "indoor_areas" : 0
+  },
+  "warnings" : [ "Platform level isn't tagged.", "No escalators mapped in OSM: fill in by hand.", "No elevators mapped in OSM: fill in by hand.", "No fare gates mapped in OSM: fill in by hand." ]
+}

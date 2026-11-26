@@ -1,0 +1,63 @@
+{
+  "abbr" : "NCON",
+  "name" : "North Concord/Martinez",
+  "source" : {
+    "name" : "OpenStreetMap",
+    "license" : "ODbL 1.0 (https://opendatacommons.org/licenses/odbl/)",
+    "attribution" : "© OpenStreetMap contributors",
+    "importedAt" : "2026-11-26T02:00:32.890018500Z"
+  },
+  "origin" : {
+    "lat" : 38.003403,
+    "lon" : -122.024515
+  },
+  "bearingDeg" : 32.9,
+  "layout" : "island",
+  "platformLevel" : null,
+  "levels" : [ ],
+  "platforms" : [ {
+    "osmId" : "way/534928764",
+    "ref" : null,
+    "level" : null,
+    "shape" : "area",
+    "lengthM" : 215.9,
+    "widthM" : 7.3,
+    "centerX" : 0.0,
+    "zMin" : -107.9,
+    "zMax" : 107.9,
+    "tracksAlongside" : "both",
+    "outline" : [ [ -3.7, -107.9 ], [ 3.7, -107.9 ], [ 3.7, 107.9 ], [ -3.7, 107.9 ], [ -3.7, -107.9 ] ]
+  } ],
+  "tracks" : [ {
+    "osmId" : "way/154832471",
+    "x" : -5.2,
+    "zMin" : -107.9,
+    "zMax" : 107.9
+  }, {
+    "osmId" : "way/154831134",
+    "x" : 5.9,
+    "zMin" : -107.9,
+    "zMax" : 107.9
+  } ],
+  "features" : [ {
+    "kind" : "entrance",
+    "osmId" : "node/270136379",
+    "level" : null,
+    "name" : null,
+    "points" : [ [ 52.7, -46.2 ] ]
+  } ],
+  "areas" : [ ],
+  "building" : [ [ 7.8, -14.5 ], [ 36.6, -14.6 ], [ 52.8, -14.7 ], [ 52.7, -39.4 ], [ 52.7, -46.2 ], [ 45.0, -46.1 ], [ 22.6, -46.0 ], [ 21.8, -46.0 ], [ 21.9, -30.3 ], [ 7.7, -30.2 ], [ 7.6, -55.2 ], [ 4.6, -55.2 ], [ 4.5, -76.4 ], [ -0.1, -78.1 ], [ -4.6, -76.3 ], [ -4.5, -55.1 ], [ -6.7, -55.1 ], [ -6.4, 9.4 ], [ -4.2, 9.4 ], [ -4.0, 53.4 ], [ 0.4, 54.4 ], [ 4.9, 53.3 ], [ 4.7, 9.4 ], [ 7.9, 9.4 ], [ 7.8, -14.5 ] ],
+  "coverage" : {
+    "platforms" : 1,
+    "tracks" : 2,
+    "entrance" : 1,
+    "elevator" : 0,
+    "escalator" : 0,
+    "stairs" : 0,
+    "fare_gate" : 0,
+    "ticket_machine" : 0,
+    "indoor_areas" : 0
+  },
+  "warnings" : [ "Platform level isn't tagged.", "No escalators mapped in OSM: fill in by hand.", "No elevators mapped in OSM: fill in by hand.", "No fare gates mapped in OSM: fill in by hand." ]
+}

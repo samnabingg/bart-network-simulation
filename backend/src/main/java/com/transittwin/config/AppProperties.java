@@ -16,8 +16,10 @@ public record AppProperties(Events events, Geo geo, Osm osm) {
      * @param outputDir where the layout files are written (committed and loaded from the classpath)
      * @param rawDir    optional: also save Overpass's raw answers here (for tests and debugging)
      * @param pause     wait between requests, to be kind to the public Overpass server
+     * @param rebuild   true: don't ask Overpass, rebuild the layouts from the answers saved in rawDir
      */
-    public record Osm(String overpassUrl, String stations, String outputDir, String rawDir, java.time.Duration pause) {
+    public record Osm(String overpassUrl, String stations, String outputDir, String rawDir, java.time.Duration pause,
+                      boolean rebuild) {
     }
 
     public record Events(String transport, String departuresTopic) {
