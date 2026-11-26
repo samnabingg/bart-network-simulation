@@ -28,6 +28,8 @@ export interface SceneOptions {
   spawn?: 'platform';
   balance?: number;
   nextStop?: (req: NextStopRequest) => SceneNextStop | null;
+  /** Every stop after the boarding station, in order, to the train's destination. */
+  route?: (req: NextStopRequest) => SceneNextStop[];
   onExit?: (nextAbbr: string, carry: { balance: number }) => void;
 }
 

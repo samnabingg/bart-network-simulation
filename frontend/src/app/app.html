@@ -46,6 +46,7 @@
     <app-station-scene
       [station]="sceneStation()"
       [lines]="sim.lines()"
+      [stations]="sim.network()?.stations ?? []"
       [feed]="sceneFeed()"
       [balance]="sceneBalance()"
       [spawn]="sceneSpawn()"

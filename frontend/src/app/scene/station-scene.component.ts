@@ -1,6 +1,6 @@
 import { Component, ElementRef, OnDestroy, effect, input, output, signal, untracked, viewChild } from '@angular/core';
 import { DepartureRow, LineDef, StationInfo } from '../core/models';
-import type { SceneRow, StationScene } from './three/scene-api';
+import type { SceneNextStop, SceneRow, StationScene } from './three/scene-api';
 
 export interface SceneExit {
   next: string;
@@ -29,6 +29,8 @@ const KIND_LABEL: Record<string, string> = { underground: 'underground', elevate
 export class StationSceneComponent implements OnDestroy {
   readonly station = input<StationInfo | null>(null);
   readonly lines = input<LineDef[]>([]);
+  /** All stations, for naming the stops along a ride. */
+  readonly stations = input<StationInfo[]>([]);
   readonly feed = input<SceneFeed>({ rows: null, note: '' });
   /** Card balance carried over from the previous station. */
   readonly balance = input<number | undefined>(undefined);
@@ -87,6 +89,8 @@ export class StationSceneComponent implements OnDestroy {
       balance: this.balance(),
       nextStop: ({ from, destAbbr, hex, direction }: { from: string; destAbbr: string; hex: string; direction: string }) =>
         this.nextStopFor(from, destAbbr, hex, direction),
+      route: ({ from, destAbbr, hex, direction }: { from: string; destAbbr: string; hex: string; direction: string }) =>
+        this.routeFor(from, destAbbr, hex, direction),
       onExit: (next: string, carry: { balance: number }) => this.exit.emit({ next, balance: carry.balance }),
     };
     const kind = KIND_LABEL[st.kind] ?? st.kind;
@@ -124,14 +128,36 @@ export class StationSceneComponent implements OnDestroy {
   }
 
   /** The backend matched every row to its line and next stop; find the row for this train. */
-  private nextStopFor(from: string, destAbbr: string, hex: string, direction: string) {
+  private matchRow(from: string, destAbbr: string, hex: string, direction: string): DepartureRow | null {
     if (from !== this.station()?.abbr) return null;
     const rows = this.feed().rows ?? [];
-    const match =
+    return (
       rows.find((r) => r.destAbbr === destAbbr && r.hex.toLowerCase() === hex?.toLowerCase() && r.direction === direction) ??
       rows.find((r) => r.destAbbr === destAbbr && r.direction === direction) ??
-      rows.find((r) => r.destAbbr === destAbbr);
-    return match?.nextStop ? { abbr: match.nextStop.abbr, name: match.nextStop.name } : null;
+      rows.find((r) => r.destAbbr === destAbbr) ??
+      null
+    );
+  }
+
+  private nextStopFor(from: string, destAbbr: string, hex: string, direction: string): SceneNextStop | null {
+    const ns = this.matchRow(from, destAbbr, hex, direction)?.nextStop;
+    return ns ? { abbr: ns.abbr, name: ns.name } : null;
+  }
+
+  /**
+   * Every stop this train makes after `from`, in order, up to its destination (or the end of the
+   * line). Falls back to just the next stop when the line is unknown.
+   */
+  private routeFor(from: string, destAbbr: string, hex: string, direction: string): SceneNextStop[] {
+    const ns = this.matchRow(from, destAbbr, hex, direction)?.nextStop;
+    if (!ns) return [];
+    const line = this.lines().find((l) => l.id === ns.line);
+    const stops = line ? (ns.dir === 0 ? line.stops : [...line.stops].reverse()) : [];
+    const i = stops.indexOf(from);
+    if (i < 0 || stops[i + 1] !== ns.abbr) return [{ abbr: ns.abbr, name: ns.name }];
+    const end = stops.indexOf(destAbbr, i + 1);
+    const names = new Map(this.stations().map((s) => [s.abbr, s.name]));
+    return stops.slice(i + 1, end > i ? end + 1 : undefined).map((abbr) => ({ abbr, name: names.get(abbr) ?? abbr }));
   }
 }
 

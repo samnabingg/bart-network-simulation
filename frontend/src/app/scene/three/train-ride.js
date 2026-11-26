@@ -24,7 +24,8 @@ export const CAR = {
   doorH: 1.95,
 };
 
-// Ride timing. The real Bay Fair to San Leandro trip is about 3 km. This is shortened to about a minute.
+// Ride timing. Real BART stations are 2 to 5 km apart; each leg is shortened to about a minute.
+// The train stops at every station on its route; you get off by pressing E at an open door.
 export const RIDE = {
   vmax: 22,        // m/s at cruise (about 80 km/h)
   accel: 1.1,      // m/s^2, same for braking
@@ -32,7 +33,13 @@ export const RIDE = {
   closeAt: 3,      // s after boarding when the doors start to close
   closeDur: 2,     // s the doors take to close
   announce: 350,   // m before the next station: "now arriving"
+  dwell: 12,       // s the doors stay open at each stop along the way before they start to close
 };
+
+// Is a rider at (x, z) standing at one of the left-side doors (the platform side)?
+export function atLeftDoor(x, z) {
+  return x < -(CAR.wall - 0.75) && CAR.doorZ.some((d) => Math.abs(z - d) < CAR.doorHalf + 0.35);
+}
 
 const TAU = Math.PI * 2;
 const clamp = (v, a, b) => Math.min(b, Math.max(a, v));
@@ -544,6 +551,9 @@ export function createTrainRide(scene, { floorY, x: originX = 400 }) {
     g.fillStyle = '#9fb3c4'; g.font = '17px system-ui, sans-serif'; g.fillText(st.from.slice(0, 18), x + 22, 300);
     g.fillStyle = '#0d1824'; g.strokeStyle = '#fff'; g.lineWidth = 4; g.beginPath(); g.arc(x, 190, 12, 0, TAU); g.fill(); g.stroke();
     g.fillStyle = '#fff'; g.font = 'bold 19px system-ui, sans-serif'; g.fillText(st.next, x + 22, 190, 256 - x - 30);
+    const after = st.stops[st.leg + 1];
+    g.fillStyle = '#9fb3c4'; g.font = '15px system-ui, sans-serif';
+    g.fillText(after ? `then ${after}` : 'Last stop', x + 22, 146, 256 - x - 30);
     g.fillStyle = '#ffd43b'; g.beginPath(); g.arc(x, 300 - prog * 110, 6, 0, TAU); g.fill(); // the train
     g.fillStyle = '#9fb3c4'; g.font = '15px system-ui, sans-serif';
     g.fillText(st.phase === 'closing' ? 'Doors closing' : 'Doors open on the left', 12, 338);
@@ -552,7 +562,8 @@ export function createTrainRide(scene, { floorY, x: originX = 400 }) {
     const o = overCanvas.getContext('2d');
     o.fillStyle = '#050505'; o.fillRect(0, 0, 768, 96);
     o.fillStyle = '#ffb02e'; o.font = 'bold 44px monospace'; o.textBaseline = 'middle';
-    const msg = `${arriving ? 'Now arriving' : 'Next stop'}: ${st.next}   ·   Train to ${st.dest}   ·   Doors open on the left   ·   `;
+    const last = st.leg >= st.stops.length - 1;
+    const msg = `${arriving ? 'Now arriving' : 'Next stop'}: ${st.next}${last ? ' (last stop)' : ''}   ·   Train to ${st.dest}   ·   Doors open on the left   ·   `;
     const wMsg = o.measureText(msg).width;
     const off = (st.t * 90) % wMsg;
     for (let xx = -off; xx < 768; xx += wMsg) o.fillText(msg, xx, 50);
@@ -578,13 +589,27 @@ export function createTrainRide(scene, { floorY, x: originX = 400 }) {
     ballastMat.map.offset.y = mod(s / 2.4, 1);
   };
 
+  // Where the train is on its route, and which station (if any) you could step off at right now.
+  const describe = () => {
+    const last = st.leg >= st.stops.length - 1;
+    let here = null;
+    if (st.phase === 'arrived' && st.open >= 0.9) here = { name: st.next, index: st.leg };
+    else if (st.phase === 'boarding' && st.leg > 0) here = { name: st.from, index: st.leg - 1 };
+    return {
+      phase: st.phase, speed: st.v, s: st.s, dest: st.dest, next: st.next, from: st.from,
+      leg: st.leg, stops: st.stops, last, here, remaining: st.stops.length - st.leg - (st.phase === 'arrived' ? 1 : 0),
+    };
+  };
+
   return {
     x: originX,
     colliders,
     seats,
     bounds: { x: W - 0.3, z: HL - 0.35 },
-    start({ dest, color, next, from = 'Bay Fair' }) {
-      st = { t: 0, s: 0, v: 0, phase: 'boarding', dest: dest || 'Train', next: next || nextStopFrom(dest), from, color: cssColor(color), fired: new Set(), arrivedT: null };
+    // stops: names of every station the train calls at after `from`, in order (the last is the end of the ride).
+    start({ dest, color, next, stops, from = 'Bay Fair' }) {
+      const list = stops && stops.length ? [...stops] : [next || nextStopFrom(dest)];
+      st = { t: 0, s: 0, v: 0, phase: 'boarding', dest: dest || 'Train', stops: list, leg: 0, next: list[0], from, origin: from, color: cssColor(color), fired: new Set(), arrivedT: null, closeAt: RIDE.closeAt };
       destPlat.setName(st.next);
       origin.setName(from);
       root.visible = true;
@@ -605,12 +630,24 @@ export function createTrainRide(scene, { floorY, x: originX = 400 }) {
       st.t += dt;
       const events = [];
       const fire = (name) => { if (!st.fired.has(name)) { st.fired.add(name); events.push(name); } };
-      const departAt = RIDE.closeAt + RIDE.closeDur + 1;
+      // Doors have been open at an intermediate stop for the dwell time: this stop becomes the start of
+      // the next leg (same spot, doors still open), so the train carries on unless you got off.
+      if (st.arrivedT !== null && st.leg < st.stops.length - 1 && st.t - st.arrivedT >= 2.5 + RIDE.dwell - RIDE.closeAt) {
+        st.from = st.next;
+        st.leg += 1;
+        st.next = st.stops[st.leg];
+        st.t = dt; st.s = 0; st.v = 0; st.arrivedT = null; st.fired = new Set();
+        origin.setName(st.from);
+        destPlat.setName(st.next);
+        events.push('continuing');
+      }
+      const closeAt = st.closeAt;
+      const departAt = closeAt + RIDE.closeDur + 1;
       const p = profile(st.t - departAt);
       st.s = p.s; st.v = p.v;
       let open;
-      if (st.t < RIDE.closeAt) { open = 1; st.phase = 'boarding'; }
-      else if (st.t < RIDE.closeAt + RIDE.closeDur) { open = 1 - (st.t - RIDE.closeAt) / RIDE.closeDur; st.phase = 'closing'; fire('closing'); }
+      if (st.t < closeAt) { open = 1; st.phase = 'boarding'; }
+      else if (st.t < closeAt + RIDE.closeDur) { open = 1 - (st.t - closeAt) / RIDE.closeDur; st.phase = 'closing'; fire('closing'); }
       else if (!p.done) {
         open = 0;
         st.phase = st.s > RIDE.distance - RIDE.announce ? 'arriving' : 'moving';
@@ -634,9 +671,10 @@ export function createTrainRide(scene, { floorY, x: originX = 400 }) {
       }
       const k = st.v / RIDE.vmax;
       const sway = { x: Math.sin(st.t * 1.7) * 0.012 * k, y: Math.sin(st.t * 9.3) * 0.004 * k + Math.sin(st.t * 2.1) * 0.003 * k, roll: Math.sin(st.t * 1.3) * 0.006 * k };
-      return { phase: st.phase, speed: st.v, s: st.s, dest: st.dest, next: st.next, events, sway };
+      st.open = open;
+      return { ...describe(), events, sway };
     },
     skip(sec) { if (st) st.t += sec; }, // test hook
-    get state() { return st ? { phase: st.phase, speed: st.v, s: st.s, dest: st.dest, next: st.next } : null; },
+    get state() { return st ? describe() : null; },
   };
 }

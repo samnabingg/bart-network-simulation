@@ -12,7 +12,7 @@
 // Not affiliated with or endorsed by BART. No BART logos are used.
 
 import * as THREE from 'three';
-import { createTrainRide, nextStopFrom } from './train-ride.js';
+import { atLeftDoor, createTrainRide, nextStopFrom } from './train-ride.js';
 import { buildFleetTrain } from './fleet.js';
 
 /* ---------- Dimensions and settings (estimates, edit freely) ---------- */
@@ -672,8 +672,10 @@ export function createBayFairScene(host, opts = {}) {
       const status = { boarding: 'Doors open', closing: 'Doors closing', moving: `Next stop: ${r.next}`, arriving: `Now arriving: ${r.next}`, arrived: `Arrived at ${r.next}` }[r.phase];
       rideEl.innerHTML = '';
       const a = document.createElement('strong'); a.textContent = `Train to ${r.dest}`;
-      const b = document.createElement('span'); b.textContent = `${status} · ${Math.round(r.speed * 3.6)} km/h`;
-      const c = document.createElement('span'); c.className = 'bf-ride-tip'; c.textContent = game.sitting ? 'Sitting. Press E or walk to stand up.' : 'Walk around the car. Press E near a seat to sit.';
+      const b = document.createElement('span'); b.textContent = `${status} · ${Math.round(r.speed * 3.6)} km/h${r.remaining > 0 ? ` · ${r.remaining} more stop${r.remaining === 1 ? '' : 's'}` : ''}`;
+      const c = document.createElement('span'); c.className = 'bf-ride-tip';
+      c.textContent = r.here ? `Doors open at ${r.here.name}. Walk to a door on the left and press E to get off.`
+        : game.sitting ? 'Sitting. Press E or walk to stand up.' : 'Walk around the car. Press E near a seat to sit.';
       rideEl.append(a, b, c);
     }
   };
@@ -772,6 +774,12 @@ export function createBayFairScene(host, opts = {}) {
   };
   const rideActs = [
     {
+      // Doors open at a station and you're standing in a doorway: step off here.
+      test: () => !game.sitting && !!(ride.state && ride.state.here) && atLeftDoor(P.x, P.z),
+      label: () => `Press E: get off at ${ride.state.here.name}`,
+      run() { getOff(ride.state.here.index); },
+    },
+    {
       test: () => !!game.sitting,
       label: () => 'Press E: stand up',
       run() { standUp(); },
@@ -798,12 +806,15 @@ export function createBayFairScene(host, opts = {}) {
     game.onBoard = true;
     game.arrived = false;
     game.sitting = null;
-    // The network (app.js) knows the real next stop for this line; fall back to the old guess.
-    const nx = (opts.nextStop && destAbbr && opts.nextStop({ from: 'BAYF', destAbbr, hex: color, direction })) || null;
+    // The network knows every stop this train makes; fall back to the next stop, then to the old guess.
+    const req = { from: 'BAYF', destAbbr, hex: color, direction };
+    const route = (opts.route && destAbbr && opts.route(req)) || [];
+    const nx = route[0] || (opts.nextStop && destAbbr && opts.nextStop(req)) || null;
+    const stops = route.length ? route : nx ? [nx] : [];
     const nextName = nx ? nx.name : nextStopFrom(dest);
-    rideInfo = { dest, color, destAbbr, direction, next: nx };
+    rideInfo = { dest, color, destAbbr, direction, next: nx, stops };
     boardEl.hidden = true;
-    ride.start({ dest, color, next: nextName, from: 'Bay Fair' });
+    ride.start({ dest, color, next: nextName, stops: stops.map((x) => x.name), from: 'Bay Fair' });
     // step in through the center door on the left, facing into the car
     P.x = -0.95; P.z = 0; P.y = 0; P.yaw = -Math.PI / 2; P.pitch = -0.05;
     beep(520, 0.2);
@@ -817,25 +828,39 @@ export function createBayFairScene(host, opts = {}) {
     game.arrived = false;
   };
   const chime = (notes) => notes.forEach(([f, d], i) => setTimeout(() => beep(f, d), i * 260));
+  // Step off at stop `index` of the route: load that station with you on its platform.
+  const getOff = (index) => {
+    const stop = rideInfo && rideInfo.stops[index];
+    if (stop && stop.abbr && opts.onExit) { opts.onExit(stop.abbr, { balance: game.balance }); return; }
+    // Not a station we can load (no network data): end the demo ride with the menu.
+    boardEl.querySelector('strong').textContent = `You got off at ${ride.state ? ride.state.here?.name || ride.state.next : 'the station'}.`;
+    boardEl.querySelector('span').textContent = 'That\'s the end of the demo ride. You can ride again or go back to Bay Fair.';
+    hud.querySelector('[data-act="get-off"]').hidden = true;
+    boardEl.hidden = false;
+  };
   const onRideEvent = (e, r) => {
     if (e === 'closing') { chime([[784, 0.18], [659, 0.18], [523, 0.32]]); toast('Doors closing. Please stand clear.'); }
-    if (e === 'departed') toast(`Next stop: ${r.next}.`);
-    if (e === 'arriving') { chime([[523, 0.2], [659, 0.3]]); toast(`Now arriving at ${r.next}. Doors will open on the left.`, 5000); }
+    if (e === 'departed') toast(`Next stop: ${r.next}${r.last ? ', the last stop' : ''}.`);
+    if (e === 'arriving') { chime([[523, 0.2], [659, 0.3]]); toast(`Now arriving at ${r.next}${r.last ? ', the last stop on this train' : ''}. Doors will open on the left.`, 5000); }
     if (e === 'opened') {
       game.arrived = true;
       chime([[523, 0.18], [659, 0.18], [784, 0.3]]);
+      if (!r.last) { toast(`This is ${r.next}. To get off, walk to a door on the left and press E.`, 6000); return; }
+      toast(`This is ${r.next}, the last stop. Everyone please leave the train: walk to a door and press E.`, 7000);
+      // End of the line: if you stay on, offer the menu after a while.
       setTimeout(() => {
-        if (!game.onBoard || !game.arrived) return;
-        boardEl.querySelector('strong').textContent = `You've arrived at ${r.next}.`;
-        const canExit = !!(rideInfo && rideInfo.next && opts.onExit);
+        const now = ride.state;
+        if (!game.onBoard || !now || !now.last || now.phase !== 'arrived') return;
+        boardEl.querySelector('strong').textContent = `End of the line: ${r.next}.`;
+        const canExit = !!(rideInfo && rideInfo.stops.length && opts.onExit);
         boardEl.querySelector('span').textContent = canExit
-          ? `Get off to walk around ${r.next}, ride again, or go back to Bay Fair.`
+          ? `This train doesn't go any further. Get off to walk around ${r.next}, ride again, or go back to Bay Fair.`
           : 'That\'s the end of the demo ride. You can ride again or go back to Bay Fair.';
         const off = hud.querySelector('[data-act="get-off"]');
         off.hidden = !canExit;
         off.textContent = `Get off at ${r.next}`;
         boardEl.hidden = false;
-      }, 2500);
+      }, 10_000);
     }
   };
   // A train standing at a platform, on the side the player is standing on, with a door close by.
@@ -902,7 +927,7 @@ export function createBayFairScene(host, opts = {}) {
     if (act.dataset.act === 'interact') interact();
     if (act.dataset.act === 'reset') reset('entrance');
     if (act.dataset.act === 'ride-again' && rideInfo) startRide(rideInfo);
-    if (act.dataset.act === 'get-off' && rideInfo && rideInfo.next && opts.onExit) opts.onExit(rideInfo.next.abbr, { balance: game.balance });
+    if (act.dataset.act === 'get-off' && rideInfo && rideInfo.stops.length) getOff(rideInfo.stops.length - 1);
   });
 
   /* ----- Movement and collisions ----- */
